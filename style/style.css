@@ -4,3 +4,19 @@ body {
     margin: 0;
     padding: 0;
 }
+
+.titolo {
+    color: #ffffff;
+    font-size: 2em;
+    text-align: center;
+    margin: 0;
+    padding: 0.5em;
+}
+
+.sottotitolo {
+    color: #ffffff;
+    font-size: 1.5em;
+    text-align: center;
+    margin: 0;
+    padding: 0.5em;
+}
