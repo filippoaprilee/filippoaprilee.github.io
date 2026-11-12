@@ -1,77 +1,88 @@
-# TurinPipps Torino (PWA gratuita)
+# TurinPipps · ricerca affitti Torino
 
-App pubblica: https://filippoaprilee.github.io/turinpipps/
+App: https://filippoaprilee.github.io/turinpipps/
 
-## Report email automatico
+**Obiettivo:** affitti da privati a Torino vicino al Politecnico (Crocetta, Cenisia, San Paolo, Borgo San Paolo, Cit Turin, Santa Rita, Pozzo Strada), massimo 700 €/mese di canone esclusi gli oneri.
 
-È attiva una schedulazione giornaliera tramite ChatGPT + Gmail alle 19:00 Europe/Rome, con email iniziale inviata correttamente il 12/11/2026 al mittente Gmail collegato. I destinatari non sono memorizzati nei file pubblici. Altri destinatari richiedono una modifica autorizzata dell'automazione. Il runner GitHub Actions resta bloccato a livello account: il workflow non può essere considerato operativo finché non viene risolto il problema di avvio dei job. La ricerca automatica tramite ChatGPT continua indipendentemente, leggendo/scrivendo turinpipps/data/listings.json.
+## Stato verificato (12/11/2026)
 
-## Obiettivo
-Cercare appartamenti da privati, fino a 700 € di canone mensile (spese escluse), a Torino nelle zone Crocetta, Cenisia, San Paolo, Borgo San Paolo, Cit Turin, Santa Rita e Pozzo Strada, con priorità alle zone più vicine al Politecnico di corso Duca degli Abruzzi.
+| Componente | Stato |
+| --- | --- |
+| GitHub Pages + PWA iPhone | Pubblicata |
+| Archivio pubblicato | 14 schede ereditate, da riconfermare con i proprietari |
+| GitHub Actions: raccolta | Workflow pronto, runner bloccato PRIMA degli step |
+| Subito e Immobiliare: avvisi | Codice IMAP pronto, ricerca email/secret da configurare |
+| GitHub Actions: report SMTP | Workflow pronto, runner bloccato e SMTP secret assenti |
+| Utenti e preferiti individuali | Codice Supabase e SQL RLS pronti, progetto da collegare |
+| Messaggi ai proprietari | Nessun invio automatico implementato |
 
-## Cosa è già attivo
-- Interfaccia web responsive, installabile su iPhone con Safari > Condividi > Aggiungi alla schermata Home.
-- Filtri rigorosi: un annuncio passa nei risultati compatibili solo se il canone è noto e <=700, la zona è riconosciuta e la fonte indica trattativa privata.
-- La sezione Da verificare ospita prezzi assenti, zone non dichiarate o status privato non confermato.
-- Preferiti, scartati, contattati e configurazione salvati solo nel browser (localStorage); non sono sincronizzati tra dispositivi.
-- Link alle ricerche ufficiali di Subito (categoria da privati), Immobiliare.it, Idealista, ClickCase, Bakeca e Facebook.
-- Inserimento manuale link annunci, importazione/esportazione JSON.
-- Messaggi personalizzati da copiare e inviare manualmente.
-- Prime schede ClickCase verificate manualmente il 12/11/2026. Disponibilità NON certificata.
+Le due automazioni ChatGPT preesistenti sono state disattivate. Nessun report verrà più generato o inviato da GPT.
 
-## Cosa non è attivo
-- Aggiornamento automatico: workflow GitHub Actions presente, ma le prime esecuzioni sono fallite prima dell'avvio del runner, con zero step eseguiti. Controllare le impostazioni Actions/Billing dell'account.
-- Subito e Immobiliare.it non forniscono annunci all'app automaticamente: sono collegate ricerche ufficiali e avvisi.
-- Nessun accesso ai gruppi privati Facebook e nessun invio automatico Messenger.
-- Nessuna notifica push personalizzata: usare gli avvisi ufficiali dei portali.
-- Nessuna autenticazione o database server. Non pubblicare credenziali o dati privati su GitHub Pages.
+## 1. Sbloccare il runner GitHub Actions
 
-## Controlli automatici sperimentali
-Il workflow .github/workflows/turinpipps-torino.yml chiama turinpipps/collector.py con standard library Python e rispetta robots.txt. Controlla solo pagine pubbliche accessibili, senza bypass CAPTCHA, restrizioni o account. Se il runner partirà, aggiornerà data/listings.json e data/diagnostics.json alle 06:19, 12:19, 18:19 UTC; il funzionamento effettivo non è garantito.
+Anche il job minimale che stampa un semplice echo fallisce prima del primo step:
+https://github.com/filippoaprilee/filippoaprilee.github.io/actions/runs/43190082048
 
-## Installazione iPhone
-1. Apri https://filippoaprilee.github.io/turinpipps/ in Safari.
-2. Tocca Condividi, quindi Aggiungi alla schermata Home.
-3. Conferma Aggiungi. Non è necessario tenere acceso Python sul Mac.
+Le prime esecuzioni TurinPipps fallite:
+- https://github.com/filippoaprilee/filippoaprilee.github.io/actions/runs/43235025880
+- https://github.com/filippoaprilee/filippoaprilee.github.io/actions/runs/43235120066
 
-## Privacy e costi
-GitHub Pages pubblica file statici; i preferiti e la configurazione risiedono sul dispositivo. Nessuna chiave API richiesta. Non sono previsti costi di hosting usando Pages su repository pubblico nel piano gratuito.
+Controlla impostazioni personali GitHub -> Billing and licensing -> Overview, Usage, Budgets and alerts; poi Repository -> Settings -> Actions -> General. Se è tutto regolare e il runner non viene ancora assegnato, apri un ticket https://support.github.com/ allegando i link. Il problema di permessi o fatturazione dell'account NON si risolve modificando il workflow. Al momento non è conosciuta la causa precisa.
 
-## File
-- index.html: app web.
-- manifest.webmanifest, sw.js, icon.svg: risorse PWA.
-- collector.py: raccoglitore sperimentale.
-- data/*.json: annunci e diagnostica pubblici.
+## 2. Configurare email automatiche GitHub
 
-## Novità: acquisizione automatica dagli avvisi ufficiali
-La nuova versione include `alerts_ingest.py`. Non accede con bot alle pagine protette: legge **in sola lettura** una casella email IMAP dedicata agli avvisi ufficiali, se esplicitamente configurata. Sono riconosciuti link diretti provenienti da Subito, Immobiliare.it, Idealista, ClickCase, Bakeca e Casa.it. Annunci senza canone, zona o inserzionista verificato rimangono "Da verificare": non vengono spacciati per compatibili.
+Apri https://github.com/filippoaprilee/filippoaprilee.github.io/settings/secrets/actions e aggiungi i tre **Repository secrets**:
 
-Per usarla devi salvare almeno una ricerca e attivare le notifiche email nel portale; Subito e Immobiliare.it hanno procedure ufficiali di avviso. Serve anche collegare una casella IMAP. Non è possibile configurare accessi di terze parti senza l'autorizzazione del relativo titolare.
+- TURINPIPPS_EMAIL_TO: filippoaprilee@gmail.com (o più indirizzi separati da virgole, fino a 20).
+- TURINPIPPS_SMTP_USER: indirizzo della casella autorizzata a inviare.
+- TURINPIPPS_SMTP_PASSWORD: password per app SMTP o altra credenziale autorizzata.
 
-## Alternativa immediata gratuita per Mac (quando GitHub Actions non avvia i job)
-Il runner GitHub standard del tuo account continua a fallire prima di eseguire uno step, compreso un test minimale. GitHub Pages funziona, ma non garantisce l'esecuzione di altri job. Il codice non può correggere un blocco di fatturazione/autorizzazione imposto da GitHub. Controlla Account settings > Billing and licensing > Budgets & alerts, e Repository > Settings > Actions > General, oppure apri un ticket a GitHub Support riportando i run ID.
+Facoltativamente nelle **Repository variables**:
+- TURINPIPPS_SMTP_HOST: smtp.gmail.com (predefinito).
+- TURINPIPPS_SMTP_PORT: 465 (SSL; alternativa 587 STARTTLS).
 
-Il Mac può eseguire lo stesso lavoro **senza runner GitHub**, tramite LaunchAgent macOS ogni 6 ore. La pagina pubblica rimane accessibile anche quando il Mac è spento; quando è spento non vengono raccolti nuovi dati.
+Il workflow è in .github/workflows/turinpipps-report.yml.
+La programmazione include i cambi d'ora legale e controlla le **19:00 Europe/Rome**. Ogni destinatario riceve una email individuale senza vedere gli altri. Lo stato dell'ultimo report realmente inviato è conservato in turinpipps/data/report_status.json senza email o password. Non vengono inviati messaggi ai proprietari.
 
-Da Terminale, con un GitHub login locale già autorizzato:
-```bash
-git clone --branch filippoaprilee https://github.com/filippoaprilee/filippoaprilee.github.io.git "$HOME/TurinPippsTorino"
-bash "$HOME/TurinPippsTorino/turinpipps/mac_install.sh"
-```
-L'installer verifica in modalità dry-run che Git possa pubblicare prima di programmare il task. Se è già stata clonata la repository, esegui `git pull` e poi `bash turinpipps/mac_install.sh`. Per configurare lettura delle mail e bot Telegram:
-```bash
-bash "$HOME/TurinPippsTorino/turinpipps/mac_setup_integrations.sh"
-```
-Conserva le password nel Portachiavi macOS. Non inserirle nel repository o nella chat. Il bot Telegram avvisa soltanto il chat ID configurato; non scrive ai proprietari.
+**Non incollare password o token nel repository, nelle issue o nelle chat.** Gmail richiede in genere una password per app con verifica in due passaggi, se disponibile sul tuo account.
 
-Per un controllo immediato e per verificare eventuali errori:
-```bash
-bash "$HOME/TurinPippsTorino/turinpipps/mac_update.sh"
-tail -n 80 "$HOME/Library/Logs/TurinPipps/error.log"
-```
+## 3. Acquisire Subito e Immobiliare.it automaticamente
 
-## Opzione GitHub Actions
-Il workflow `.github/workflows/turinpipps-torino.yml` è configurato per tre scansioni al giorno e include gli stessi tre moduli Python. Quando GitHub consentirà i runner, occorrerà impostare le repository Actions secrets `TURINPIPPS_IMAP_HOST`, `TURINPIPPS_IMAP_USER`, `TURINPIPPS_IMAP_PASSWORD` e facoltativamente `TURINPIPPS_TELEGRAM_TOKEN`, `TURINPIPPS_TELEGRAM_CHAT_ID`. Il connettore GitHub usato per questo progetto non dispone dell'azione che crea i secret: si devono aggiungere manualmente nella schermata GitHub. Non sono state aggiunte credenziali nel repository.
+Per rispettare le regole dei siti, l'app **non effettua scraping diretto non autorizzato** dei loro annunci. Legge invece gli avvisi ufficiali che i portali inviano via email.
 
-## Contatti ai proprietari
-L'app prepara il testo di un messaggio, ma il primo invio automatico su Facebook Marketplace/Subito/Immobiliare.it **non è attivo**, perché non sono disponibili autorizzazioni e interfacce ufficiali per inviare liberamente messaggi privati da un bot personale. Non aggiriamo login, CAPTCHA e sistemi antispam. I contatti devono usare i canali consentiti dal singolo portale. È esclusa la messaggistica seriale non richiesta.
+1. Accedi a Subito, cerca appartamenti in affitto a Torino, filtra “da privati” e massimo 700 €, limita i quartieri, quindi usa **Salva ricerca / Avvisami via email**.
+2. Accedi a Immobiliare.it, imposta la ricerca con i quartieri, canone massimo e altri filtri, poi fai **Salva ricerca** e abilita email di notifica.
+3. Puoi aggiungere altre ricerche ufficiali (Idealista, Casa.it) sulla stessa casella.
+4. Apri i Repository secrets GitHub e aggiungi:
+   - TURINPIPPS_IMAP_HOST = imap.gmail.com (se casella Gmail)
+   - TURINPIPPS_IMAP_USER = email che riceve gli avvisi
+   - TURINPIPPS_IMAP_PASSWORD = password per app IMAP autorizzata
+
+Il workflow di raccolta è in .github/workflows/turinpipps-collect.yml: 05:12, 11:12, 17:12 e 23:12 UTC. Il modulo turinpipps/alerts_ingest.py legge via IMAP in sola lettura fino agli ultimi 120 messaggi e importa i link immobiliari diretti. Gli avvisi con proprietario, zona o canone non verificati vanno nella lista “Da verificare”, non nella lista compatibili. L'app non manda messaggi ai proprietari.
+
+## 4. Account e preferiti personali gratuiti
+
+GitHub Pages è un sito statico. Non ha un backend sicuro per gestire registrazione, password e dati utente individuali. TurinPipps utilizza Supabase Auth con Postgres e regole RLS per dati isolati per utente.
+
+1. Crea un progetto **Free** in https://supabase.com/dashboard.
+2. In **SQL Editor** esegui il file turinpipps/supabase_schema.sql.
+3. In **Authentication -> Providers** abilita Email con conferma email.
+4. In **Authentication -> URL Configuration** inserisci come Site URL e Redirect URL consentito: https://filippoaprilee.github.io/turinpipps/
+5. Recupera il Project URL e la sola publishable/anon key.
+6. Modifica turinpipps/auth-config.js con i due valori pubblici.
+
+NON inserire mai chiavi service_role, segreti o password nei file GitHub pubblici. La registrazione, la sincronizzazione di preferiti/note e il recupero password funzioneranno solo dopo questi collegamenti. Senza Supabase, l'app rimane utilizzabile in modalità ospite con salvataggio locale sul dispositivo.
+
+Supabase ha piano gratuito con quote, e può sospendere progetti Free dopo periodi di inattività.
+
+## 5. PWA iPhone
+
+In Safari apri https://filippoaprilee.github.io/turinpipps/ -> Condividi -> Aggiungi alla schermata Home. La web app include splash screen, spinner, icone Font Awesome, paginazione, CSV, preferiti, note e cache offline degli annunci pubblici. Non è un'app nativa dell'App Store.
+
+## Prossimi miglioramenti
+
+- Calcolo distanza reale dal Politecnico solo su indirizzi o coordinate verificati.
+- Storico dei canoni quando le fonti riportano variazioni attendibili.
+- Totale mensile canone + spese note, con indicazione del deposito.
+- Cronologia esiti delle fonti e verifica annunci scaduti.
+- Filtro disponibilità, contratto e numero stanze, e digest settimanale.
