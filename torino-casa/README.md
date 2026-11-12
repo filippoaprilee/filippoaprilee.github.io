@@ -38,3 +38,36 @@ GitHub Pages pubblica file statici; i preferiti e la configurazione risiedono su
 - manifest.webmanifest, sw.js, icon.svg: risorse PWA.
 - collector.py: raccoglitore sperimentale.
 - data/*.json: annunci e diagnostica pubblici.
+
+## Novità: acquisizione automatica dagli avvisi ufficiali
+La nuova versione include `alerts_ingest.py`. Non accede con bot alle pagine protette: legge **in sola lettura** una casella email IMAP dedicata agli avvisi ufficiali, se esplicitamente configurata. Sono riconosciuti link diretti provenienti da Subito, Immobiliare.it, Idealista, ClickCase, Bakeca e Casa.it. Annunci senza canone, zona o inserzionista verificato rimangono "Da verificare": non vengono spacciati per compatibili.
+
+Per usarla devi salvare almeno una ricerca e attivare le notifiche email nel portale; Subito e Immobiliare.it hanno procedure ufficiali di avviso. Serve anche collegare una casella IMAP. Non è possibile configurare accessi di terze parti senza l'autorizzazione del relativo titolare.
+
+## Alternativa immediata gratuita per Mac (quando GitHub Actions non avvia i job)
+Il runner GitHub standard del tuo account continua a fallire prima di eseguire uno step, compreso un test minimale. GitHub Pages funziona, ma non garantisce l'esecuzione di altri job. Il codice non può correggere un blocco di fatturazione/autorizzazione imposto da GitHub. Controlla Account settings > Billing and licensing > Budgets & alerts, e Repository > Settings > Actions > General, oppure apri un ticket a GitHub Support riportando i run ID.
+
+Il Mac può eseguire lo stesso lavoro **senza runner GitHub**, tramite LaunchAgent macOS ogni 6 ore. La pagina pubblica rimane accessibile anche quando il Mac è spento; quando è spento non vengono raccolti nuovi dati.
+
+Da Terminale, con un GitHub login locale già autorizzato:
+```bash
+git clone --branch filippoaprilee https://github.com/filippoaprilee/filippoaprilee.github.io.git "$HOME/CasaRadarTorino"
+bash "$HOME/CasaRadarTorino/torino-casa/mac_install.sh"
+```
+L'installer verifica in modalità dry-run che Git possa pubblicare prima di programmare il task. Se è già stata clonata la repository, esegui `git pull` e poi `bash torino-casa/mac_install.sh`. Per configurare lettura delle mail e bot Telegram:
+```bash
+bash "$HOME/CasaRadarTorino/torino-casa/mac_setup_integrations.sh"
+```
+Conserva le password nel Portachiavi macOS. Non inserirle nel repository o nella chat. Il bot Telegram avvisa soltanto il chat ID configurato; non scrive ai proprietari.
+
+Per un controllo immediato e per verificare eventuali errori:
+```bash
+bash "$HOME/CasaRadarTorino/torino-casa/mac_update.sh"
+tail -n 80 "$HOME/Library/Logs/CasaRadar/error.log"
+```
+
+## Opzione GitHub Actions
+Il workflow `.github/workflows/casaradar-torino.yml` è configurato per tre scansioni al giorno e include gli stessi tre moduli Python. Quando GitHub consentirà i runner, occorrerà impostare le repository Actions secrets `CASARADAR_IMAP_HOST`, `CASARADAR_IMAP_USER`, `CASARADAR_IMAP_PASSWORD` e facoltativamente `CASARADAR_TELEGRAM_TOKEN`, `CASARADAR_TELEGRAM_CHAT_ID`. Il connettore GitHub usato per questo progetto non dispone dell'azione che crea i secret: si devono aggiungere manualmente nella schermata GitHub. Non sono state aggiunte credenziali nel repository.
+
+## Contatti ai proprietari
+L'app prepara il testo di un messaggio, ma il primo invio automatico su Facebook Marketplace/Subito/Immobiliare.it **non è attivo**, perché non sono disponibili autorizzazioni e interfacce ufficiali per inviare liberamente messaggi privati da un bot personale. Non aggiriamo login, CAPTCHA e sistemi antispam. I contatti devono usare i canali consentiti dal singolo portale. È esclusa la messaggistica seriale non richiesta.
