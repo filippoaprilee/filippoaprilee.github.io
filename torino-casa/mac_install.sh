@@ -5,6 +5,12 @@ set -euo pipefail
 BASE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(git -C "$BASE" rev-parse --show-toplevel)"
 [ "$(git -C "$ROOT" branch --show-current)" = "filippoaprilee" ] || { echo "Branch Git sbagliato"; exit 1; }
+# Evita di creare un task che non puo' pubblicare sul repository.
+if ! GIT_TERMINAL_PROMPT=0 git -C "$ROOT" push --dry-run origin HEAD:filippoaprilee >/dev/null 2>&1; then
+  echo "Git sul Mac non e' ancora autorizzato a scrivere su GitHub." >&2
+  echo "Accedi al tuo account GitHub con GitHub Desktop o gh auth login, poi riesegui l'installazione." >&2
+  exit 1
+fi
 PLIST="$HOME/Library/LaunchAgents/it.casaradar.torino.scan.plist"
 LOGS="$HOME/Library/Logs/CasaRadar"
 mkdir -p "$HOME/Library/LaunchAgents" "$LOGS"
