@@ -1,0 +1,7 @@
+{
+  "last_sent_date": null,
+  "last_sent_at": null,
+  "recipient_count": 0,
+  "status": "non_configurato",
+  "message": "Nessun report SMTP confermato. Configurare i GitHub Actions Secrets e sbloccare il runner."
+}
