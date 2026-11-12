@@ -1,40 +1,40 @@
 {
-  "updated_at": "2026-11-12T09:25:00Z",
+  "updated_at": "2026-11-12T09:28:34Z",
   "sources": [
     {
-      "name": "Annunci verificati manualmente · 3 portali",
+      "name": "Ricerca autonoma ChatGPT → GitHub",
       "status": "ok",
-      "links_found": 9,
-      "new": 9,
-      "message": "9 schede pubbliche controllate: 6 ClickCase, 2 Subito da privati, 1 Immobiliare.it privato. 7 con canone entro 700 € e 2 da chiarire. Disponibilità non confermata."
+      "links_found": 14,
+      "new": 5,
+      "message": "Prima ricerca avviata il 12/11/2026: 5 nuove schede aggiunte al database tramite GitHub. Controllo ricorrente ogni 6 ore attivato; la disponibilità degli immobili resta da verificare."
     },
     {
-      "name": "GitHub Actions · aggiornamento automatico",
-      "status": "non operativa",
+      "name": "GitHub Actions · runner standard",
+      "status": "bloccato",
       "links_found": 0,
       "new": 0,
-      "message": "Il runner non è partito nelle prime due esecuzioni (zero step). L'aggiornamento programmato è configurato ma non ancora funzionante."
+      "message": "Il runner si arresta prima di qualsiasi step anche con un semplice comando echo. La pubblicazione tramite GitHub Pages funziona, ma il workflow programmato non parte. Verifica account GitHub Actions / fatturazione."
     },
     {
-      "name": "Subito · annunci da privati",
-      "status": "verifica manuale",
-      "links_found": 2,
-      "new": 2,
-      "message": "2 schede Subito presenti. Ricerca ufficiale in Fonti. Nessun scraping automatico dal sito."
+      "name": "Avvisi email ufficiali Subito e Immobiliare.it",
+      "status": "da configurare",
+      "links_found": 0,
+      "new": 0,
+      "message": "Il lettore di avvisi IMAP è nel repository, ma una casella non è ancora autorizzata. I messaggi dai portali non vengono letti finché non viene configurata."
     },
     {
-      "name": "Immobiliare.it · privati",
-      "status": "verifica manuale",
-      "links_found": 1,
-      "new": 1,
-      "message": "1 scheda Immobiliare.it con inserzionista indicato come privato. Nessuno scraping automatico dal sito."
+      "name": "Scansione autonoma via Mac",
+      "status": "da installare",
+      "links_found": 0,
+      "new": 0,
+      "message": "Installazione macOS pronta nel repository; il Mac non è ancora stato collegato al task di raccolta."
     },
     {
       "name": "Facebook Marketplace",
       "status": "manuale",
       "links_found": 0,
       "new": 0,
-      "message": "Nessuna raccolta da gruppi privati o login; i link si possono aggiungere manualmente."
+      "message": "La messaggistica personale automatica non è autorizzata tramite API pubbliche. Nessun login o scraper privato attivo."
     }
   ]
 }
