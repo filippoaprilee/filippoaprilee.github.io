@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CasaRadar v3: raccolta rispettosa di robots.txt da pagine pubbliche.
+"""TurinPipps v3: raccolta rispettosa di robots.txt da pagine pubbliche.
 Nessun login, CAPTCHA, proxy, dati privati o invio messaggi automatici.
 I portali che non autorizzano la lettura sono mostrati in diagnostica.
 """
@@ -18,7 +18,7 @@ from urllib.error import HTTPError, URLError
 
 HERE=Path(__file__).resolve().parent
 DATA=HERE/"data"
-UA="CasaRadar/3.0 (personal housing alerts; robots.txt respected)"
+UA="TurinPipps/3.0 (TurinPipps public housing search; robots.txt respected)"
 SOURCE_URLS=[
   ("clickcase","ClickCase · affitti privati","https://www.clickcase.it/annunci/affitti-case-privati-torino.html"),
   ("bakeca","Bakeca · annunci Torino","https://torino.bakeca.it/annunci/offro-casa/"),
