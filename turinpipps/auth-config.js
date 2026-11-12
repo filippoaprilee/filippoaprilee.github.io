@@ -4,6 +4,6 @@
  * Se non configurato, TurinPipps funziona come ospite sul dispositivo corrente.
  */
 window.TURINPIPPS_SUPABASE = {
-  url: "",
+  url: "https://akgnxjwkrnuckgxscjdz.supabase.co",
   publishableKey: ""
 };
