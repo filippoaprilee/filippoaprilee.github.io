@@ -222,6 +222,42 @@ function publicListings_(now){
   }catch(e){why='Errore fonte: '+String(e.message||e).slice(0,100)}
   return {rows:found,status:why};
 }
+
+function enrichWalkingRoutes_(known,now){
+  // Google Apps Script Maps Directions; only addresses explicitly supplied by listings.
+  // No made-up walking distances from zone centroids.
+  var count=0,changed=0;
+  Object.keys(known).forEach(function(k){
+    if(count>=8)return;
+    var row=known[k],address=String(row.address||'').trim();
+    if(!/^(?:Via|Corso|Piazza|Viale|Largo)\s+.+\s+\d+[A-Za-z]?,\s*Torino,\s*Italia$/i.test(address))return;
+    if(row.route_address===address&&Number(row.walking_km)>0)return;
+    count++;
+    try{
+      var directions=Maps.newDirectionFinder()
+        .setOrigin(address)
+        .setDestination('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino, Italia')
+        .setMode(Maps.DirectionFinder.Mode.WALKING)
+        .setLanguage('it').getDirections();
+      var leg=directions.routes&&directions.routes[0]&&directions.routes[0].legs&&directions.routes[0].legs[0];
+      if(!leg||!leg.distance||!leg.duration) return;
+      var loc=leg.start_location||{};
+      if(Number(loc.lat)<44.8||Number(loc.lat)>45.3||Number(loc.lng)<7.3||Number(loc.lng)>8)return;
+      var meters=Number(leg.distance.value),seconds=Number(leg.duration.value);
+      if(!isFinite(meters)||meters<=0||meters>30000||!isFinite(seconds)||seconds<=0)return;
+      row.walking_km=Math.round(meters/100)/10;
+      row.walking_minutes=Math.round(seconds/60);
+      row.route_checked_at=now;
+      row.route_address=address;
+      row.route_source='Google Maps Directions (percorso pedonale indicativo)';
+      row.lat=Number(loc.lat);
+      row.lng=Number(loc.lng);
+      changed++;
+    }catch(err){console.warn('Percorso non disponibile: '+String(err.message||err).slice(0,90));}
+  });
+  return {requested:count,updated:changed};
+}
+
 function runScan(){
   var lock=LockService.getScriptLock();
   if(!lock.tryLock(20000))return;
@@ -263,6 +299,7 @@ function runScan(){
       }
       oldItem.last_seen=timestamp;
     });
+    var walking=enrichWalkingRoutes_(known,timestamp);
     stored.json.listings=Object.keys(known).map(function(key){return known[key];}).slice(-850);
     stored.json.updated_at=timestamp;
     stored.json.verification='Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.';
@@ -270,7 +307,7 @@ function runScan(){
     var sources=(diagnostics.json.sources||[]).filter(function(x){return x.name!=='Google Apps Script · automatico';});
     sources.push({name:'Google Apps Script · automatico',status:rss.failures?'parziale':'ok',
       links_found:rss.rows.length+messages.length+publics.rows.length,new:added,
-      message:'Feed RSS: '+rss.feeds+' (errori '+rss.failures+'), link '+rss.rows.length+'. Email avvisi opzionali: '+messages.length+'. '+publics.status+'. Nessun bypass dei portali.'});
+      message:'Feed RSS: '+rss.feeds+' (errori '+rss.failures+'), link '+rss.rows.length+'. Email avvisi opzionali: '+messages.length+'. Percorsi a piedi aggiornati: '+walking.updated+'. '+publics.status+'. Nessun bypass dei portali.'});
     diagnostics.json.sources=sources;
     githubSave_(TP.listings,stored,stored.json);
     // The previous PUT changed the repository head but not this file's SHA.
