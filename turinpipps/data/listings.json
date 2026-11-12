@@ -43,7 +43,8 @@
       "seen": "2026-07-26",
       "last_seen": "2026-11-12T09:25:00Z",
       "source_updated": "2026-07-26",
-      "property_type": "Bilocale intero · riservato a donne"
+      "property_type": "Bilocale intero · riservato a donne",
+      "address": "Via Vigone 28, Torino, Italia"
     },
     {
       "url": "https://www.clickcase.it/bilocale-gia-arredato-libero-da-fine-marzo-torino-395540.html",
@@ -147,7 +148,8 @@
       "expenses": "Condominio 70 €/mese; altre utenze da verificare",
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
-      "property_type": "Bilocale intero"
+      "property_type": "Bilocale intero",
+      "address": "Corso Ferrucci 106, Torino, Italia"
     },
     {
       "url": "https://www.immobiliare.it/annunci/133834776/",
@@ -161,7 +163,8 @@
       "expenses": "Condominio 100 €/mese; elettricità, riscaldamento e TARI esclusi",
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
-      "property_type": "Bilocale intero"
+      "property_type": "Bilocale intero",
+      "address": "Via Moretta 12, Torino, Italia"
     },
     {
       "url": "https://www.immobiliare.it/annunci/133148838/",
@@ -175,7 +178,8 @@
       "expenses": "Condominio 40 €/mese; utenze da verificare; cauzione 1.400 €",
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
-      "property_type": "Bilocale intero"
+      "property_type": "Bilocale intero",
+      "address": "Via Perrero 13, Torino, Italia"
     },
     {
       "url": "https://torino.bakeca.it/dettaglio/offro-casa/gioiello-nel-cuore-della-crocetta-trilocale-nuovo-u5v5298583748",
@@ -203,7 +207,8 @@
       "expenses": "Utenze, TARI, luce e gas intestate agli inquilini; altri oneri da verificare",
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
-      "property_type": "Trilocale intero condiviso"
+      "property_type": "Trilocale intero condiviso",
+      "address": "Via Azzi 10, Torino, Italia"
     }
   ]
 }
