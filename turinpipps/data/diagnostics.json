@@ -1,40 +1,47 @@
 {
-  "updated_at": "2026-11-12T09:28:34Z",
+  "updated_at": "2026-11-12T12:40:00Z",
   "sources": [
     {
-      "name": "Ricerca autonoma ChatGPT → GitHub",
+      "name": "TurinPipps · ricerca autonoma ChatGPT",
       "status": "ok",
       "links_found": 14,
       "new": 5,
-      "message": "Prima ricerca avviata il 12/11/2026: 5 nuove schede aggiunte al database tramite GitHub. Controllo ricorrente ogni 6 ore attivato; la disponibilità degli immobili resta da verificare."
+      "message": "Automazione riconfigurata per il nuovo percorso TurinPipps, controllo ogni 6 ore. Archivio copiato con 14 schede, di cui 5 aggiunte dalla ricerca autonoma precedente. Prossimi controlli programmati, esito da verificare."
     },
     {
-      "name": "GitHub Actions · runner standard",
+      "name": "TurinPipps · report quotidiano email",
+      "status": "ok",
+      "links_found": 14,
+      "new": 0,
+      "message": "Automazione email programmata ogni giorno alle 19:00 (Europe/Rome). Primo invio di prova Gmail riuscito il 12/11/2026; la prima esecuzione pianificata deve ancora avvenire."
+    },
+    {
+      "name": "GitHub Actions · runner Linux",
       "status": "bloccato",
       "links_found": 0,
       "new": 0,
-      "message": "Il runner si arresta prima di qualsiasi step anche con un semplice comando echo. La pubblicazione tramite GitHub Pages funziona, ma il workflow programmato non parte. Verifica account GitHub Actions / fatturazione."
+      "message": "I job standard GitHub falliscono prima dell'avvio del runner, anche con workflow echo minimale. Il problema è esterno al codice dell'app; verificare Actions, fatturazione e supporto GitHub."
     },
     {
-      "name": "Avvisi email ufficiali Subito e Immobiliare.it",
-      "status": "da configurare",
+      "name": "ClickCase / Bakeca",
+      "status": "sperimentale",
       "links_found": 0,
       "new": 0,
-      "message": "Il lettore di avvisi IMAP è nel repository, ma una casella non è ancora autorizzata. I messaggi dai portali non vengono letti finché non viene configurata."
+      "message": "Raccoglitore pubblico presente nel codice; il runner GitHub non l'ha ancora eseguito. Gli annunci vengono verificati dal monitor ChatGPT quando accessibili."
     },
     {
-      "name": "Scansione autonoma via Mac",
-      "status": "da installare",
-      "links_found": 0,
+      "name": "Subito / Immobiliare.it",
+      "status": "avvisi ufficiali",
+      "links_found": 3,
       "new": 0,
-      "message": "Installazione macOS pronta nel repository; il Mac non è ancora stato collegato al task di raccolta."
+      "message": "Archivio con schede verificabili. Per aggiornamenti automatici via IMAP occorre connettere gli avvisi email ufficiali; non si aggirano le restrizioni dei portali."
     },
     {
       "name": "Facebook Marketplace",
       "status": "manuale",
       "links_found": 0,
       "new": 0,
-      "message": "La messaggistica personale automatica non è autorizzata tramite API pubbliche. Nessun login o scraper privato attivo."
+      "message": "Nessun accesso automatico ai gruppi privati e nessun invio di messaggi. Si possono aggiungere annunci tramite link."
     }
   ]
 }
