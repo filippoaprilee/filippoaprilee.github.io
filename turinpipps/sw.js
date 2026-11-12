@@ -1,5 +1,5 @@
 /* TurinPipps PWA offline cache. No private account data is cached here. */
-const CACHE='turinpipps-shell-v1.1.0';
+const CACHE='turinpipps-shell-v1.4.0';
 const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png'];
 const DATA=['./data/listings.json','./data/diagnostics.json','./data/report_status.json'];
 self.addEventListener('install',event=>{
@@ -21,7 +21,7 @@ self.addEventListener('fetch',event=>{
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;
   // Supabase/GitHub auth tokens never go into Cache Storage.
-  if(url.pathname.endsWith('/auth-config.js')||url.pathname.endsWith('/auth.js'))return;
+  if(url.pathname.endsWith('/auth-config.js')||url.pathname.endsWith('/auth.js')||url.pathname.endsWith('/auth-loader.js'))return;
   if(url.pathname.includes('/data/')){
     const clean=new Request(url.origin+url.pathname);
     event.respondWith((async()=>{
