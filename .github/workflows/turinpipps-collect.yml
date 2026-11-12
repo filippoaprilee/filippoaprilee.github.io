@@ -5,6 +5,7 @@ on:
     paths:
       - 'turinpipps/collector.py'
       - 'turinpipps/alerts_ingest.py'
+      - 'turinpipps/config/*.json'
       - '.github/workflows/turinpipps-collect.yml'
   schedule:
     - cron: '12 5,11,17,23 * * *'
@@ -26,10 +27,10 @@ jobs:
         run: python3 turinpipps/collector.py
       - name: Importa avvisi email Subito, Immobiliare.it e altri
         env:
-          TURINPIPPS_IMAP_HOST: ${{ secrets.TURINPIPPS_IMAP_HOST }}
+          TURINPIPPS_IMAP_HOST: ${{ vars.TURINPIPPS_IMAP_HOST || 'imap.gmail.com' }}
           TURINPIPPS_IMAP_PORT: '993'
-          TURINPIPPS_IMAP_USER: ${{ secrets.TURINPIPPS_IMAP_USER }}
-          TURINPIPPS_IMAP_PASSWORD: ${{ secrets.TURINPIPPS_IMAP_PASSWORD }}
+          TURINPIPPS_IMAP_USER: ${{ secrets.TURINPIPPS_IMAP_USER || secrets.TURINPIPPS_SMTP_USER }}
+          TURINPIPPS_IMAP_PASSWORD: ${{ secrets.TURINPIPPS_IMAP_PASSWORD || secrets.TURINPIPPS_SMTP_PASSWORD }}
         run: python3 turinpipps/alerts_ingest.py
       - name: Pubblica dati e diagnostica in GitHub Pages
         shell: bash
