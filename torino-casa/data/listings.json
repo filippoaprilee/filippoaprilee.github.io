@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-12T09:25:00Z",
-  "verification": "Controllo manuale su schede pubbliche il 12/11/2026, nessun contatto effettuato; disponibilità e spese da confermare.",
+  "updated_at": "2026-11-12T09:28:34Z",
+  "verification": "Ricerca su schede pubbliche 12/11/2026: inserzionista privato dichiarato dal portale, non identificazione indipendente. Nuove schede scoperte oggi ma alcune pubblicate in ottobre. Nessun contatto effettuato; disponibilità e spese da confermare.",
   "listings": [
     {
       "url": "https://www.subito.it/appartamenti/monolocale-arredato-in-crocetta-torino-668007219.htm",
@@ -134,6 +134,76 @@
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-07-18",
       "property_type": "Bilocale · transitorio · prezzo incerto"
+    },
+    {
+      "url": "https://www.immobiliare.it/annunci/133448718/",
+      "title": "Bilocale fronte Politecnico · corso Ferrucci 106",
+      "description": "Privato indicato nella scheda. Bilocale arredato e ristrutturato, piano rialzato; aggiornato 11/10/2026. Disponibilità attuale non confermata.",
+      "price": 550,
+      "sqm": 40,
+      "zone": "Cenisia",
+      "source": "Immobiliare.it · scheda pubblica",
+      "private_status": "source",
+      "expenses": "Condominio 70 €/mese; altre utenze da verificare",
+      "seen": "2026-11-12T09:28:34Z",
+      "last_seen": "2026-11-12T09:28:34Z",
+      "property_type": "Bilocale intero"
+    },
+    {
+      "url": "https://www.immobiliare.it/annunci/133834776/",
+      "title": "Bilocale mansardato · via Moretta 12",
+      "description": "Annuncio privato, a circa 3 minuti a piedi dall'ingresso posteriore del Politecnico. Contratto transitorio senza trasferimento di residenza; aggiornato 23/10/2026. Cauzione riportata 1.200 €, da verificare perché non corrisponde a due canoni.",
+      "price": 700,
+      "sqm": 58,
+      "zone": "Cenisia",
+      "source": "Immobiliare.it · scheda pubblica",
+      "private_status": "source",
+      "expenses": "Condominio 100 €/mese; elettricità, riscaldamento e TARI esclusi",
+      "seen": "2026-11-12T09:28:34Z",
+      "last_seen": "2026-11-12T09:28:34Z",
+      "property_type": "Bilocale intero"
+    },
+    {
+      "url": "https://www.immobiliare.it/annunci/133148838/",
+      "title": "Bilocale arredato · via Perrero 13",
+      "description": "Scheda indica privato e nessuna agenzia, riscaldamento autonomo e contratto non transitorio. Aggiornato 19/10/2026; disponibilità da confermare.",
+      "price": 700,
+      "sqm": 50,
+      "zone": "Cenisia",
+      "source": "Immobiliare.it · scheda pubblica",
+      "private_status": "source",
+      "expenses": "Condominio 40 €/mese; utenze da verificare; cauzione 1.400 €",
+      "seen": "2026-11-12T09:28:34Z",
+      "last_seen": "2026-11-12T09:28:34Z",
+      "property_type": "Bilocale intero"
+    },
+    {
+      "url": "https://torino.bakeca.it/dettaglio/offro-casa/gioiello-nel-cuore-della-crocetta-trilocale-nuovo-u5v5298583748",
+      "title": "Trilocale arredato · via Lamarmora",
+      "description": "Bakeca indica inserzionista privato e canone mensile 570 €. Pubblicato 30/10/2026, 2 camere, terzo piano, riscaldamento autonomo. Indirizzo civico e disponibilità effettiva non confermati; verificare condizioni e attendibilità dell'offerta.",
+      "price": 570,
+      "sqm": 85,
+      "zone": "Crocetta",
+      "source": "Bakeca · scheda pubblica",
+      "private_status": "source",
+      "expenses": "Condominio e utenze non specificati; richieste 2 mensilità di cauzione",
+      "seen": "2026-11-12T09:28:34Z",
+      "last_seen": "2026-11-12T09:28:34Z",
+      "property_type": "Trilocale intero"
+    },
+    {
+      "url": "https://torino.bakeca.it/dettaglio/offro-casa/alloggio-mq-85-affitto-nh8n298335940",
+      "title": "Trilocale per due studenti · via Azzi 10",
+      "description": "Bakeca indica privato, canone totale 700 €/mese diviso fra due inquilini. Pubblicato 18/10/2026, disponibile dal 1 ottobre secondo annuncio; disponibilità attuale non confermata. Destinato a due studenti, non verificata locazione a una sola persona.",
+      "price": 700,
+      "sqm": 85,
+      "zone": "San Paolo",
+      "source": "Bakeca · scheda pubblica",
+      "private_status": "source",
+      "expenses": "Utenze, TARI, luce e gas intestate agli inquilini; altri oneri da verificare",
+      "seen": "2026-11-12T09:28:34Z",
+      "last_seen": "2026-11-12T09:28:34Z",
+      "property_type": "Trilocale intero condiviso"
     }
   ]
 }
