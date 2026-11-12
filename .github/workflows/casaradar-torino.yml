@@ -1,0 +1,38 @@
+name: CasaRadar Torino - controllo annunci
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'torino-casa/collector.py'
+      - '.github/workflows/casaradar-torino.yml'
+  schedule:
+    - cron: '19 6,12,18 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: casaradar-torino
+  cancel-in-progress: false
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verifica sintassi
+        run: python3 -m py_compile torino-casa/collector.py
+      - name: Scansiona fonti pubbliche consentite
+        run: python3 torino-casa/collector.py
+      - name: Aggiorna esclusivamente i dati pubblici CasaRadar
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add torino-casa/data/listings.json torino-casa/data/diagnostics.json
+          if ! git diff --cached --quiet; then
+            git commit -m "CasaRadar: aggiornamento annunci e diagnostica"
+            git push
+          else
+            echo "Nessuna variazione dei dati."
+          fi
