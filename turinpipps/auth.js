@@ -15,6 +15,9 @@
   var dialog=document.getElementById('tp-auth-dialog');
   var button=document.getElementById('tp-account-button');
   var mode='signin';
+  var welcome=document.getElementById('tp-welcome');
+  var bootReported=false;
+  function notifyBoot(){if(bootReported)return;bootReported=true;if(window.TurinPippsBoot)window.TurinPippsBoot.authReady(!!current,!!client);}
   function el(id){return document.getElementById(id);}
   function status(msg,type){
     var e=el('tp-auth-status');if(!e)return;
@@ -50,11 +53,13 @@
       el('tp-auth-config').hidden=true;
       if(!current)el('tp-auth-form').hidden=false;
     }
+    if(welcome)welcome.hidden=true;
     if(dialog.showModal)dialog.showModal();
     else dialog.setAttribute('open','');
   }
   function close(){
     if(dialog.close)dialog.close();
+    if(welcome&&!current&&client&&sessionStorage.getItem('turinpipps-guest-session')!=='1')welcome.hidden=false;
     else dialog.removeAttribute('open');
   }
   async function changeSession(session){
@@ -153,6 +158,7 @@
     if(loading)return;
     loading=true;
     el('tp-auth-submit').disabled=true;
+    var loadingEl=el('tp-auth-load');if(loadingEl)loadingEl.classList.add('active');
     try{
       var user=el('tp-auth-email').value.trim();
       var pass=el('tp-auth-password').value;
@@ -171,9 +177,10 @@
         status('Autenticato. Caricamento dei dati personali…','ok');
         await changeSession(result.data.session);
         close();
+        if(welcome)welcome.hidden=true;
       }
     }catch(err){status(err.message||'Errore di accesso.','error');}
-    finally{loading=false;el('tp-auth-submit').disabled=false;}
+    finally{loading=false;el('tp-auth-submit').disabled=false;if(loadingEl)loadingEl.classList.remove('active');}
   }
   async function resetPassword(){
     if(!client)return;
@@ -192,6 +199,14 @@
     status('Password aggiornata.','ok');
   }
   button.addEventListener('click',open);
+  if(el('tp-show-password'))el('tp-show-password').addEventListener('click',function(){
+    var pass=el('tp-auth-password'),show=pass.type==='password';
+    pass.type=show?'text':'password';this.setAttribute('aria-label',show?'Nascondi password':'Mostra password');
+    this.innerHTML=show?'<i class="fa-regular fa-eye-slash" aria-hidden="true"></i>':'<i class="fa-regular fa-eye" aria-hidden="true"></i>';
+  });
+  var welcomeRegister=el('tp-welcome-register'),welcomeSignin=el('tp-welcome-signin');
+  if(welcomeRegister)welcomeRegister.addEventListener('click',function(){setMode('register');open()});
+  if(welcomeSignin)welcomeSignin.addEventListener('click',function(){setMode('signin');open()});
   el('tp-auth-close').addEventListener('click',close);
   el('tp-auth-form').addEventListener('submit',submit);
   el('tp-auth-reset').addEventListener('click',resetPassword);
@@ -211,10 +226,10 @@
     saveFlag:saveFlag,saveManual:saveManual,savePreferences:savePreferences,open:open};
   setButton();
   if(client){
-    client.auth.getSession().then(function(r){
+    client.auth.getSession().then(async function(r){
       if(r.error){status(r.error.message,'error');return;}
-      return changeSession(r.data.session);
-    }).catch(function(err){status(err.message,'error');});
+      await changeSession(r.data.session);
+    }).catch(function(err){status(err.message,'error');}).finally(notifyBoot);
     client.auth.onAuthStateChange(function(evt,session){
       if(evt==='PASSWORD_RECOVERY'){
         setTimeout(function(){open();el('tp-auth-change-password').hidden=false;},0);
@@ -222,5 +237,5 @@
         setTimeout(function(){changeSession(session);},0);
       }
     });
-  }
+  }else notifyBoot();
 })();
