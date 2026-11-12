@@ -14,7 +14,14 @@
       "expenses": "Spese condominiali incluse · utenze da verificare",
       "seen": "2026-11-12T09:25:00Z",
       "last_seen": "2026-11-12T09:25:00Z",
-      "property_type": "Monolocale intero"
+      "property_type": "Monolocale intero",
+      "price_history": [
+        {
+          "price": 550,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.subito.it/appartamenti/bilocale-zona-vicina-al-politecnico-torino-666902816.htm",
@@ -28,7 +35,14 @@
       "expenses": "150 €/mese a parte",
       "seen": "2026-11-12T09:25:00Z",
       "last_seen": "2026-11-12T09:25:00Z",
-      "property_type": "Bilocale intero · garante richiesto"
+      "property_type": "Bilocale intero · garante richiesto",
+      "price_history": [
+        {
+          "price": 650,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.immobiliare.it/annunci/128593522/",
@@ -44,7 +58,14 @@
       "last_seen": "2026-11-12T09:25:00Z",
       "source_updated": "2026-07-26",
       "property_type": "Bilocale intero · riservato a donne",
-      "address": "Via Vigone 28, Torino, Italia"
+      "address": "Via Vigone 28, Torino, Italia",
+      "price_history": [
+        {
+          "price": 650,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.clickcase.it/bilocale-gia-arredato-libero-da-fine-marzo-torino-395540.html",
@@ -59,7 +80,14 @@
       "seen": "2026-09-22",
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-09-22",
-      "property_type": "Bilocale · intero alloggio"
+      "property_type": "Bilocale · intero alloggio",
+      "price_history": [
+        {
+          "price": 550,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
@@ -74,7 +102,14 @@
       "seen": "2026-09-15",
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-09-15",
-      "property_type": "Bilocale · intero alloggio · studenti"
+      "property_type": "Bilocale · intero alloggio · studenti",
+      "price_history": [
+        {
+          "price": 500,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-271099.html",
@@ -89,7 +124,14 @@
       "seen": "2026-05-29",
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-05-29",
-      "property_type": "Bilocale · intero alloggio"
+      "property_type": "Bilocale · intero alloggio",
+      "price_history": [
+        {
+          "price": 600,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-200568.html",
@@ -104,7 +146,14 @@
       "seen": "2026-06-04",
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-06-04",
-      "property_type": "Bilocale · intero alloggio"
+      "property_type": "Bilocale · intero alloggio",
+      "price_history": [
+        {
+          "price": 550,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.clickcase.it/disponibile-appartamento-torino-387546.html",
@@ -149,7 +198,14 @@
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
       "property_type": "Bilocale intero",
-      "address": "Corso Ferrucci 106, Torino, Italia"
+      "address": "Corso Ferrucci 106, Torino, Italia",
+      "price_history": [
+        {
+          "price": 550,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.immobiliare.it/annunci/133834776/",
@@ -164,7 +220,14 @@
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
       "property_type": "Bilocale intero",
-      "address": "Via Moretta 12, Torino, Italia"
+      "address": "Via Moretta 12, Torino, Italia",
+      "price_history": [
+        {
+          "price": 700,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://www.immobiliare.it/annunci/133148838/",
@@ -179,7 +242,14 @@
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
       "property_type": "Bilocale intero",
-      "address": "Via Perrero 13, Torino, Italia"
+      "address": "Via Perrero 13, Torino, Italia",
+      "price_history": [
+        {
+          "price": 700,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://torino.bakeca.it/dettaglio/offro-casa/gioiello-nel-cuore-della-crocetta-trilocale-nuovo-u5v5298583748",
@@ -193,7 +263,14 @@
       "expenses": "Condominio e utenze non specificati; richieste 2 mensilità di cauzione",
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
-      "property_type": "Trilocale intero"
+      "property_type": "Trilocale intero",
+      "price_history": [
+        {
+          "price": 570,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     },
     {
       "url": "https://torino.bakeca.it/dettaglio/offro-casa/alloggio-mq-85-affitto-nh8n298335940",
@@ -208,7 +285,14 @@
       "seen": "2026-11-12T09:28:34Z",
       "last_seen": "2026-11-12T09:28:34Z",
       "property_type": "Trilocale intero condiviso",
-      "address": "Via Azzi 10, Torino, Italia"
+      "address": "Via Azzi 10, Torino, Italia",
+      "price_history": [
+        {
+          "price": 700,
+          "observed_at": "2026-11-12T15:00:00Z",
+          "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
+        }
+      ]
     }
   ]
 }
