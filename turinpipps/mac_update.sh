@@ -15,20 +15,20 @@ case "$REMOTE" in
 esac
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 export GIT_TERMINAL_PROMPT=0
-CFG="$HOME/Library/Application Support/TurinPipps/config.env"
+CFG="$HOME/Library/Application Support/CasaRadar/config.env"
 if [ -f "$CFG" ]; then
   set -a
   . "$CFG"
   set +a
 fi
-if [ -n "${TURINPIPPS_IMAP_USER:-}" ]; then
-  PASS="$(/usr/bin/security find-generic-password -a "$TURINPIPPS_IMAP_USER" -s "turinpipps-imap" -w 2>/dev/null || true)"
-  if [ -n "$PASS" ]; then export TURINPIPPS_IMAP_PASSWORD="$PASS"; fi
+if [ -n "${CASARADAR_IMAP_USER:-}" ]; then
+  PASS="$(/usr/bin/security find-generic-password -a "$CASARADAR_IMAP_USER" -s "casaradar-imap" -w 2>/dev/null || true)"
+  if [ -n "$PASS" ]; then export CASARADAR_IMAP_PASSWORD="$PASS"; fi
   unset PASS
 fi
-if [ -n "${TURINPIPPS_TELEGRAM_CHAT_ID:-}" ]; then
-  TOKEN="$(/usr/bin/security find-generic-password -a "$TURINPIPPS_TELEGRAM_CHAT_ID" -s "turinpipps-telegram" -w 2>/dev/null || true)"
-  if [ -n "$TOKEN" ]; then export TURINPIPPS_TELEGRAM_TOKEN="$TOKEN"; fi
+if [ -n "${CASARADAR_TELEGRAM_CHAT_ID:-}" ]; then
+  TOKEN="$(/usr/bin/security find-generic-password -a "$CASARADAR_TELEGRAM_CHAT_ID" -s "casaradar-telegram" -w 2>/dev/null || true)"
+  if [ -n "$TOKEN" ]; then export CASARADAR_TELEGRAM_TOKEN="$TOKEN"; fi
   unset TOKEN
 fi
 cd "$ROOT"
