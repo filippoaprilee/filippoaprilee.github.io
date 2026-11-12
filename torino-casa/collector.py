@@ -197,25 +197,53 @@ def run():
             if not allowed:
                 report.update(status="bloccata",message="Raccolta non consentita: "+why)
             else:
-                page=fetch(url)
-                results=scrape_index(url,kind,page)
+                # ClickCase: consulta al massimo le prime 5 pagine pubbliche
+                # consentite da robots.txt, senza effettuare login.
+                pages=5 if kind=="clickcase" else 1
+                results=[]; seen_pages=0; page_warnings=[]
+                unique=set()
+                for page_number in range(1,pages+1):
+                    page_url=url if page_number==1 else url+"?pagina="+str(page_number)
+                    permitted,_=robots_allows(page_url)
+                    if not permitted:
+                        page_warnings.append("pagina "+str(page_number)+" non consentita")
+                        break
+                    try:
+                        page=fetch(page_url)
+                        part=scrape_index(page_url,kind,page)
+                    except Exception as exc:
+                        page_warnings.append("pagina "+str(page_number)+": "+type(exc).__name__)
+                        break
+                    seen_pages+=1
+                    for row in part:
+                        if row["url"] in unique:continue
+                        unique.add(row["url"])
+                        results.append(row)
+                    if page_number<pages:time.sleep(1.0)
                 report["links_found"]=len(results)
-                # A limited number of requests to public detail pages (ClickCase only).
+                # Solo pochi dettagli, solo se robots.txt lo consente.
                 if kind=="clickcase":
                     prioritized=[a for a in results if a["zone"] in ZONES and (0<a["price"]<=700 or not a["price"])]
-                    for item in prioritized[:12]:
+                    for item in prioritized[:10]:
                         enrich_clickcase(item)
-                        time.sleep(0.7)
-                for item in results[:120]:
+                        time.sleep(0.8)
+                for item in results[:180]:
                     address=item["url"]
                     if address not in known:report["new"]+=1
                     prev=known.get(address,{})
-                    for k,v in item.items():
-                        if not v and prev.get(k):item[k]=prev[k]
+                    if prev:
+                        for key,value in prev.items():
+                            if key not in ("last_seen",) and value not in ("",None,0,False):
+                                item[key]=value
+                        # A manually flagged ambiguous rent must not be guessed.
+                        if prev.get("source_updated") and prev.get("price")==0:
+                            item["price"]=0
                     item["seen"]=prev.get("seen") or stamp
                     item["last_seen"]=stamp
                     known[address]=item
-                report.update(status="ok" if results else "zero annunci",message=("Pagina letta; risultati estratti: "+str(len(results)) if results else "Pagina accessibile, nessun link annuncio leggibile")+". "+why)
+                report["message"]="Scansione "+str(seen_pages)+" pagine, "+str(len(results))+" link annunci distinti. "+why
+                if page_warnings:report["message"]+="; "+", ".join(page_warnings)
+                report["status"]="ok" if results else "zero annunci"
         except HTTPError as e:report.update(status="errore HTTP",message="HTTP "+str(e.code)+": nessun tentativo di aggirare il blocco")
         except Exception as e:report.update(status="errore",message=str(e)[:160])
         reports.append(report)
