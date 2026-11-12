@@ -1,6 +1,6 @@
 /**
  * TurinPipps · Google Apps Script edition (V8).
- * Free scheduled background checks and Gmail digests, independent of GitHub Actions.
+ * Scheduled public RSS search and MailApp daily digests without reading the inbox.
  * Tokens MUST be in Script Properties, never in this public source.
  * Does not log into Subito, Immobiliare.it, Facebook or bypass access controls.
  */
@@ -148,26 +148,7 @@ function rssListings_(now){
   });
   return {rows:out,feeds:feeds.length,failures:failures};
 }
-function mailListings_(now){
-  // Existing Gmail account: official alerts or Google Alerts, no portal login required.
-  var threads=GmailApp.search('newer_than:30d {from:subito.it from:immobiliare.it from:idealista.it from:clickcase.it from:googlealerts-noreply@google.com}',0,75);
-  var found=[],seen={};
-  threads.forEach(function(t){
-    t.getMessages().slice(-5).forEach(function(msg){
-      var sender=(msg.getFrom().match(/@([a-z0-9.-]+)/i)||[])[1]||'';
-      sender=sender.toLowerCase();
-      var allowed=TP.sources.some(function(d){return sender===d||sender.endsWith('.'+d)})||
-        sender==='google.com';
-      if(!allowed)return;
-      links_(msg.getBody()).forEach(function(pair){
-        var p=pair.link;
-        if(seen[p.url])return;seen[p.url]=1;
-        found.push(row_(p.url,p.source+' · avviso Gmail',pair.near,now));
-      });
-    });
-  });
-  return found;
-}
+/* RSS Google Alerts: nessuna email in arrivo, nessun accesso di lettura Gmail necessario. */
 function allowedByRobots_(url){
   var origin=(url.match(/^https?:\/\/[^/]+/)||[])[0];
   if(!origin)return false;
@@ -296,10 +277,8 @@ function runScan(){
     var old=stored.json.listings||[],known={},added=0;
     old.forEach(function(x){if(x&&x.url)known[x.url]=x;});
     var rss=rssListings_(timestamp);
-    var mailEnabled=props_().getProperty('IMPORT_EMAIL_ALERTS')==='true';
-    var messages=mailEnabled?mailListings_(timestamp):[];
     var publics=publicListings_(timestamp);
-    rss.rows.concat(messages,publics.rows).forEach(function(x){
+    rss.rows.concat(publics.rows).forEach(function(x){
       if(!known[x.url]){
         if(x.price_verified&&x.price>0){
           x.price_history=[{price:x.price,observed_at:timestamp,source:'scheda pubblica'}];
@@ -334,9 +313,9 @@ function runScan(){
     stored.json.verification='Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.';
     diagnostics.json.updated_at=timestamp;
     var sources=(diagnostics.json.sources||[]).filter(function(x){return x.name!=='Google Apps Script · automatico';});
-    sources.push({name:'Google Apps Script · automatico',status:rss.failures?'parziale':'ok',
-      links_found:rss.rows.length+messages.length+publics.rows.length,new:added,
-      message:'Feed RSS: '+rss.feeds+' (errori '+rss.failures+'), link '+rss.rows.length+'. Email avvisi opzionali: '+messages.length+'. Percorsi a piedi aggiornati: '+walking.updated+'. '+publics.status+'. Nessun bypass dei portali.'});
+    sources.push({name:'Google Apps Script · automatico',status:!rss.feeds?'RSS da configurare':rss.failures?'parziale':'ok',
+      links_found:rss.rows.length+publics.rows.length,new:added,
+      message:'Google Alerts RSS: '+rss.feeds+' feed (errori '+rss.failures+'), link '+rss.rows.length+'. Nessuna email di alert. Percorsi a piedi verificati: '+walking.updated+'. '+publics.status+'. Nessun bypass dei portali.'});
     diagnostics.json.sources=sources;
     githubSave_(TP.listings,stored,stored.json);
     // The previous PUT changed the repository head but not this file's SHA.
@@ -392,7 +371,7 @@ function runDailyDigest(){
     var plain='TurinPipps: '+matching.length+' compatibili, '+newItems.length+
       ' nuovi. Apri: '+TP.app;
     recipients.forEach(function(mail){
-      GmailApp.sendEmail(mail,subject,plain,{htmlBody:html,name:'TurinPipps'});
+      MailApp.sendEmail(mail,subject,plain,{htmlBody:html,name:'TurinPipps'});
     });
     props_().setProperty('LAST_DIGEST_DATE',today);
     try{
@@ -413,7 +392,7 @@ function runDailyDigest(){
   }finally{lock.releaseLock();}
 }
 function sendTestEmail(){
-  GmailApp.sendEmail(props_().getProperty('EMAIL_TO')||'filippoaprilee@gmail.com',
+  MailApp.sendEmail(props_().getProperty('EMAIL_TO')||'filippoaprilee@gmail.com',
     'TurinPipps | Test invio','Invio di prova eseguito con Google Apps Script, senza GitHub Actions.');
 }
 function installTurinPipps(){
