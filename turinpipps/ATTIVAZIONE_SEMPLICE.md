@@ -97,3 +97,28 @@ La pagina TurinPipps include già **Continua con Google** e **Continua con Apple
 **Apple OAuth** richiede la configurazione nel programma Apple Developer, con Services ID, chiave e redirect. La configurazione web potrebbe richiedere un'iscrizione Apple Developer a pagamento. Non è stata attivata. Il pulsante non diventerà funzionante senza credenziali valide. Non condividere private key in chat o GitHub.
 
 Per la password tradizionale resta la conferma di Supabase Auth. Con login Google/Apple la verifica dell'identità avviene attraverso il provider e non serve una seconda email di conferma di TurinPipps.
+
+
+## 7 — Email di conferma in stile TurinPipps
+
+Se vuoi mantenere anche la registrazione con email/password, l'email di verifica non può essere inviata in modo sicuro dal solo browser GitHub Pages: deve essere inviata e verificata da un servizio di autenticazione, che nel progetto resta Supabase Auth. Puoi però sostituire integralmente il **testo, il marchio e il mittente** visibili all'utente:
+
+1. Apri https://supabase.com/dashboard/project/akgnxjwkrnuckgxscjdz/auth/templates .
+2. Scegli **Confirm sign up**, inserisci come oggetto `TurinPipps | Conferma il tuo account`.
+3. Copia il contenuto di `turinpipps/email-templates/confirm-signup.html` nel template HTML e salva. **Non eliminare `{{ .ConfirmationURL }}`**.
+4. Per mostrare un mittente TurinPipps anziché il mittente tecnico Supabase devi anche configurare un servizio SMTP personalizzato in **Authentication → SMTP Settings**, con un indirizzo mittente controllato da te. Non inserire password nel repository pubblico.
+5. Il server SMTP predefinito di Supabase è solo per test e può inviare esclusivamente a indirizzi autorizzati; per permettere registrazioni di altri utenti serve SMTP personalizzato. Non disattivare la conferma email per risolvere questo problema.
+
+Il login Google/Apple, quando il provider è effettivamente configurato, usa la verifica del provider e non richiede una seconda mail di conferma. **Apple web OAuth richiede un account Apple Developer e le credenziali appropriate, che possono avere un costo annuo**; non abbiamo attivato né pagato il provider Apple.
+
+## 8 — Verifiche eseguite sul database
+
+Il 12/11/2026 il progetto Supabase `akgnxjwkrnuckgxscjdz` risulta `ACTIVE_HEALTHY`. Sono già presenti `turinpipps_listing_states`, `turinpipps_manual_listings` e `turinpipps_preferences`, tutte con RLS attiva e quattro policy ciascuna. Non rieseguire uno script SQL distruttivo solo per creare le stesse tabelle.
+
+Le funzioni private di gestione dati sono separate per `auth.uid()`. L'event trigger `public.rls_auto_enable()` non è più eseguibile dai ruoli `anon` e `authenticated` dopo la correzione dei privilegi.
+
+## 9 — Novità app
+
+L'app dispone di avvisi per annunci oltre 60 giorni, indizi di duplicati, storico prezzi da osservazioni verificate, misurazione del percorso a piedi dal Politecnico solo dove esiste un indirizzo con civico, login Google e Apple (interfaccia predisposta), icone Font Awesome, iPhone home screen icon e avvio con spinner.
+
+**Importante:** la UI e i file sono pubblicati su GitHub, ma nessun feed RSS Google Alerts è collegato a Script Properties e non sono stati eseguiti i trigger di Apps Script. Il login Google/Apple deve essere configurato nei provider: la presenza dei pulsanti non garantisce l'accesso.
