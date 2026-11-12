@@ -227,6 +227,27 @@
     var node=el(pair[0]);
     if(node)node.addEventListener('click',function(){oauthLogin(pair[1])});
   });
+  async function updateProviderAvailability(){
+    if(!client)return;
+    try{
+      var r=await fetch(cfg.url.replace(/\\/$/,'')+'/auth/v1/settings',{cache:'no-store'});
+      if(!r.ok)return;
+      var settings=await r.json(),external=settings&&settings.external||{};
+      ['google','apple'].forEach(function(provider){
+        if(external[provider]!==false)return;
+        ['tp-welcome-'+provider,'tp-auth-'+provider].forEach(function(id){
+          var b=el(id);
+          if(!b)return;
+          b.disabled=true;
+          b.title='Accesso '+(provider==='google'?'Google':'Apple')+' non ancora configurato nel progetto Supabase';
+          b.style.opacity='0.5';
+          b.style.cursor='not-allowed';
+          b.setAttribute('aria-label',b.textContent.trim()+' (non ancora attivo)');
+        });
+      });
+    }catch(_){/* OAuth handles provider errors when this check is unavailable. */}
+  }
+  updateProviderAvailability();
   button.addEventListener('click',open);
   if(el('tp-show-password'))el('tp-show-password').addEventListener('click',function(){
     var pass=el('tp-auth-password'),show=pass.type==='password';
