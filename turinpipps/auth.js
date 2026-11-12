@@ -230,7 +230,7 @@
   async function updateProviderAvailability(){
     if(!client)return;
     try{
-      var r=await fetch(cfg.url.replace(/\\/$/,'')+'/auth/v1/settings',{cache:'no-store'});
+      var r=await fetch(String(cfg.url).replace(/\/$/,'')+'/auth/v1/settings',{cache:'no-store'});
       if(!r.ok)return;
       var settings=await r.json(),external=settings&&settings.external||{};
       ['google','apple'].forEach(function(provider){
