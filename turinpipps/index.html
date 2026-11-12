@@ -51,8 +51,44 @@ body.tp-ready .tp-splash{opacity:0;visibility:hidden;pointer-events:none}
 @media(max-width:700px){.topline .top-actions{gap:5px}.topline .eyebrow{font-size:9px}.tp-account{max-width:130px;padding:8px;font-size:11px}.tp-auth-dialog{margin:auto}.tp-auth-wrap{padding:21px}.listing .actions{gap:5px}.actions .button{padding:8px;font-size:11px}}
 @media(max-width:700px){.topline .top-actions{flex-direction:column;align-items:flex-end;gap:5px}.topline .sync{font-size:10px;text-align:right;max-width:158px}.topline .eyebrow{max-width:130px}.hero-cta{width:100%}.listing .actions{gap:5px}.listing .actions .button{flex:1 1 auto}}
 @media(prefers-reduced-motion:reduce){.tp-spinner{animation:none}.tp-splash{transition:none}}
+
+/* TurinPipps 1.3: native-style launch and sign-in welcome */
+.tp-splash{background:radial-gradient(circle at 50% 33%,#293e69 0%,#15233f 40%,#0b1428 100%);isolation:isolate}
+.tp-splash:before{content:"";position:absolute;width:72vmin;height:72vmin;border:1px solid #ffffff10;border-radius:50%;box-shadow:0 0 0 75px #ffffff04,0 0 0 150px #ffffff02}
+.tp-splash-center{position:relative;z-index:1;gap:11px;min-width:245px}
+.tp-logo{width:90px;height:90px;border-radius:28px;background:linear-gradient(145deg,#6979f5,#4556d1);border:1px solid #ffffff33;box-shadow:0 16px 55px #050b1c99,inset 0 1px #ffffff45;position:relative;animation:tp-rise .65s ease both}
+.tp-logo:after{content:"";position:absolute;inset:-8px;border:1px solid #aebeff3b;border-radius:35px}
+.tp-splash-name{font-size:33px;letter-spacing:-1.4px}
+.tp-splash-caption{font-size:11px;letter-spacing:1.4px;font-weight:650}
+.tp-spinner{height:35px;width:35px;margin:22px auto 6px;border:2px solid #b7c5ff29;border-top-color:#c7d2ff;border-right-color:#718afa;animation:tp-spin 1.05s cubic-bezier(.48,.1,.55,.95) infinite}
+.tp-loading-label{font-size:11px;letter-spacing:.45px;color:#b8c7e9;min-height:18px}
+.tp-progress-track{width:190px;height:3px;background:#8295cd24;border-radius:25px;overflow:hidden;margin-top:8px}
+.tp-progress-bar{height:100%;width:36%;background:linear-gradient(90deg,#7184f7,#e7edff);border-radius:25px;animation:tp-progress 1.8s ease-in-out infinite}
+@keyframes tp-progress{0%{transform:translateX(-105%)}100%{transform:translateX(410%)}}
+@keyframes tp-rise{from{transform:translateY(12px) scale(.94);opacity:.55}to{transform:none;opacity:1}}
+.tp-welcome{position:fixed;z-index:8000;inset:0;background:linear-gradient(145deg,#101d34 0%,#1c2b4c 100%);display:grid;place-items:center;padding:24px;overflow:auto}
+.tp-welcome[hidden]{display:none!important}
+.tp-welcome-card{width:min(460px,100%);background:#fff;color:#1a2843;border:1px solid #ffffff50;border-radius:23px;box-shadow:0 24px 80px #080e2099;padding:35px 30px;text-align:left}
+.tp-welcome-icon{width:57px;height:57px;border-radius:17px;background:#eef1ff;color:#5060dc;display:grid;place-items:center;font-size:24px;margin-bottom:20px}
+.tp-welcome-card h2{font-size:28px;line-height:1.2;letter-spacing:-.9px;margin:6px 0 10px}
+.tp-welcome-card p{color:#738099;font-size:13px;line-height:1.7;margin:0 0 24px}
+.tp-welcome-actions{display:grid;gap:10px}
+.tp-welcome-actions .button{min-height:45px}
+.tp-welcome-actions .button.primary{color:#fff}
+.tp-welcome-footer{margin-top:18px;text-align:center;font-size:11px;color:#8b96ac}
+.tp-auth-dialog{max-width:450px;width:min(94vw,450px)}
+.tp-auth-password-wrap{position:relative}
+.tp-auth-password-wrap input{padding-right:45px}
+.tp-auth-toggle{position:absolute;right:4px;top:4px;width:36px;height:36px;border:0;background:transparent;color:#71819c}
+.tp-auth-load{display:none;gap:7px;align-items:center;justify-content:center;color:#5367da;font-weight:700;font-size:12px;margin:11px 0}
+.tp-auth-load.active{display:flex}
+.tp-auth-load i{animation:tp-spin 1s linear infinite}
+@media(max-width:700px){.tp-welcome{padding:14px}.tp-welcome-card{padding:28px 22px}.tp-welcome-card h2{font-size:25px}}
+@media(prefers-reduced-motion:reduce){.tp-spinner,.tp-progress-bar,.tp-logo{animation:none}}
+
 </style></head><body>
-<div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><i class="fa-solid fa-house" aria-hidden="true"></i></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div></div></div>
+<div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><i class="fa-solid fa-house" aria-hidden="true"></i></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
+<div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENEVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
 <aside class="side"><div class="brand"><span class="brand-mark"><i class="fa-solid fa-house" aria-hidden="true"></i></span><div class="brand-name">TurinPipps<small>TORINO · PRIVATI</small></div></div><nav class="nav">
 <button data-nav="results" class="active"><i class="fa-solid fa-house" aria-hidden="true"></i> <span class="nav-label">Annunci</span></button>
@@ -88,8 +124,8 @@ body.tp-ready .tp-splash{opacity:0;visibility:hidden;pointer-events:none}
   <form id="tp-auth-form">
    <div class="tp-auth-tabs"><button type="button" data-auth-mode="signin" class="active">Accedi</button><button type="button" data-auth-mode="register">Registrati</button></div>
    <div class="tp-auth-field"><label for="tp-auth-email">Indirizzo email</label><input type="email" id="tp-auth-email" required autocomplete="username" placeholder="nome@email.it"></div>
-   <div class="tp-auth-field"><label for="tp-auth-password">Password</label><input type="password" id="tp-auth-password" required minlength="8" autocomplete="current-password" placeholder="Almeno 8 caratteri"></div>
-   <button class="button primary" id="tp-auth-submit" type="submit" style="width:100%">Accedi</button>
+   <div class="tp-auth-field"><label for="tp-auth-password">Password</label><div class="tp-auth-password-wrap"><input type="password" id="tp-auth-password" required minlength="8" autocomplete="current-password" placeholder="Almeno 8 caratteri"><button class="tp-auth-toggle" type="button" id="tp-show-password" aria-label="Mostra password"><i class="fa-regular fa-eye" aria-hidden="true"></i></button></div></div>
+   <button class="button primary" id="tp-auth-submit" type="submit" style="width:100%">Accedi</button><div class="tp-auth-load" id="tp-auth-load"><i class="fa-solid fa-spinner" aria-hidden="true"></i> Verifica credenziali in corso</div>
    <button class="button" id="tp-auth-reset" type="button" style="width:100%;margin-top:9px">Recupera password</button>
   </form>
   <div id="tp-auth-change-password" hidden><div class="tp-auth-field"><label for="tp-auth-new-password">Nuova password</label><input id="tp-auth-new-password" type="password" minlength="8" autocomplete="new-password"></div><button id="tp-auth-update-password" type="button" class="button primary">Aggiorna password</button></div>
@@ -171,7 +207,31 @@ window.TurinPippsBridge={
  }
 };
 
-load().finally(function(){setTimeout(function(){document.body.classList.add('tp-ready')},450)});if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
+(function(){
+ var started=Date.now(),gotData=false,gotAuth=false,finished=false;
+ var splashLabel=document.getElementById('tp-loading-label');
+ function finish(){
+   if(finished||!gotData||!gotAuth)return;
+   finished=true;var delay=Math.max(0,1450-(Date.now()-started));
+   setTimeout(function(){
+     document.body.classList.add('tp-ready');
+     window.dispatchEvent(new Event('turinpipps:ready'));
+   },delay);
+ }
+ window.TurinPippsBoot={
+   dataReady:function(){gotData=true;if(splashLabel)splashLabel.textContent='Preparazione completata';finish()},
+   authReady:function(signedIn,enabled){
+      gotAuth=true;finish();
+      var welcome=document.getElementById('tp-welcome');
+      if(!welcome)return;
+      if(signedIn||sessionStorage.getItem('turinpipps-guest-session')==='1')return;
+      if(enabled)window.addEventListener('turinpipps:ready',function(){welcome.hidden=false},{once:true});
+   }
+ };
+ load().catch(function(){if(splashLabel)splashLabel.textContent='Alcune fonti non sono disponibili'}).finally(function(){window.TurinPippsBoot.dataReady()});
+ setTimeout(function(){if(!gotAuth)window.TurinPippsBoot.authReady(false,false)},6000);
+ document.getElementById('tp-welcome-guest').addEventListener('click',function(){sessionStorage.setItem('turinpipps-guest-session','1');document.getElementById('tp-welcome').hidden=true});
+})();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
 })();
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
