@@ -136,6 +136,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .tp-social-buttons button:focus-visible{outline:2px solid #6377ed;outline-offset:2px}
 .tp-social-hint{font-size:11px;color:#8793a8;line-height:1.5}
 
+
+/* TurinPipps · housing intelligence */
+.tp-intelbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 18px}
+.tp-intelstat{display:flex;align-items:center;gap:10px;background:white;border:1px solid #e0e6f0;border-radius:12px;padding:12px 14px}
+.tp-intelstat i{width:24px;text-align:center;color:#576ce3;font-size:17px}
+.tp-intelstat b{display:block;font-size:20px;line-height:1.1;color:#26385a}
+.tp-intelstat span{font-size:11px;color:#7b889d}
+.tp-intel-summary{grid-column:1/-1;font-size:11px;color:#78859d;line-height:1.6;padding:0 2px}
+.tp-history{border-top:1px solid #e7ebf4;margin-top:10px;padding-top:11px;color:#5b6880;font-size:11px}
+.tp-history summary{cursor:pointer;font-weight:750;color:#4d5dc3}
+.tp-history ul{margin:7px 0 0;padding-left:18px}
+.tp-history li{padding:2px 0}
+.tp-listing-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:9px}
+.tp-microtag{font-size:10px;border-radius:6px;background:#f1f3f9;color:#576681;padding:5px 7px;font-weight:700}
+.tp-microtag.warn{background:#fff2e2;color:#965b19}
+.tp-microtag.alert{background:#fbe8eb;color:#a83a54}
+.tp-microtag.good{background:#e9f7f0;color:#207952}
+.tp-intelmap{margin-top:8px;font-weight:700;font-size:11px;color:#5365d6}
+.tp-intelmap i{margin-right:4px}
+@media(max-width:690px){.tp-intelbar{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tp-intelstat{gap:5px;padding:10px 7px;flex-direction:column;text-align:center}.tp-intelstat b{font-size:18px}.tp-intelstat span{font-size:10px}}
 </style></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="tp-social-btn" id="tp-welcome-google"><i class="fa-brands fa-google" aria-hidden="true"></i> Continua con Google</button><button type="button" class="tp-social-btn" id="tp-welcome-apple"><i class="fa-brands fa-apple" aria-hidden="true"></i> Continua con Apple</button><div class="tp-social-separator">Oppure utilizza email e password</div><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
@@ -149,7 +169,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <main class="content"><div class="topline"><div class="eyebrow">TURINPIPPS / TORINO</div><div class="top-actions"><span class="sync" id="updated">Caricamento dati…</span><button id="tp-account-button" class="tp-account" type="button"><i class="fa-solid fa-user-circle" aria-hidden="true"></i> <span>Account</span></button></div></div>
 <section class="hero"><div><small>TURINPIPPS · AFFITTI DA PRIVATI</small><h1>Una casa a Torino.<br>Senza agenzie.</h1><p>Affitti da privati a Torino, canone fino a <b>700 €/mese</b> con spese da verificare separatamente. Annunci selezionati e fonti tracciabili.</p></div><button class="hero-cta" data-nav="sources">Esplora le fonti <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button></section>
 <div class="stats"><div class="stat"><div class="k">Compatibili</div><div class="n" id="stat-good">—</div><div class="sub">Filtri rigorosi</div></div><div class="stat"><div class="k">Da verificare</div><div class="n" id="stat-review">—</div><div class="sub">Dati incompleti</div></div><div class="stat"><div class="k">Preferiti</div><div class="n" id="stat-saved">—</div><div class="sub">Salvati sul dispositivo</div></div></div>
-<section id="view-results"><div class="section-heading"><div><h2>Annunci trovati</h2><p>Solo privati, budget e vicinanza al campus: ogni dato è verificabile.</p></div><button class="button" id="csv-button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta CSV</button><button class="button" id="reload"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Ricarica dati</button></div>
+<section id="view-results"><div class="tp-intelbar" id="tp-intelbar" aria-label="Analisi annunci"></div><div class="section-heading"><div><h2>Annunci trovati</h2><p>Solo privati, budget e vicinanza al campus: ogni dato è verificabile.</p></div><button class="button" id="csv-button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta CSV</button><button class="button" id="reload"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Ricarica dati</button></div>
 <div class="filterbar"><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
 <section id="view-sources" class="hidden"><div class="section-heading"><div><h2>Fonti e monitoraggio</h2><p>Ricerche ufficiali e stato reale dell'acquisizione automatica.</p></div></div><div class="source-grid" id="sources"></div>
@@ -204,14 +224,69 @@ function canonical(url){try{var u=new URL(url);if(!/^https?:$/.test(u.protocol))
 function normalize(item){if(!item||typeof item!=='object')return null;var url=canonical(item.url||item.link);if(!url)return null;var desc=String(item.description||item.summary||'').replace(/<[^>]+>/g,' ').slice(0,1200);var price=Number(item.price||item.rent||0);if(!Number.isFinite(price)||price<0)price=0;var zone=String(item.zone||'').trim();var probe=(zone+' '+String(item.title||'')+' '+desc).toLowerCase();if(!zone){zones.forEach(function(z){if(!zone&&probe.includes(z))zone=z.replace(/\b\w/g,function(m){return m.toUpperCase()})})}
 var source=String(item.source||item.portal||'Web');var privateStatus=item.private_status||item.owner_status||((source.toLowerCase().includes('clickcase')||source.toLowerCase().includes('subito privati'))?'source':'unverified');
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
-return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',score:Number(item.score||0)||0}}
+return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,score:Number(item.score||0)||0}}
 function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=remote.concat(prefs.manual||[]).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
 function classify(a){var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();if(!zones.some(function(x){return z.includes(x)}))return 'excluded';return 'good'}
 function score(a){return (a.private_status!=='unverified'?30:0)+(a.price&&a.price<=Number(prefs.budget||700)?25:0)+(a.zone&&zones.slice(0,5).some(function(z){return a.zone.toLowerCase().includes(z)})?35:0)+(a.description.toLowerCase().includes('arredat')?10:0)}
 function flag(url){return prefs.flags[url]||{}}
 function stats(){var a=all();el('stat-good').textContent=a.filter(function(x){return classify(x)==='good'}).length;el('stat-review').textContent=a.filter(function(x){return classify(x)==='review'}).length;el('stat-saved').textContent=a.filter(function(x){return flag(x.url).saved}).length}
-function card(a){var f=flag(a.url),c=classify(a),v=a.private_status!=='unverified',p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Da verificare';
-return '<article class="listing"><div class="listing-banner"><div class="tile"><i class="fa-solid fa-house" aria-hidden="true"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div><div class="body"><div class="micro">'+esc(a.source)+' <span class="muted">· '+esc(a.zone||'Zona da verificare')+'</span></div><h3>'+esc(a.title)+'</h3><div class="tags"><span class="tag '+(v?'green':'orange')+'">'+(v?'Privato dichiarato · verifica':'Inserzionista da verificare')+'</span><span class="tag">'+(a.sqm?esc(a.sqm)+' m²':'Metratura da verificare')+'</span><span class="tag">'+(a.expenses?esc(a.expenses):'Spese da verificare')+'</span></div><p class="desc">'+esc(a.description||'Apri l’annuncio originale per leggere la descrizione, le spese e le condizioni.')+'</p>'+(f.notes?'<div class="tp-note"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> '+esc(f.notes)+'</div>':'')+'</div><div class="actions"><a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a><button class="button" data-action="copy" data-url="'+esc(a.url)+'">Copia messaggio</button><button class="button" data-action="save" data-url="'+esc(a.url)+'">'+(f.saved?'<i class="fa-solid fa-heart" aria-hidden="true"></i> Salvato':'<i class="fa-regular fa-heart" aria-hidden="true"></i> Salva')+'</button><button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'<i class="fa-solid fa-check" aria-hidden="true"></i> Contattato':'<i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Contattato')+'</button><button class="button" data-action="note" data-url="'+esc(a.url)+'"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> Note</button><button class="button" data-action="discard" data-url="'+esc(a.url)+'">'+(f.discard?'Ripristina':'Scarta')+'</button></div></article>'}
+
+function listingAgeDays(a){
+ var d=new Date(a.source_updated||a.seen||'');
+ return isFinite(d.getTime())?Math.floor(Math.max(0,Date.now()-d.getTime())/86400000):null;
+}
+function geoKm(a){
+ if(!a.lat||!a.lng||a.lat<44.8||a.lat>45.3||a.lng<7.3||a.lng>8)return null;
+ var rad=Math.PI/180,dLat=(a.lat-45.0618513)*rad,dLon=(a.lng-7.6606506)*rad;
+ var v=Math.sin(dLat/2)**2+Math.cos(45.0618513*rad)*Math.cos(a.lat*rad)*Math.sin(dLon/2)**2;
+ return 6371*2*Math.atan2(Math.sqrt(v),Math.sqrt(1-v));
+}
+function duplicateKey(a){
+ var t=(a.title+' '+a.description.slice(0,130)).toLowerCase();
+ var m=t.match(/\b(?:via|corso|piazza|viale|largo)\s+([a-zàèéìòù]+(?:\s+[a-zàèéìòù]+){0,2})/i);
+ return m?m[1].trim():'';
+}
+function duplicateOf(a){
+ var street=duplicateKey(a);
+ if(!street||!a.sqm)return [];
+ return all().filter(function(b){
+   return b.url!==a.url&&b.zone.toLowerCase()===a.zone.toLowerCase()&&
+     Math.abs(b.sqm-a.sqm)<=3&&duplicateKey(b)===street&&
+     (!a.price||!b.price||Math.abs(a.price-b.price)<=60);
+ }).map(function(b){return b.url});
+}
+function priceChange(a){
+ var h=a.price_history.filter(function(v){return v&&Number(v.price)>0});
+ if(h.length<2)return null;
+ var last=h[h.length-1],before=h[h.length-2];
+ if(Number(last.price)===Number(before.price))return null;
+ return {delta:Number(last.price)-Number(before.price),old:Number(before.price),new:Number(last.price),date:last.observed_at};
+}
+function dateLabel(v){var d=new Date(v||'');return isFinite(d.getTime())?d.toLocaleDateString('it-IT'):'data non disponibile'}
+function intelStats(){
+ var items=all(),out=el('tp-intelbar');if(!out)return;
+ var aged=items.filter(function(x){var n=listingAgeDays(x);return n!==null&&n>60}).length;
+ var changes=items.filter(function(x){return !!priceChange(x)}).length;
+ var dupes=items.filter(function(x){return duplicateOf(x).length>0}).length;
+ out.innerHTML='<div class="tp-intelstat"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><b>'+aged+'</b><span>Annunci datati</span></div></div>'+
+ '<div class="tp-intelstat"><i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i><div><b>'+changes+'</b><span>Prezzi variati</span></div></div>'+
+ '<div class="tp-intelstat"><i class="fa-solid fa-copy" aria-hidden="true"></i><div><b>'+dupes+'</b><span>Possibili doppi</span></div></div>'+
+ '<div class="tp-intel-summary">Annunci datati: oltre 60 giorni dalla pubblicazione/aggiornamento dichiarato, non necessariamente scaduti. Duplicati: indizi su via, zona e metratura, da controllare. Distanze soltanto con coordinate geografiche dell’immobile; il percorso pedonale si consulta su Maps.</div>';
+}
+function card(a){
+ var f=flag(a.url),v=a.private_status!=='unverified',p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Da verificare';
+ var age=listingAgeDays(a),dupes=duplicateOf(a),change=priceChange(a),km=geoKm(a);
+ var meta='';
+ if(age!==null&&age>60)meta+='<span class="tp-microtag warn"><i class="fa-solid fa-clock" aria-hidden="true"></i> Datato: '+age+' giorni · verifica disponibilità</span>';
+ if(dupes.length)meta+='<span class="tp-microtag warn"><i class="fa-solid fa-copy" aria-hidden="true"></i> Possibile duplicato ('+dupes.length+')</span>';
+ if(change)meta+='<span class="tp-microtag '+(change.delta<0?'good':'alert')+'"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> '+(change.delta<0?'Calo ':'Aumento ')+esc(Math.abs(change.delta))+' €/mese</span>';
+ if(km!==null)meta+='<span class="tp-microtag"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> '+km.toFixed(1).replace('.',',')+' km in linea d’aria dal PoliTO</span>';
+ else meta+='<span class="tp-microtag">Distanza esatta da verificare</span>';
+ var history=a.price_history.filter(function(v){return v&&Number(v.price)>0});
+ var historyHTML=history.length?'<details class="tp-history"><summary><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Storico prezzi ('+history.length+' rilevazioni)</summary><ul>'+history.slice(-12).map(function(h){return '<li>'+esc(dateLabel(h.observed_at))+' · '+esc(Number(h.price).toLocaleString('it-IT'))+' € · '+esc(h.source||'monitoraggio')+'</li>'}).join('')+'</ul></details>':'';
+ var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> Verifica percorso a piedi</a>':'';
+ return '<article class="listing"><div class="listing-banner"><div class="tile"><i class="fa-solid fa-house" aria-hidden="true"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div><div class="body"><div class="micro">'+esc(a.source)+' <span class="muted">· '+esc(a.zone||'Zona da verificare')+'</span></div><h3>'+esc(a.title)+'</h3><div class="tags"><span class="tag '+(v?'green':'orange')+'">'+(v?'Privato dichiarato · verifica':'Inserzionista da verificare')+'</span><span class="tag">'+(a.sqm?esc(a.sqm)+' m²':'Metratura da verificare')+'</span><span class="tag">'+(a.expenses?esc(a.expenses):'Spese da verificare')+'</span></div><div class="tp-listing-meta">'+meta+'</div><p class="desc">'+esc(a.description||'Apri l’annuncio originale per leggere descrizione, spese e condizioni.')+'</p>'+route+historyHTML+(f.notes?'<div class="tp-note"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> '+esc(f.notes)+'</div>':'')+'</div><div class="actions"><a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a><button class="button" data-action="copy" data-url="'+esc(a.url)+'"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia messaggio</button><button class="button" data-action="save" data-url="'+esc(a.url)+'">'+(f.saved?'<i class="fa-solid fa-heart" aria-hidden="true"></i> Salvato':'<i class="fa-regular fa-heart" aria-hidden="true"></i> Salva')+'</button><button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'<i class="fa-solid fa-check" aria-hidden="true"></i> Contattato':'<i class="fa-solid fa-phone" aria-hidden="true"></i> Da contattare')+'</button><button class="button" data-action="note" data-url="'+esc(a.url)+'"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> Note</button><button class="button" data-action="discard" data-url="'+esc(a.url)+'"><i class="fa-solid fa-ban" aria-hidden="true"></i> '+(f.discard?'Ripristina':'Scarta')+'</button></div></article>'
+}
 function showEmpty(msg){return '<div class="empty"><div style="font-size:38px"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>Nessun annuncio in questa sezione</b><p>'+esc(msg)+'</p><button class="button primary" data-nav="sources"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Apri le ricerche sui portali</button></div>'}
 function renderResults(){var arr=all(),q=el('query').value.trim().toLowerCase(),z=el('zone').value.toLowerCase(),sort=el('sort').value,source=el('source-filter').value.toLowerCase(),days=Number(el('age-filter').value||0);arr=arr.filter(function(a){if(flag(a.url).discard)return false;if(mode!=='all'&&classify(a)!==mode)return false;if(q&&!((a.title+' '+a.description+' '+a.zone+' '+a.source).toLowerCase().includes(q)))return false;if(z&&!a.zone.toLowerCase().includes(z))return false;if(source&&!a.source.toLowerCase().includes(source))return false;if(days){if(!a.source_updated)return false;var d=new Date(a.source_updated);if(!Number.isFinite(d.getTime())||Date.now()-d.getTime()>days*86400000)return false}return true});arr.sort(function(a,b){if(sort==='price')return (a.price||999999)-(b.price||999999);if(sort==='score')return score(b)-score(a);return String(b.seen).localeCompare(String(a.seen))});el('list').innerHTML=arr.slice(0,page*pageSize).map(card).join('')||showEmpty('Nessun risultato soddisfa tutti i criteri. Puoi consultare gli annunci da verificare oppure aprire le ricerche ufficiali.');el('tp-page-more').hidden=arr.length<=page*pageSize;stats()}
 function renderSaved(){var a=all().filter(function(x){return flag(x.url).saved});el('saved-list').innerHTML=a.map(card).join('')||showEmpty('Salva un annuncio per ritrovarlo qui, anche dopo aver chiuso la pagina.');stats()}
