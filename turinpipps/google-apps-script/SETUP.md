@@ -5,7 +5,7 @@ Il runner GitHub dell'account è bloccato per fatturazione. Il messaggio ufficia
 ## La soluzione senza Mac acceso e senza ChatGPT
 
 Il file `Code.gs` in questa cartella contiene un agente autonomo su **Google Apps Script** collegato al tuo account Gmail esistente:
-- Controlla fonti pubbliche consentite e legge in Gmail gli avvisi ufficiali/Google Alerts.
+- Controlla fonti pubbliche consentite e legge fino a 20 feed RSS Google Alerts, SENZA acquisire email di avviso in Gmail.
 - Ogni 6 ore prova ad aggiornare gli annunci e la diagnostica della web app su GitHub con la REST API.
 - Invia direttamente con Gmail una email riepilogativa circa alle ore 19:00 Europe/Rome ai destinatari configurati.
 - Non invia messaggi ai proprietari e non accede agli account dei portali.
@@ -24,7 +24,8 @@ Il file `Code.gs` in questa cartella contiene un agente autonomo su **Google App
 3. Apri https://github.com/filippoaprilee/filippoaprilee.github.io/blob/filippoaprilee/turinpipps/google-apps-script/Code.gs e copia tutto il codice in **Editor → Code.gs** (sostituisci il contenuto iniziale), poi **Salva**.
 4. In Apps Script apri **Project Settings → Script Properties → Add script property** e crea:
    - `GITHUB_TOKEN` → il token GitHub ristretto a questo repository;
-   - `EMAIL_TO` → `filippoaprilee@gmail.com`, oppure più email separate da virgola.
+   - `EMAIL_TO` → `filippoaprilee@gmail.com`, oppure più email separate da virgola;
+   - `ALERT_FEEDS` → URL dei feed RSS Google Alerts (fino a 20, separati da virgole o nuove righe).
 5. Dall'editor seleziona la funzione `installTurinPipps`, premi **Run** e autorizza Gmail, script triggers e richieste HTTPS esterne con il tuo account.
 6. Seleziona `sendTestEmail` → **Run**: controlla che la mail di prova sia arrivata.
 7. Seleziona `runScan` → **Run**: verifica in **Executions** il risultato, e controlla i file `turinpipps/data/listings.json` e `turinpipps/data/diagnostics.json` nel repository.
@@ -33,19 +34,19 @@ Da quel momento i controlli ed email sono pianificati automaticamente *da Google
 
 **Sicurezza:** il PAT è conservato nelle Script Properties del progetto privato, non nelle pagine pubbliche. Non mettere mai nella web app pubblica PAT, Gmail password, service_role o chiavi segrete. Limita chi può accedere al progetto Apps Script.
 
-## Come includere Subito e Immobiliare.it SENZA aprire account sui portali
+## Subito, Immobiliare.it e altre fonti senza spam email
 
-Non è disponibile un accesso pubblicamente autorizzato che permetta di acquisire ogni annuncio in tempo reale senza login. Evitiamo scraping non autorizzato, CAPTCHA o proxy elusivi.
+Apri la **[pagina di configurazione interattiva TurinPipps](https://filippoaprilee.github.io/turinpipps/alert-setup.html)**. Contiene 14 ricerche precompilate e pulsanti **Copia ricerca**.
 
-Puoi usare **Google Alerts**, con l'account Google che hai già, per ottenere link di pagine indicizzate:
-- https://www.google.com/alerts
-- Esempio ricerca 1: `site:subito.it/appartamenti/ Torino "privato" "affitto"`
-- Esempio ricerca 2: `site:immobiliare.it/annunci/ Torino "privato" "affitto"`
-- Scegli come recapito `filippoaprilee@gmail.com`.
+1. Apri https://www.google.com/alerts e incolla una ricerca.
+2. Espandi **Mostra opzioni**; imposta **Fonti = Web**, **Lingua = Italiano**, **Regione = Italia**, **Quantità = Tutti i risultati**.
+3. In **Invia tramite**, seleziona **Feed RSS**, **NON il tuo indirizzo Gmail**. Premi **Crea avviso**.
+4. Dopo la creazione apri l'icona RSS dell'avviso e copia l'URL del feed (inizia con `https://www.google.com/alerts/feeds/`).
+5. Ripeti per le ricerche desiderate e inserisci tutti gli URL nella **Script Property `ALERT_FEEDS`** (uno per riga o separati da virgole). In Apps Script esegui `runScan` per una verifica iniziale.
 
-Il programma legge le email di Google Alerts, verifica che i link di destinazione puntino a schede specifiche di Subito/Immobiliare.it e inserisce queste ultime **solo nella lista da verificare** se il canone, l'inserzionista o la zona non sono confermati. Google Alerts può essere incompleto o ritardato: non fornisce tutti gli annunci e non garantisce risultati nel budget.
+Il sistema esamina feed RSS, li confronta con gli annunci già pubblicati e importa soltanto link direttamente riconosciuti dei portali. Gli annunci con dati non confermati rimangono **Da verificare**. Gli alert NON generano email; l'unica mail programmata è il riepilogo quotidiano TurinPipps.
 
-Per una copertura maggiore dei due portali servono ricerche salvate e avvisi ufficiali sui rispettivi siti, soggetti alle loro modalità di accesso. Non viene creato automaticamente alcun account su questi siti.
+Google Alerts può perdere contenuti, lavorare con ritardo o non indicizzare annunci accessibili solo tramite login. Non sono presenti account automatici su Subito, Immobiliare.it o Facebook, e non viene aggirato alcun controllo dei portali.
 
 ## Per chi vuole usare il Mac al posto di Apps Script
 
