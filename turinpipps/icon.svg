@@ -1,1 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#111d32"/><rect x="72" y="85" width="368" height="342" rx="70" fill="#5968eb"/><path d="M142 245 256 147l114 98v121a25 25 0 0 1-25 25H167a25 25 0 0 1-25-25V245Z" fill="#fff"/><path d="M218 390V278h76v112" fill="#cbd3ff"/><path d="M119 254 256 135l137 119" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">TurinPipps</title><desc id="desc">Casa bianca dal tetto blu su fondo blu notte e scritta TurinPipps</desc>
+<defs>
+<linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#20345b"/><stop offset="1" stop-color="#101a31"/></linearGradient>
+<linearGradient id="roof" x1="0" x2="1"><stop stop-color="#788bff"/><stop offset="1" stop-color="#556be6"/></linearGradient>
+<linearGradient id="door" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#6579f0"/><stop offset="1" stop-color="#4057cb"/></linearGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<circle cx="256" cy="224" r="166" fill="#30456b" opacity=".36"/>
+<circle cx="256" cy="224" r="145" fill="none" stroke="#8b9bcd" stroke-opacity=".13" stroke-width="2"/>
+<rect x="139" y="222" width="234" height="149" rx="16" fill="#f9fbff"/>
+<path d="M112 232 241 115c9-8 21-8 30 0l129 117c8 7 9 20 2 28-7 9-20 10-29 2L256 156 139 262c-9 8-22 7-29-2-7-8-6-21 2-28Z" fill="url(#roof)"/>
+<path d="M324 136v-21c0-8 6-14 14-14h21c8 0 14 6 14 14v66l-49-45Z" fill="#8d9cff"/>
+<rect x="225" y="262" width="62" height="109" rx="12" fill="url(#door)"/>
+<circle cx="274" cy="319" r="5" fill="#dbe3ff"/>
+<rect x="166" y="267" width="43" height="44" rx="9" fill="#c7d7f8"/>
+<path d="M187.5 270v37M169 289h37" stroke="#f8fbff" stroke-width="5" opacity=".95"/>
+<rect x="304" y="267" width="43" height="44" rx="9" fill="#c7d7f8"/>
+<path d="M325.5 270v37M307 289h37" stroke="#f8fbff" stroke-width="5" opacity=".95"/>
+<path d="M144 373h223" stroke="#95a7ff" stroke-opacity=".5" stroke-width="4" stroke-linecap="round"/>
+<text x="256" y="441" text-anchor="middle" fill="#ffffff" font-family="Arial,Helvetica,sans-serif" font-size="51" font-weight="800" letter-spacing="-2.2">TurinPipps</text>
+<path d="M202 463h108" stroke="#6e82ee" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+</svg>
