@@ -212,7 +212,7 @@ window.TurinPippsBridge={
  var splashLabel=document.getElementById('tp-loading-label');
  function finish(){
    if(finished||!gotData||!gotAuth)return;
-   finished=true;var delay=Math.max(0,1450-(Date.now()-started));
+   finished=true;var delay=Math.max(0,2500-(Date.now()-started));
    setTimeout(function(){
      document.body.classList.add('tp-ready');
      window.dispatchEvent(new Event('turinpipps:ready'));
