@@ -33,7 +33,7 @@
     status('');
   }
   function setButton(){
-    var caption=current?(current.email||'Il mio profilo'):(ready?'Accedi / Registrati':'Account');
+    var caption=current?(current.email||'Il mio profilo'):(ready?'Accedi / Registrati':'Accedi');
     var display=caption.length>30?caption.slice(0,27)+'…':caption;
     button.innerHTML='<i class="fa-solid fa-user-circle" aria-hidden="true"></i> <span>'+escapeHtml(display)+'</span>';
     el('tp-auth-logout').hidden=!current;
@@ -48,7 +48,13 @@
     if(!ready){
       el('tp-auth-form').hidden=true;
       el('tp-auth-config').hidden=false;
-      status('La registrazione è predisposta ma non ancora attiva: bisogna collegare il progetto Supabase e installare le regole di sicurezza.','warn');
+      var reason=(!cfg.url||!cfg.publishableKey)
+        ? 'La configurazione pubblica Supabase è incompleta.'
+        : (!window.supabase||typeof window.supabase.createClient!=='function')
+          ? 'Il modulo di accesso non è stato caricato. Controlla la rete o eventuali blocchi del browser e ricarica la pagina.'
+          : 'Impossibile inizializzare l’accesso. Controlla URL e chiave pubblica Supabase.';
+      el('tp-auth-config').textContent=reason+' Gli annunci restano consultabili come ospite.';
+      status(reason,'warn');
     }else{
       el('tp-auth-config').hidden=true;
       if(!current)el('tp-auth-form').hidden=false;
