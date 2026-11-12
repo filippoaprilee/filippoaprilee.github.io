@@ -1,7 +1,7 @@
 {
-  "name": "CasaRadar · Torino",
-  "short_name": "CasaRadar",
-  "description": "Affitti da privati, massimo 700 €, vicino al Politecnico di Torino.",
+  "name": "TurinPipps · Affitti a Torino",
+  "short_name": "TurinPipps",
+  "description": "Affitti da privati a Torino, vicino al Politecnico, massimo 700 €/mese.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
