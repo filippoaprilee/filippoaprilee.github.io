@@ -222,6 +222,14 @@ function runDailyDigest(){
   try{
     var timezone='Europe/Rome',today=Utilities.formatDate(new Date(),timezone,'yyyy-MM-dd');
     if(props_().getProperty('LAST_DIGEST_DATE')===today){console.log('Report già inviato oggi');return;}
+    try{
+      var published=githubFile_('turinpipps/data/report_status.json').json;
+      if(published.last_sent_date===today){
+        console.log('Report già registrato per oggi da un altro motore; invio saltato.');
+        props_().setProperty('LAST_DIGEST_DATE',today);
+        return;
+      }
+    }catch(statusError){console.warn('Impossibile consultare registro report: '+statusError.message);}
     var recipients=(props_().getProperty('EMAIL_TO')||'filippoaprilee@gmail.com')
       .split(/[,;]/).map(function(s){return s.trim();}).filter(Boolean).slice(0,20);
     if(!recipients.length)throw new Error('Nessun destinatario EMAIL_TO configurato');
