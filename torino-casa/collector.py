@@ -21,7 +21,6 @@ DATA=HERE/"data"
 UA="CasaRadar/3.0 (personal housing alerts; robots.txt respected)"
 SOURCE_URLS=[
   ("clickcase","ClickCase · affitti privati","https://www.clickcase.it/annunci/affitti-case-privati-torino.html"),
-  ("subito","Subito · appartamenti da privati","https://www.subito.it/annunci-piemonte/affitto/appartamenti/torino/torino/da-privati/"),
   ("bakeca","Bakeca · annunci Torino","https://torino.bakeca.it/annunci/offro-casa/"),
 ]
 ZONES=("Crocetta","Cenisia","San Paolo","Borgo San Paolo","Cit Turin","Santa Rita","Pozzo Strada")
@@ -221,9 +220,9 @@ def run():
         except Exception as e:report.update(status="errore",message=str(e)[:160])
         reports.append(report)
         print(label+": "+report["status"]+" · "+str(report["links_found"])+" link · "+str(report["new"])+" nuovi",flush=True)
-    for name in ("Immobiliare.it","Idealista","Facebook Marketplace"):
+    for name in ("Subito (solo avvisi ufficiali)","Immobiliare.it (solo avvisi ufficiali)","Idealista (solo avvisi ufficiali)","Facebook Marketplace"):
         reports.append({"name":name,"status":"solo avvisi/manuale","links_found":0,"new":0,
-            "message":"Non viene eseguito scraping; usare la ricerca salvata sul portale o l'inserimento manuale."})
+            "message":"Nessuno scraping automatizzato. Attiva gli avvisi email ufficiali e configura il modulo IMAP, oppure consulta la ricerca salvata."})
     cutoff=now-timedelta(days=40)
     output=[]
     for item in known.values():
