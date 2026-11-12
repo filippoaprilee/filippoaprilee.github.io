@@ -1,4 +1,96 @@
 {
-  "updated_at": null,
-  "listings": []
+  "updated_at": "2026-11-12T09:20:00Z",
+  "verification": "Controllo manuale delle pagine originarie del 12/11/2026; disponibilità non confermata",
+  "listings": [
+    {
+      "url": "https://www.clickcase.it/bilocale-gia-arredato-libero-da-fine-marzo-torino-395540.html",
+      "title": "Bilocale arredato in via Paolo Braccini",
+      "description": "Torino, Crocetta · 60 m², 2 locali. Privato, riscaldamento autonomo, indicato anche per studenti e lavoratori. Canone 550 € più 40 € di spese mensili dichiarate. Annuncio aggiornato il 22/09/2026: disponibilità attuale da confermare al proprietario.",
+      "price": 550,
+      "sqm": 60,
+      "zone": "Crocetta",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "40 €/mese a parte",
+      "seen": "2026-09-22",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-09-22",
+      "property_type": "Bilocale · intero alloggio"
+    },
+    {
+      "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
+      "title": "Bilocale arredato in via Monginevro · solo studenti fuori sede",
+      "description": "Zona San Paolo, piazza Sabotino · intero bilocale di 40 m², cucina e camera da letto con due letti. Canone annunciato 500 €/mese, spese condominiali incluse; consumi non chiariti. SOLO studenti fuori sede. Annuncio del 15/09/2026, verificare disponibilità.",
+      "price": 500,
+      "sqm": 40,
+      "zone": "San Paolo",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "Spese condominiali incluse · utenze da chiarire",
+      "seen": "2026-09-15",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-09-15",
+      "property_type": "Bilocale · intero alloggio · studenti"
+    },
+    {
+      "url": "https://www.clickcase.it/bilocale-arredato-torino-271099.html",
+      "title": "Bilocale ristrutturato in via Moretta",
+      "description": "Cenisia · 50 m², 2 locali, secondo piano con ascensore, riscaldamento autonomo, arredato. Affitto da privato a 600 €/mese più 54 € di spese. Annuncio aggiornato il 29/05/2026: disponibilità attuale da confermare.",
+      "price": 600,
+      "sqm": 50,
+      "zone": "Cenisia",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "54 €/mese a parte",
+      "seen": "2026-05-29",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-05-29",
+      "property_type": "Bilocale · intero alloggio"
+    },
+    {
+      "url": "https://www.clickcase.it/bilocale-arredato-torino-200568.html",
+      "title": "Bilocale arredato in corso Lecce",
+      "description": "Cenisia · 50 m², 2 locali, ristrutturato, climatizzato, riscaldamento centralizzato. Privato senza agenzia: 550 €/mese più circa 120 € di spese. Annuncio aggiornato il 04/06/2026, da verificare.",
+      "price": 550,
+      "sqm": 50,
+      "zone": "Cenisia",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "120 €/mese circa a parte",
+      "seen": "2026-06-04",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-06-04",
+      "property_type": "Bilocale · intero alloggio"
+    },
+    {
+      "url": "https://www.clickcase.it/disponibile-appartamento-torino-387546.html",
+      "title": "Appartamento ristrutturato · canone non indicato",
+      "description": "San Paolo · 40 m², bilocale arredato al piano terra con cucina abitabile, bagno e ampia camera. L'annuncio non indica il canone: non possiamo considerarlo entro 700 € finché il proprietario non lo conferma. Aggiornato il 27/10/2026.",
+      "price": 0,
+      "sqm": 40,
+      "zone": "San Paolo",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "Da verificare",
+      "seen": "2026-10-27",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-10-27",
+      "property_type": "Bilocale · canone da chiedere"
+    },
+    {
+      "url": "https://www.clickcase.it/bilocale-arredato-torino-415406.html",
+      "title": "Bilocale transitorio arredato · cifra discordante",
+      "description": "Cenisia · 45 m² in via Avigliana, affitto transitorio. La scheda indica 600 € mensili ma nella descrizione sono richiesti 580 €; spese 90 € a parte. Canone esatto da confermare prima di considerare l'annuncio idoneo. Aggiornato il 18/07/2026.",
+      "price": 0,
+      "sqm": 45,
+      "zone": "Cenisia",
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "90 €/mese a parte · canone discordante",
+      "seen": "2026-07-18",
+      "last_seen": "2026-11-12T09:20:00Z",
+      "source_updated": "2026-07-18",
+      "property_type": "Bilocale · transitorio · prezzo incerto"
+    }
+  ]
 }
