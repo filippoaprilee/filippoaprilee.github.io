@@ -210,7 +210,8 @@ function publicListings_(now){
           var doc=response.getContentText(),h=doc.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
           var body=text_(doc.slice(0,13000));
           if(h)row.title=text_(h[1]).slice(0,170)||row.title;
-          row.price=price_(body)||row.price;
+          var observed=price_(body);
+          if(observed){row.price=observed;row.price_verified=true;}
           row.zone=zone_(row.title+' '+body.slice(0,2200))||row.zone;
           row.description=(body.slice(0,350)||row.description);
         }
@@ -234,9 +235,33 @@ function runScan(){
     var messages=mailEnabled?mailListings_(timestamp):[];
     var publics=publicListings_(timestamp);
     rss.rows.concat(messages,publics.rows).forEach(function(x){
-      if(!known[x.url]){known[x.url]=x;added++;return;}
-      // Preserve manually verified price, description and private status.
-      known[x.url].last_seen=timestamp;
+      if(!known[x.url]){
+        if(x.price_verified&&x.price>0){
+          x.price_history=[{price:x.price,observed_at:timestamp,source:'scheda pubblica'}];
+        }
+        delete x.price_verified;
+        known[x.url]=x;added++;return;
+      }
+      var oldItem=known[x.url];
+      // Solo un canone confermato sulla scheda originale può sostituire il precedente;
+      // non usare il prezzo di un risultato Google o di uno snippet.
+      if(x.price_verified&&x.price>0){
+        var h=Array.isArray(oldItem.price_history)?oldItem.price_history:[];
+        if(!h.length&&Number(oldItem.price)>0){
+          h.push({price:Number(oldItem.price),observed_at:timestamp,source:'base al primo controllo'});
+        }
+        if(Number(oldItem.price)!==Number(x.price)){
+          h.push({price:x.price,observed_at:timestamp,source:'scheda pubblica'});
+          oldItem.price=x.price;
+          oldItem.price_last_changed_at=timestamp;
+        }
+        oldItem.price_history=h.slice(-24);
+      }
+      if(x.source.indexOf('ClickCase')!==-1&&x.title&&!/^Annuncio /.test(x.title)){
+        oldItem.title=x.title;
+        if(x.zone)oldItem.zone=x.zone;
+      }
+      oldItem.last_seen=timestamp;
     });
     stored.json.listings=Object.keys(known).map(function(key){return known[key];}).slice(-850);
     stored.json.updated_at=timestamp;
