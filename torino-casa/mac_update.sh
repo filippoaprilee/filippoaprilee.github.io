@@ -33,9 +33,9 @@ if [ -n "${CASARADAR_TELEGRAM_CHAT_ID:-}" ]; then
 fi
 cd "$ROOT"
 git pull --ff-only --quiet origin filippoaprilee
-/usr/bin/python3 "$BASE/collector.py"
-/usr/bin/python3 "$BASE/alerts_ingest.py"
-/usr/bin/python3 "$BASE/notify_telegram.py"
+python3 "$BASE/collector.py"
+python3 "$BASE/alerts_ingest.py"
+python3 "$BASE/notify_telegram.py"
 git add -- torino-casa/data/listings.json torino-casa/data/diagnostics.json
 if [ -f "$BASE/data/notified.json" ]; then git add -- torino-casa/data/notified.json; fi
 if ! git diff --cached --quiet; then
