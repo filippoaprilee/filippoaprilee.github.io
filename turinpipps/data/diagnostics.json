@@ -1,47 +1,47 @@
 {
-  "updated_at": "2026-11-12T12:40:00Z",
+  "updated_at": "2026-11-12T14:24:26.652Z",
   "sources": [
     {
-      "name": "TurinPipps · ricerca autonoma ChatGPT",
-      "status": "ok",
+      "name": "GitHub Actions · raccolta TurinPipps",
+      "status": "bloccato prima del runner",
+      "links_found": 0,
+      "new": 0,
+      "message": "Workflow pubblicato. Prima esecuzione 43235025880: il job è terminato senza avviare step. Stato account/actions da risolvere; nessuna raccolta automatica verificata."
+    },
+    {
+      "name": "GitHub Actions · report email",
+      "status": "bloccato prima del runner",
+      "links_found": 0,
+      "new": 0,
+      "message": "Workflow pubblicato. Prima esecuzione 43235120066 fallita prima del runner. Mancano anche le credenziali SMTP nei GitHub Secrets; nessun report inviato da GitHub."
+    },
+    {
+      "name": "Subito · annunci da privati",
+      "status": "avvisi da attivare",
+      "links_found": 0,
+      "new": 0,
+      "message": "Il portale offre avvisi ufficiali via email. La ricerca e la lettura IMAP sono predisposte; nessuna casella IMAP collegata al workflow."
+    },
+    {
+      "name": "Immobiliare.it · affitti privati",
+      "status": "avvisi da attivare",
+      "links_found": 0,
+      "new": 0,
+      "message": "Il portale supporta ricerche salvate e avvisi via email. Occorre attivarli sul portale e collegare IMAP. Nessuna acquisizione automatica confermata."
+    },
+    {
+      "name": "Archivio annunci",
+      "status": "archivio disponibile",
       "links_found": 14,
-      "new": 5,
-      "message": "Automazione riconfigurata per il nuovo percorso TurinPipps, controllo ogni 6 ore. Archivio copiato con 14 schede, di cui 5 aggiunte dalla ricerca autonoma precedente. Prossimi controlli programmati, esito da verificare."
-    },
-    {
-      "name": "TurinPipps · report quotidiano email",
-      "status": "ok",
-      "links_found": 14,
       "new": 0,
-      "message": "Automazione email programmata ogni giorno alle 19:00 (Europe/Rome). Primo invio di prova Gmail riuscito il 12/11/2026; la prima esecuzione pianificata deve ancora avvenire."
+      "message": "14 schede precedentemente raccolte tramite verifica/manuale. Non vengono presentate come nuove scansioni del runner. Verificare disponibilità e inserzionista."
     },
     {
-      "name": "GitHub Actions · runner Linux",
-      "status": "bloccato",
+      "name": "Account personali",
+      "status": "backend da collegare",
       "links_found": 0,
       "new": 0,
-      "message": "I job standard GitHub falliscono prima dell'avvio del runner, anche con workflow echo minimale. Il problema è esterno al codice dell'app; verificare Actions, fatturazione e supporto GitHub."
-    },
-    {
-      "name": "ClickCase / Bakeca",
-      "status": "sperimentale",
-      "links_found": 0,
-      "new": 0,
-      "message": "Raccoglitore pubblico presente nel codice; il runner GitHub non l'ha ancora eseguito. Gli annunci vengono verificati dal monitor ChatGPT quando accessibili."
-    },
-    {
-      "name": "Subito / Immobiliare.it",
-      "status": "avvisi ufficiali",
-      "links_found": 3,
-      "new": 0,
-      "message": "Archivio con schede verificabili. Per aggiornamenti automatici via IMAP occorre connettere gli avvisi email ufficiali; non si aggirano le restrizioni dei portali."
-    },
-    {
-      "name": "Facebook Marketplace",
-      "status": "manuale",
-      "links_found": 0,
-      "new": 0,
-      "message": "Nessun accesso automatico ai gruppi privati e nessun invio di messaggi. Si possono aggiungere annunci tramite link."
+      "message": "Interfaccia e RLS pronte nel codice. Registrazione e sincronizzazione saranno disponibili solo collegando un progetto Supabase."
     }
   ]
 }
