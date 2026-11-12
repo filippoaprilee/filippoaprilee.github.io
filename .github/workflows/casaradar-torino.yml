@@ -1,11 +1,11 @@
-name: CasaRadar Torino - aggiornamento annunci
+name: TurinPipps - scansione programmata
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'torino-casa/collector.py'
-      - 'torino-casa/alerts_ingest.py'
-      - 'torino-casa/notify_telegram.py'
+      - 'turinpipps/collector.py'
+      - 'turinpipps/alerts_ingest.py'
+      - 'turinpipps/notify_telegram.py'
       - '.github/workflows/casaradar-torino.yml'
   schedule:
     - cron: '19 6,12,18 * * *'
@@ -23,9 +23,9 @@ jobs:
         with:
           persist-credentials: true
       - name: Verifica sintassi moduli Python
-        run: python3 -m py_compile torino-casa/collector.py torino-casa/alerts_ingest.py torino-casa/notify_telegram.py
+        run: python3 -m py_compile turinpipps/collector.py turinpipps/alerts_ingest.py turinpipps/notify_telegram.py
       - name: Scansiona solo pagine pubbliche consentite
-        run: python3 torino-casa/collector.py
+        run: python3 turinpipps/collector.py
       - name: Leggi gli avvisi ufficiali da casella IMAP (se collegata)
         continue-on-error: true
         env:
@@ -33,24 +33,24 @@ jobs:
           CASARADAR_IMAP_USER: ${{ secrets.CASARADAR_IMAP_USER }}
           CASARADAR_IMAP_PASSWORD: ${{ secrets.CASARADAR_IMAP_PASSWORD }}
           CASARADAR_IMAP_PORT: '993'
-        run: python3 torino-casa/alerts_ingest.py
+        run: python3 turinpipps/alerts_ingest.py
       - name: Notifica nuovi annunci compatibili su Telegram (se configurato)
         continue-on-error: true
         env:
           CASARADAR_TELEGRAM_TOKEN: ${{ secrets.CASARADAR_TELEGRAM_TOKEN }}
           CASARADAR_TELEGRAM_CHAT_ID: ${{ secrets.CASARADAR_TELEGRAM_CHAT_ID }}
-        run: python3 torino-casa/notify_telegram.py
+        run: python3 turinpipps/notify_telegram.py
       - name: Commit annunci, diagnostica e memoria delle notifiche
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add torino-casa/data/listings.json torino-casa/data/diagnostics.json
-          if [ -f torino-casa/data/notified.json ]; then
-            git add torino-casa/data/notified.json
+          git add turinpipps/data/listings.json turinpipps/data/diagnostics.json
+          if [ -f turinpipps/data/notified.json ]; then
+            git add turinpipps/data/notified.json
           fi
           if ! git diff --cached --quiet; then
-            git commit -m "CasaRadar: aggiornamento automatico annunci"
+            git commit -m "TurinPipps: aggiornamento automatico annunci"
             git push origin HEAD:filippoaprilee
           else
             echo "Nessuna variazione."
