@@ -191,6 +191,34 @@ function allowedByRobots_(url){
   rules.forEach(function(r){if(path.indexOf(r.path.replace(/\*.*$/,''))===0&&(!best||r.path.length>best.path.length))best=r;});
   return !best||best.type==='allow';
 }
+function verifiedRent_(html){
+  // Trust only offer prices explicitly attached to housing structured-data objects.
+  // Free-form page text often contains prices for other listings and must not
+  // generate a fabricated price-change event.
+  var scripts=String(html||'').match(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi)||[];
+  for(var i=0;i<scripts.length;i++){
+    try{
+      var raw=scripts[i].replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');
+      var data=JSON.parse(raw);
+      var nodes=Array.isArray(data)?data:(data['@graph']||[data]);
+      for(var j=0;j<nodes.length;j++){
+        var obj=nodes[j];
+        if(!obj||typeof obj!=='object')continue;
+        var types=[].concat(obj['@type']||[]).map(function(t){return String(t).toLowerCase()});
+        if(!types.some(function(t){return /residence|apartment|house|realestatelisting|accommodation|product/.test(t)}))continue;
+        var offers=[].concat(obj.offers||[]);
+        for(var k=0;k<offers.length;k++){
+          var offer=offers[k];if(!offer||typeof offer!=='object')continue;
+          if(offer.priceCurrency&&String(offer.priceCurrency).toUpperCase()!=='EUR')continue;
+          var val=Number(offer.price);
+          if(isFinite(val)&&val>=150&&val<=4000)return val;
+        }
+      }
+    }catch(err){}
+  }
+  return 0;
+}
+
 function publicListings_(now){
   var found=[],why='nessuna scheda letta';
   try{
@@ -210,8 +238,9 @@ function publicListings_(now){
           var doc=response.getContentText(),h=doc.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
           var body=text_(doc.slice(0,13000));
           if(h)row.title=text_(h[1]).slice(0,170)||row.title;
-          var observed=price_(body);
+          var observed=verifiedRent_(doc);
           if(observed){row.price=observed;row.price_verified=true;}
+          else row.price=price_(body)||row.price;
           row.zone=zone_(row.title+' '+body.slice(0,2200))||row.zone;
           row.description=(body.slice(0,350)||row.description);
         }
@@ -284,7 +313,7 @@ function runScan(){
       if(x.price_verified&&x.price>0){
         var h=Array.isArray(oldItem.price_history)?oldItem.price_history:[];
         if(!h.length&&Number(oldItem.price)>0){
-          h.push({price:Number(oldItem.price),observed_at:timestamp,source:'base al primo controllo'});
+          h.push({price:Number(oldItem.price),observed_at:oldItem.last_seen||oldItem.seen||timestamp,source:'canone inizialmente registrato'});
         }
         if(Number(oldItem.price)!==Number(x.price)){
           h.push({price:x.price,observed_at:timestamp,source:'scheda pubblica'});
