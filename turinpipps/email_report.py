@@ -157,23 +157,25 @@ def run(force=False,dry_run=False):
         return False
     message=EmailMessage()
     message["From"]=user
-    message["To"]=user
+    message["To"]=recipients[0]
     message["Subject"]=f"TurinPipps | Report affitti Torino — {now:%d/%m/%Y}"
     message.set_content(plain)
     message.add_alternative(html_body,subtype="html")
     context=ssl.create_default_context()
-    # BCC envelope recipients: none appears in public repo or email headers.
+    if port not in (465,587):raise ValueError("Porta SMTP ammessa: 465 (SSL) o 587 (STARTTLS)")
+    # Messaggi separati: gli utenti non vedono gli indirizzi degli altri destinatari.
+    # Non caricare nel repository le email personali o lo storico delle spedizioni.
     if port==465:
-        with smtplib.SMTP_SSL(host,port,context=context,timeout=25) as smtp:
-            smtp.login(user,password)
-            rejected=smtp.send_message(message,from_addr=user,to_addrs=recipients)
-    elif port==587:
-        with smtplib.SMTP(host,port,timeout=25) as smtp:
-            smtp.starttls(context=context)
-            smtp.login(user,password)
-            rejected=smtp.send_message(message,from_addr=user,to_addrs=recipients)
-    else:raise ValueError("Porta SMTP ammessa: 465 (SSL) o 587 (STARTTLS)")
-    if rejected:raise RuntimeError(f"Invio rifiutato per {len(rejected)} destinatari.")
+        smtp=smtplib.SMTP_SSL(host,port,context=context,timeout=25)
+    else:
+        smtp=smtplib.SMTP(host,port,timeout=25)
+    with smtp:
+        if port==587:smtp.starttls(context=context)
+        smtp.login(user,password)
+        for recipient in recipients:
+            message.replace_header("To",recipient)
+            rejected=smtp.send_message(message,from_addr=user,to_addrs=[recipient])
+            if rejected:raise RuntimeError("Invio rifiutato dal server SMTP.")
     STATUS.parent.mkdir(parents=True,exist_ok=True)
     STATUS.write_text(json.dumps({"last_sent_date":today,"last_sent_at":now.isoformat(),
         "recipient_count":len(recipients),**counts},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
