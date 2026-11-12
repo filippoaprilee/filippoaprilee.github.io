@@ -1,0 +1,25 @@
+{
+  "name": "CasaRadar · Torino",
+  "short_name": "CasaRadar",
+  "description": "Affitti da privati, massimo 700 €, vicino al Politecnico di Torino.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#121d32",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "./icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
