@@ -28,7 +28,7 @@ Vai su https://github.com/settings/personal-access-tokens/new e compila:
 | `ALERT_FEEDS` | gli URL RSS effettivi di Google Alerts, separati da **una nuova riga** (fino a 20) |
 
 6. Salva le proprietà. Non inserire il token nei file pubblici.
-7. Nell'editor scegli la funzione `installTurinPipps` dal menu in alto, fai clic su **Run** e autorizza Google Apps Script ad accedere a Gmail, Google Maps, URL Fetch e triggers. È un progetto controllato da te: valuta con attenzione i permessi.
+7. Nell'editor scegli la funzione `installTurinPipps` dal menu in alto, fai clic su **Run** e autorizza Google Apps Script a inviare email (MailApp), interrogare Maps e siti pubblici tramite URL Fetch e creare trigger. Non è necessaria la lettura della posta. È un progetto controllato da te: valuta con attenzione i permessi.
 8. Esegui `sendTestEmail`, poi `runScan`; apri **Executions** per verificare eventuali errori. La sola presenza dello script non dimostra che stia funzionando.
 
 ## 3 — Crea fino a 20 alert senza messaggi nella posta
@@ -79,8 +79,8 @@ Le parole **privato**, **700** e **affitto** nei risultati sono solo indizi. L'a
 ## 5 — Blocchi e risoluzione problemi
 
 - Se Google Apps Script non riesce ad aggiornare i JSON, controlla `GITHUB_TOKEN`, repository selezionato e `Contents: Read and write` e la scadenza del token.
-- Se il test Gmail funziona ma non ci sono annunci, controlla `ALERT_FEEDS` e i messaggi in `Executions`. Non promettiamo che gli alert Google trovino ogni annuncio.
-- Se GitHub Actions rimane bloccato con `The job was not started because your account is locked due to a billing issue`, il codice non lo può sbloccare. Contatta https://support.github.com con run ID `43246222475`. Dalle schermate è un account GitHub Free, fatturato 0 $, quota inclusa disponibile e nessun metodo di pagamento.
+- Se il test Gmail funziona ma non ci sono annunci, controlla `ALERT_FEEDS` e i dettagli delle esecuzioni in `Executions`. Non promettiamo che gli alert Google trovino ogni annuncio.
+- Se GitHub Actions rimane bloccato con `The job was not started because your account is locked due to a billing issue`, il codice non lo può sbloccare. Se non vuoi aprire ticket, usa Google Apps Script e lascia GitHub Actions bloccato; l'alternativa documentata per riprovare uno sblocco è un nuovo metodo di pagamento con verifica riuscita (può comparire una preautorizzazione temporanea, non è garantito). Dalle schermate è un account GitHub Free, fatturato 0 $, quota inclusa disponibile e nessun metodo di pagamento.
 - Non eseguire sia trigger Apps Script sia workflow GitHub programmati per lo stesso digest: se GitHub sblocca Actions, scegli un solo sistema per evitare invii duplicati.
 
 ## 6 — Login Google e Apple
