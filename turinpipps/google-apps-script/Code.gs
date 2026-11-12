@@ -258,6 +258,20 @@ function runDailyDigest(){
       GmailApp.sendEmail(mail,subject,plain,{htmlBody:html,name:'TurinPipps'});
     });
     props_().setProperty('LAST_DIGEST_DATE',today);
+    try{
+      var reportPath='turinpipps/data/report_status.json';
+      var state=githubFile_(reportPath);
+      state.json={
+        last_sent_date:today,last_sent_at:new Date().toISOString(),
+        recipient_count:recipients.length,status:'inviato',
+        provider:'Google Apps Script / Gmail',total:items.length,
+        matching:matching.length,new:newItems.length,
+        message:'Invio Gmail completato. Nessun destinatario pubblicato.'
+      };
+      githubSave_(reportPath,state,state.json);
+    }catch(syncError){
+      console.warn('Email inviate ma registro pubblico non aggiornato: '+syncError.message);
+    }
     console.log('Report TurinPipps inviato a '+recipients.length+' destinatari.');
   }finally{lock.releaseLock();}
 }
