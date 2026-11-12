@@ -1,7 +1,50 @@
 {
-  "updated_at": "2026-11-12T09:20:00Z",
-  "verification": "Controllo manuale delle pagine originarie del 12/11/2026; disponibilità non confermata",
+  "updated_at": "2026-11-12T09:25:00Z",
+  "verification": "Controllo manuale su schede pubbliche il 12/11/2026, nessun contatto effettuato; disponibilità e spese da confermare.",
   "listings": [
+    {
+      "url": "https://www.subito.it/appartamenti/monolocale-arredato-in-crocetta-torino-668007219.htm",
+      "title": "Monolocale arredato in Crocetta · spese condominiali incluse",
+      "description": "Torino Crocetta, vicino all'Ospedale Mauriziano · 28 m², piano terra con terrazzino, ristrutturato e arredato. Canone 550 €/mese, spese condominiali incluse. Inserzione nella categoria Subito 'da privati'. Disponibilità immediata dichiarata, da confermare.",
+      "price": 550,
+      "sqm": 28,
+      "zone": "Crocetta",
+      "source": "Subito privati",
+      "private_status": "source",
+      "expenses": "Spese condominiali incluse · utenze da verificare",
+      "seen": "2026-11-12T09:25:00Z",
+      "last_seen": "2026-11-12T09:25:00Z",
+      "property_type": "Monolocale intero"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/bilocale-zona-vicina-al-politecnico-torino-666902816.htm",
+      "title": "Bilocale arredato vicino al Politecnico · piazza Marmolada",
+      "description": "Zona piazza Marmolada / Santa Rita · 48 m², bilocale con balcone, primo piano senza ascensore. L'inserzionista richiede 650 €/mese più 150 € di spese, contratto 4+4 e garante. Inserzione presente nella sezione Subito da privati; distanza effettiva dal Politecnico da verificare.",
+      "price": 650,
+      "sqm": 48,
+      "zone": "Santa Rita",
+      "source": "Subito privati",
+      "private_status": "source",
+      "expenses": "150 €/mese a parte",
+      "seen": "2026-11-12T09:25:00Z",
+      "last_seen": "2026-11-12T09:25:00Z",
+      "property_type": "Bilocale intero · garante richiesto"
+    },
+    {
+      "url": "https://www.immobiliare.it/annunci/128593522/",
+      "title": "Bilocale arredato in via Vigone · solo studentesse o lavoratrici",
+      "description": "Cenisia, via Vigone 28 · 45 m², arredato con balconi, riscaldamento autonomo. Proprietario classificato come 'Privato' da Immobiliare.it; canone 650 €/mese, utenze e riscaldamento a parte. Affitto esclusivamente a studentesse o donne lavoratrici. Annuncio aggiornato il 26/07/2026: disponibilità da confermare.",
+      "price": 650,
+      "sqm": 45,
+      "zone": "Cenisia",
+      "source": "Immobiliare.it",
+      "private_status": "confirmed",
+      "expenses": "Utenze e riscaldamento a parte · importi non indicati",
+      "seen": "2026-07-26",
+      "last_seen": "2026-11-12T09:25:00Z",
+      "source_updated": "2026-07-26",
+      "property_type": "Bilocale intero · riservato a donne"
+    },
     {
       "url": "https://www.clickcase.it/bilocale-gia-arredato-libero-da-fine-marzo-torino-395540.html",
       "title": "Bilocale arredato in via Paolo Braccini",
