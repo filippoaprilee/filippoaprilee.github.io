@@ -136,12 +136,27 @@ def read_json(path):
         return value if isinstance(value,dict) else {"listings":[]}
     except (ValueError,OSError):return {"listings":[]}
 
+def report(status, found, added, message):
+    """Diagnostic only: never store IMAP credentials or mail content."""
+    path=BASE/"data"/"diagnostics.json"
+    data=read_json(path)
+    sources=data.get("sources",[])
+    if not isinstance(sources,list):sources=[]
+    sources=[x for x in sources if isinstance(x,dict) and x.get("name")!="Avvisi ufficiali email · IMAP"]
+    sources.append({"name":"Avvisi ufficiali email · IMAP","status":status,
+        "links_found":found,"new":added,"message":message})
+    data["sources"]=sources
+    data["updated_at"]=datetime.now(timezone.utc).isoformat(timespec="seconds")
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n","utf-8")
+
 def run():
     user=os.getenv("CASARADAR_IMAP_USER","").strip()
     password=os.getenv("CASARADAR_IMAP_PASSWORD","")
     host=os.getenv("CASARADAR_IMAP_HOST","").strip()
     folder=os.getenv("CASARADAR_IMAP_FOLDER","INBOX").strip()
     if not (user and password and host):
+        report("non configurato",0,0,"Imposta una casella per le notifiche ufficiali Subito, Immobiliare.it e altri portali. Nessun accesso agli account dei portali.")
         print("IMAP: non configurato, avvisi email non acquisiti.",flush=True)
         return 0
     if not re.fullmatch(r"[a-zA-Z0-9._-]+",folder):
@@ -174,6 +189,7 @@ def run():
         existing["listings"]=list(known.values())[:800]
         existing["updated_at"]=datetime.now(timezone.utc).isoformat(timespec="seconds")
         DATA.write_text(json.dumps(existing,ensure_ascii=False,indent=2)+"\n","utf-8")
+    report("ok",found,added,f"Lettura autorizzata della casella: {found} link riconosciuti e {added} nuovi. Proprietario, canone e zona non confermati restano da verificare.")
     print(f"Avvisi email: {found} link validi · {added} nuovi annunci · nessun dato personale esportato.",flush=True)
     return added
 
