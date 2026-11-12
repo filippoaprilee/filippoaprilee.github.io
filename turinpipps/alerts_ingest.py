@@ -151,17 +151,17 @@ def report(status, found, added, message):
     path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n","utf-8")
 
 def run():
-    user=os.getenv("CASARADAR_IMAP_USER","").strip()
-    password=os.getenv("CASARADAR_IMAP_PASSWORD","")
-    host=os.getenv("CASARADAR_IMAP_HOST","").strip()
-    folder=os.getenv("CASARADAR_IMAP_FOLDER","INBOX").strip()
+    user=os.getenv("TURINPIPPS_IMAP_USER","").strip()
+    password=os.getenv("TURINPIPPS_IMAP_PASSWORD","")
+    host=os.getenv("TURINPIPPS_IMAP_HOST","").strip()
+    folder=os.getenv("TURINPIPPS_IMAP_FOLDER","INBOX").strip()
     if not (user and password and host):
         report("non configurato",0,0,"Imposta una casella per le notifiche ufficiali Subito, Immobiliare.it e altri portali. Nessun accesso agli account dei portali.")
         print("IMAP: non configurato, avvisi email non acquisiti.",flush=True)
         return 0
     if not re.fullmatch(r"[a-zA-Z0-9._-]+",folder):
         raise ValueError("Nome cartella IMAP non valido")
-    port=int(os.getenv("CASARADAR_IMAP_PORT","993"))
+    port=int(os.getenv("TURINPIPPS_IMAP_PORT","993"))
     existing=read_json(DATA)
     known={v["url"]:v for v in existing.get("listings",[]) if isinstance(v,dict) and v.get("url")}
     found=0; added=0
