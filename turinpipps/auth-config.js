@@ -5,5 +5,5 @@
  */
 window.TURINPIPPS_SUPABASE = {
   url: "https://akgnxjwkrnuckgxscjdz.supabase.co",
-  publishableKey: ""
+  publishableKey: "sb_publishable_086jIStS0Bn21uXDmIl1YA_htPyNiYm"
 };
