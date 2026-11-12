@@ -1,0 +1,57 @@
+name: TurinPipps - report email giornaliero
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'turinpipps/email_report.py'
+      - '.github/workflows/turinpipps-report.yml'
+  schedule:
+    # Ora legale e solare: il codice controlla le 19:00 Europe/Rome.
+    - cron: '5 17,18 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: turinpipps-report
+  cancel-in-progress: false
+jobs:
+  send:
+    name: Report TurinPipps via SMTP
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verifica sintassi Python
+        run: python3 -m py_compile turinpipps/email_report.py
+      - name: Verifica credenziali SMTP configurate
+        env:
+          TURINPIPPS_SMTP_USER: ${{ secrets.TURINPIPPS_SMTP_USER }}
+          TURINPIPPS_SMTP_PASSWORD: ${{ secrets.TURINPIPPS_SMTP_PASSWORD }}
+          TURINPIPPS_EMAIL_TO: ${{ secrets.TURINPIPPS_EMAIL_TO }}
+        run: |
+          test -n "$TURINPIPPS_SMTP_USER" || { echo "::error::Secret TURINPIPPS_SMTP_USER assente"; exit 1; }
+          test -n "$TURINPIPPS_SMTP_PASSWORD" || { echo "::error::Secret TURINPIPPS_SMTP_PASSWORD assente"; exit 1; }
+          test -n "$TURINPIPPS_EMAIL_TO" || { echo "::error::Secret TURINPIPPS_EMAIL_TO assente"; exit 1; }
+      - name: Invia report da GitHub senza ChatGPT
+        env:
+          TURINPIPPS_SMTP_HOST: ${{ vars.TURINPIPPS_SMTP_HOST }}
+          TURINPIPPS_SMTP_PORT: ${{ vars.TURINPIPPS_SMTP_PORT }}
+          TURINPIPPS_SMTP_USER: ${{ secrets.TURINPIPPS_SMTP_USER }}
+          TURINPIPPS_SMTP_PASSWORD: ${{ secrets.TURINPIPPS_SMTP_PASSWORD }}
+          TURINPIPPS_EMAIL_TO: ${{ secrets.TURINPIPPS_EMAIL_TO }}
+        shell: bash
+        run: |
+          export TURINPIPPS_SMTP_HOST="${TURINPIPPS_SMTP_HOST:-smtp.gmail.com}"
+          export TURINPIPPS_SMTP_PORT="${TURINPIPPS_SMTP_PORT:-465}"
+          python3 turinpipps/email_report.py
+      - name: Memorizza stato di invio senza salvare destinatari
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f turinpipps/data/report_status.json ]; then
+            git add turinpipps/data/report_status.json
+            if ! git diff --cached --quiet; then
+              git commit -m "TurinPipps: registro report inviato"
+              git push origin HEAD:filippoaprilee
+            fi
+          fi
