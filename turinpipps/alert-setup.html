@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#13213b">
+<link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<title>TurinPipps · Configurazione ricerca automatica</title>
+<style>
+:root{font-family:Inter,-apple-system,system-ui,sans-serif;color:#192944;background:#f3f6fb;font-synthesis:none}*{box-sizing:border-box}body{margin:0;line-height:1.6}.wrap{max-width:1030px;margin:auto;padding:22px 20px 65px}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}
+header a{color:#253b67;text-decoration:none;display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700}
+header img{height:37px;width:37px}header a.back{border:1px solid #dce4ef;border-radius:12px;padding:10px 14px;background:#fff}
+.hero{background:linear-gradient(130deg,#13213d,#25396a);color:#fff;padding:33px;border-radius:22px}
+.eyebrow{font-size:10px;color:#acbef5;letter-spacing:2px;font-weight:800;text-transform:uppercase}h1{font-size:clamp(26px,5vw,39px);letter-spacing:-1.6px;line-height:1.1;margin:14px 0}
+.hero p{max-width:750px;color:#c4d0ec;font-size:14px;margin-bottom:0}
+.section{margin-top:27px}.section h2{font-size:22px;letter-spacing:-.6px;margin-bottom:8px}.section>p{color:#71809a;font-size:13px;margin:0 0 16px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.step{padding:18px 18px 22px;border:1px solid #e0e8f1;background:#fff;border-radius:16px;min-width:0}
+.step .mark{height:36px;width:36px;background:#eef0ff;color:#5664d5;display:grid;place-items:center;border-radius:11px;margin-bottom:12px;font-size:16px}
+.step strong{font-size:14px;display:block}.step p{font-size:12px;color:#6d7c95;margin:7px 0 0}.step a{color:#5163d3}
+.alert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.a{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:88px;padding:13px;background:white;border:1px solid #e0e7f1;border-radius:14px;min-width:0}
+.a-main{display:flex;align-items:center;gap:11px;min-width:0}.num{font-size:11px;color:#6f80ab;font-weight:850}
+.a strong{display:block;font-size:12px}.a small{font-size:10px;color:#8390a3;display:block;max-width:290px;overflow-wrap:anywhere}
+.copy,.btn{border:1px solid #d8e0ef;background:#fff;border-radius:10px;padding:10px 12px;color:#354a6e;font-weight:750;font-size:11px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px}
+.copy:hover,.btn:hover{background:#f6f8ff}.copy:focus-visible,.btn:focus-visible,a:focus-visible{outline:3px solid #7281ff;outline-offset:2px}
+.note{padding:17px 19px;border:1px solid #dbe4f0;background:#fff;border-radius:15px;font-size:13px;color:#556582;margin-top:18px}
+strong.important{color:#374de0}.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.btn.primary{background:#5265db;color:#fff;border-color:#5265db;text-decoration:none}.btn.ghost{text-decoration:none}
+code{font-size:12px;color:#3f56d9;background:#eef2fa;border-radius:5px;padding:3px 6px}ol{padding-left:23px}li{padding:4px 0}
+@media(max-width:850px){.alert-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr}}@media(max-width:510px){.wrap{padding:16px 12px 45px}.hero{padding:25px 20px}.a{align-items:flex-start;flex-direction:column}.copy{margin-left:28px}.step{padding:16px}header a.back{font-size:11px}}
+</style></head><body>
+<div class="wrap"><header><a href="./"><img src="./icon.svg" alt=""><span>TurinPipps</span></a><a class="back" href="./"><i class="fa-solid fa-arrow-left"></i> Torna all'app</a></header>
+<section class="hero"><div class="eyebrow">Configurazione ufficiale · Google RSS</div><h1>Più annunci.<br>Nessuna email di alert.</h1>
+<p>Monitora fino a 20 ricerche senza riempire Gmail. Google Alerts produce feed RSS e TurinPipps li consulta periodicamente. Riceverai soltanto il report riepilogativo TurinPipps se abiliti l'invio Gmail.</p></section>
+<section class="section"><h2>Configurazione in 3 passaggi</h2>
+<div class="steps">
+<div class="step"><div class="mark"><i class="fa-solid fa-magnifying-glass"></i></div><strong>1. Crea un avviso Google</strong><p>Apri <a target="_blank" rel="noopener" href="https://www.google.com/alerts">Google Alerts</a>, incolla una ricerca, apri Mostra opzioni. Come fonte usa Web, lingua italiano, regione Italia e quantità Tutti i risultati.</p></div>
+<div class="step"><div class="mark"><i class="fa-solid fa-rss"></i></div><strong>2. Seleziona Feed RSS</strong><p>Nella voce <b>Invia tramite</b> scegli <b>Feed RSS</b> (non il tuo indirizzo email). Premi Crea avviso, poi copia il collegamento RSS dall'icona dedicata. Ripeti per le ricerche utili.</p></div>
+<div class="step"><div class="mark"><i class="fa-solid fa-gear"></i></div><strong>3. Collega il feed a TurinPipps</strong><p>In Apps Script → Impostazioni progetto → Proprietà script crea <code>ALERT_FEEDS</code> e incolla tutti gli URL RSS, uno per riga o separati da virgola. Esegui <code>runScan</code>.</p></div>
+</div></section>
+<section class="section"><h2>14 ricerche già preparate</h2><p>Premi Copia ricerca e incollala nel campo di Google Alerts. Sono ricerche di pagine pubblicamente indicizzate: non è garantita la copertura completa dei portali, né la disponibilità degli immobili.</p>
+<div class="alert-grid"><div class="a"><div class="a-main"><span class="num">01</span><div><strong>Subito · Crocetta</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Crocetta&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Crocetta&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">02</span><div><strong>Subito · Cenisia</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">03</span><div><strong>Subito · San Paolo</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;San Paolo&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;San Paolo&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">04</span><div><strong>Subito · Cit Turin</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Cit Turin&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Cit Turin&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">05</span><div><strong>Subito · Santa Rita</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Santa Rita&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Santa Rita&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">06</span><div><strong>Subito · Pozzo Strada</strong><small>site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Pozzo Strada&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:subito.it/appartamenti/ &quot;Torino&quot; &quot;Pozzo Strada&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">07</span><div><strong>Immobiliare · Crocetta</strong><small>site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Crocetta&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Crocetta&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">08</span><div><strong>Immobiliare · Cenisia</strong><small>site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">09</span><div><strong>Immobiliare · San Paolo</strong><small>site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;San Paolo&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;San Paolo&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">10</span><div><strong>Immobiliare · Cit Turin</strong><small>site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Cit Turin&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:immobiliare.it/annunci/ &quot;Torino&quot; &quot;Cit Turin&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">11</span><div><strong>ClickCase · Torino</strong><small>site:clickcase.it &quot;Torino&quot; &quot;affitto&quot; &quot;privati&quot;</small></div></div><button class="copy" data-value="site:clickcase.it &quot;Torino&quot; &quot;affitto&quot; &quot;privati&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">12</span><div><strong>Bakeca · privati</strong><small>site:torino.bakeca.it &quot;Torino&quot; &quot;affitto&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:torino.bakeca.it &quot;Torino&quot; &quot;affitto&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">13</span><div><strong>Idealista · Cenisia</strong><small>site:idealista.it/immobile/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;affitto&quot;</small></div></div><button class="copy" data-value="site:idealista.it/immobile/ &quot;Torino&quot; &quot;Cenisia&quot; &quot;affitto&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div>
+<div class="a"><div class="a-main"><span class="num">14</span><div><strong>Casa.it · Torino</strong><small>site:casa.it/immobili/ &quot;Torino&quot; &quot;affitto&quot; &quot;privato&quot;</small></div></div><button class="copy" data-value="site:casa.it/immobili/ &quot;Torino&quot; &quot;affitto&quot; &quot;privato&quot;"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia ricerca</button></div></div>
+<div class="note"><i class="fa-solid fa-circle-info"></i> <b>Importante:</b> gli annunci provenienti da RSS senza conferma esplicita dell'inserzionista sono mantenuti in <b>Da verificare</b>. L'app non contatta i proprietari e non registra account su Subito o Immobiliare.it.</div></section>
+<section class="section"><h2>Attivare l'agente Google senza runner GitHub</h2>
+<ol>
+<li>In GitHub crea un <b>fine-grained token</b>: nome <code>TurinPipps-Agent</code>, proprietario <code>filippoaprilee</code>, <b>Only select repositories</b> → <code>filippoaprilee.github.io</code>, permesso <b>Contents: Read and write</b>. Non inviare il token in chat.</li>
+<li>Apri Google Apps Script e crea il progetto <b>TurinPipps Agent</b>; copia il file <b>Code.gs</b> già pronto.</li>
+<li>In <b>Project Settings → Script Properties</b> crea <code>GITHUB_TOKEN</code> (valore: token creato), <code>EMAIL_TO</code> (valore: destinatari report), e <code>ALERT_FEEDS</code> (valore: link RSS).</li>
+<li>Esegui <code>installTurinPipps</code>, autorizza il progetto, quindi prova <code>runScan</code> e <code>sendTestEmail</code>.</li>
+</ol>
+<div class="links">
+<a class="btn primary" href="https://www.google.com/alerts" target="_blank" rel="noopener"><i class="fa-solid fa-rss"></i> Apri Google Alerts</a>
+<a class="btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> Crea token GitHub</a>
+<a class="btn ghost" href="https://script.google.com/home/projects/create" target="_blank" rel="noopener"><i class="fa-solid fa-code"></i> Apri Apps Script</a>
+<a class="btn ghost" href="https://github.com/filippoaprilee/filippoaprilee.github.io/blob/filippoaprilee/turinpipps/google-apps-script/Code.gs" target="_blank" rel="noopener"><i class="fa-regular fa-file-code"></i> Copia il codice</a>
+</div>
+</section></div>
+<script>document.querySelectorAll('button[data-value]').forEach(function(b){b.addEventListener('click',async function(){var text=b.getAttribute('data-value');try{await navigator.clipboard.writeText(text)}catch(e){var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}var prev=b.innerHTML;b.innerHTML='<i class="fa-solid fa-check"></i> Copiato';setTimeout(function(){b.innerHTML=prev},1800)})});</script>
+</body></html>
