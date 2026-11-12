@@ -1,4 +1,40 @@
 {
-  "updated_at": null,
-  "sources": []
+  "updated_at": "2026-11-12T09:20:00Z",
+  "sources": [
+    {
+      "name": "Schede ClickCase controllate manualmente",
+      "status": "ok",
+      "links_found": 6,
+      "new": 6,
+      "message": "Sei annunci consultati sulle pagine originali il 12/11/2026: quattro con canone entro 700 €, due con prezzo da verificare. La disponibilità non è stata confermata ai proprietari."
+    },
+    {
+      "name": "GitHub Actions · aggiornamento automatico",
+      "status": "non operativa",
+      "links_found": 0,
+      "new": 0,
+      "message": "Prima esecuzione fallita prima di qualsiasi step; runner GitHub non avviato. La raccolta periodica non è ancora attiva. Consultare Actions nel repository."
+    },
+    {
+      "name": "Subito · annunci da privati",
+      "status": "ricerca ufficiale",
+      "links_found": 0,
+      "new": 0,
+      "message": "Collegamento dedicato da privati disponibile in Fonti. Nessun annuncio Subito acquisito automaticamente."
+    },
+    {
+      "name": "Immobiliare.it",
+      "status": "ricerca ufficiale",
+      "links_found": 0,
+      "new": 0,
+      "message": "Ricerche e avvisi ufficiali disponibili in Fonti. Nessun annuncio acquisito automaticamente."
+    },
+    {
+      "name": "Facebook Marketplace",
+      "status": "manuale",
+      "links_found": 0,
+      "new": 0,
+      "message": "Nessuna raccolta da gruppi privati o login; i link possono essere inseriti manualmente."
+    }
+  ]
 }
