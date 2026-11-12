@@ -1,6 +1,12 @@
 name: TurinPipps - report email giornaliero
 on:
   workflow_dispatch:
+    inputs:
+      send_test:
+        description: "Invia subito una email di prova, anche fuori dalle 19:00"
+        type: boolean
+        required: false
+        default: false
   push:
     paths:
       - 'turinpipps/email_report.py'
@@ -42,7 +48,11 @@ jobs:
         run: |
           export TURINPIPPS_SMTP_HOST="${TURINPIPPS_SMTP_HOST:-smtp.gmail.com}"
           export TURINPIPPS_SMTP_PORT="${TURINPIPPS_SMTP_PORT:-465}"
-          python3 turinpipps/email_report.py
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.send_test }}" = "true" ]; then
+            python3 turinpipps/email_report.py --force
+          else
+            python3 turinpipps/email_report.py
+          fi
       - name: Memorizza stato di invio senza salvare destinatari
         shell: bash
         run: |
