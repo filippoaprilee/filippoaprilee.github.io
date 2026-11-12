@@ -113,6 +113,41 @@ function row_(url,source,near,now){
     private_status:'unverified',expenses:'',property_type:'',seen:now,last_seen:now,
     origin:'automatic_alert'};
 }
+function rssListings_(now){
+  // Inserisci fino a 20 URL RSS da Google Alerts nelle Script Properties,
+  // uno per riga o separati da virgole. Zero email degli alert in Gmail.
+  var raw=props_().getProperty('ALERT_FEEDS')||'';
+  var feeds=raw.split(/[\s,;]+/).map(function(v){return v.trim();}).filter(Boolean).slice(0,20);
+  var out=[],seen={};var failures=0;
+  feeds.forEach(function(feed){
+    if(!/^https:\/\/(?:www\.)?google\.com\/alerts\/feeds\/[a-zA-Z0-9/_%-]+$/.test(feed)){failures++;return;}
+    try{
+      var response=UrlFetchApp.fetch(feed,{muteHttpExceptions:true,followRedirects:false});
+      if(response.getResponseCode()!==200){failures++;return;}
+      var xml=XmlService.parse(response.getContentText());
+      var root=xml.getRootElement();
+      var entries=root.getChildren('entry',XmlService.getNamespace('http://www.w3.org/2005/Atom'));
+      entries.slice(0,60).forEach(function(entry){
+        var ns=XmlService.getNamespace('http://www.w3.org/2005/Atom');
+        var title=entry.getChildText('title',ns)||'';
+        var content=entry.getChildText('content',ns)||entry.getChildText('summary',ns)||'';
+        var link=entry.getChild('link',ns);
+        var href=link?(link.getAttribute('href')||{}).getValue?.():'';
+        var found=portal_(href);
+        if(!found){
+          var candidates=links_(content);
+          if(candidates.length)found=candidates[0].link;
+        }
+        if(!found||seen[found.url])return;
+        seen[found.url]=1;
+        var row=row_(found.url,found.source+' · Google Alerts RSS',text_(title+' '+content),now);
+        row.title=text_(title).slice(0,170)||row.title;
+        out.push(row);
+      });
+    }catch(e){failures++;console.warn('TurinPipps RSS: feed non letto ('+String(e.message||e).slice(0,80)+')');}
+  });
+  return {rows:out,feeds:feeds.length,failures:failures};
+}
 function mailListings_(now){
   // Existing Gmail account: official alerts or Google Alerts, no portal login required.
   var threads=GmailApp.search('newer_than:30d {from:subito.it from:immobiliare.it from:idealista.it from:clickcase.it from:googlealerts-noreply@google.com}',0,75);
@@ -194,8 +229,11 @@ function runScan(){
       diagnostics=githubFile_(TP.diagnostics);
     var old=stored.json.listings||[],known={},added=0;
     old.forEach(function(x){if(x&&x.url)known[x.url]=x;});
-    var messages=mailListings_(timestamp),publics=publicListings_(timestamp);
-    messages.concat(publics.rows).forEach(function(x){
+    var rss=rssListings_(timestamp);
+    var mailEnabled=props_().getProperty('IMPORT_EMAIL_ALERTS')==='true';
+    var messages=mailEnabled?mailListings_(timestamp):[];
+    var publics=publicListings_(timestamp);
+    rss.rows.concat(messages,publics.rows).forEach(function(x){
       if(!known[x.url]){known[x.url]=x;added++;return;}
       // Preserve manually verified price, description and private status.
       known[x.url].last_seen=timestamp;
@@ -205,9 +243,9 @@ function runScan(){
     stored.json.verification='Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.';
     diagnostics.json.updated_at=timestamp;
     var sources=(diagnostics.json.sources||[]).filter(function(x){return x.name!=='Google Apps Script · automatico';});
-    sources.push({name:'Google Apps Script · automatico',status:'ok',
-      links_found:messages.length+publics.rows.length,new:added,
-      message:'Avvisi Gmail: '+messages.length+'. '+publics.status+'. Nessun bypass dei portali.'});
+    sources.push({name:'Google Apps Script · automatico',status:rss.failures?'parziale':'ok',
+      links_found:rss.rows.length+messages.length+publics.rows.length,new:added,
+      message:'Feed RSS: '+rss.feeds+' (errori '+rss.failures+'), link '+rss.rows.length+'. Email avvisi opzionali: '+messages.length+'. '+publics.status+'. Nessun bypass dei portali.'});
     diagnostics.json.sources=sources;
     githubSave_(TP.listings,stored,stored.json);
     // The previous PUT changed the repository head but not this file's SHA.
