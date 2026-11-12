@@ -204,6 +204,29 @@
     el('tp-auth-change-password').hidden=true;
     status('Password aggiornata.','ok');
   }
+  async function oauthLogin(provider){
+    if(!client){status('Accesso non disponibile: verificare configurazione Supabase o connessione.','error');open();return}
+    if(loading)return;
+    loading=true;
+    try{
+      sessionStorage.removeItem('turinpipps-guest-session');
+      var r=await client.auth.signInWithOAuth({
+        provider:provider,
+        options:{redirectTo:location.origin+location.pathname}
+      });
+      if(r.error)throw r.error;
+      // Supabase redirects to Google/Apple; tokens are never handled by TurinPipps.
+    }catch(err){
+      if(welcome)welcome.hidden=false;
+      if(!dialog.open&&dialog.showModal)dialog.showModal();
+      status('Accesso '+(provider==='google'?'Google':'Apple')+' non riuscito: '+(err.message||'provider OAuth non configurato')+'. Controlla che il provider sia abilitato in Supabase.','error');
+    }finally{loading=false;}
+  }
+  [['tp-welcome-google','google'],['tp-welcome-apple','apple'],
+   ['tp-auth-google','google'],['tp-auth-apple','apple']].forEach(function(pair){
+    var node=el(pair[0]);
+    if(node)node.addEventListener('click',function(){oauthLogin(pair[1])});
+  });
   button.addEventListener('click',open);
   if(el('tp-show-password'))el('tp-show-password').addEventListener('click',function(){
     var pass=el('tp-auth-password'),show=pass.type==='password';
