@@ -38,6 +38,18 @@ function createRadar(){
  var live=node('div','tp-radar-live-status','Controllo gli annunci aggiuntivi…');
  live.id='tp-radar-live-status';panel.appendChild(live);
 
+ var direct=node('div','tp-radar-direct');
+ direct.innerHTML='<div class="tp-radar-direct-heading"><b>Vai direttamente agli annunci da privati</b><span>Filtri già impostati per Torino · scelta manuale sulla fonte</span></div>'+
+ '<div class="tp-radar-direct-grid">'+
+ '<a target="_blank" rel="noopener noreferrer" href="https://www.immobiliare.it/affitto-case/torino/da-privati/"><span>Immobiliare.it</span><small>Sezione privati</small></a>'+
+ '<a target="_blank" rel="noopener noreferrer" href="https://torino.bakeca.it/annunci/offro-casa/inserzionistacase/privato/"><span>Bakeca</span><small>Privati Torino</small></a>'+
+ '<a target="_blank" rel="noopener noreferrer" href="https://www.trovacasa.it/appartamenti-in-affitto/torino/borgo-san-paolo-cenisia/da-privati"><span>TrovaCasa</span><small>Cenisia e San Paolo</small></a>'+
+ '<a target="_blank" rel="noopener noreferrer" href="https://www.clickcase.it/annunci/affitti-case-privati-torino.html"><span>ClickCase</span><small>Da privato a privato</small></a>'+
+ '<a target="_blank" rel="noopener noreferrer" href="https://www.subito.it/annunci-piemonte/affitto/appartamenti/torino/torino/da-privati/"><span>Subito</span><small>Affitti privati</small></a>'+
+ '</div>';
+ panel.appendChild(direct);
+
+
  // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
  var add=$('#add');if(add){
    add.innerHTML='<i class="fa-solid fa-link"></i> Aggiungi annuncio';
