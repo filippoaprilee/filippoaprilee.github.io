@@ -188,7 +188,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <aside class="side"><div class="brand"><span class="brand-mark"><img src="./icon.svg" alt="" aria-hidden="true"></span>
 <div class="brand-name">TurinPipps<small>IL TUO SPAZIO CASA</small></div></div>
 <nav class="nav" aria-label="Navigazione principale">
-<button data-nav="home" class="active"><i class="fa-solid fa-grid-2" aria-hidden="true"></i><span class="nav-label">Panoramica</span></button>
+<button data-nav="home" class="active"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span class="nav-label">Panoramica</span></button>
 <button data-nav="results"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="nav-label">Cerca casa</span></button>
 <button data-nav="compare"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i><span class="nav-label">Confronta <span id="tp-nav-compare-count"></span></span></button>
 <button data-nav="saved"><i class="fa-regular fa-heart" aria-hidden="true"></i><span class="nav-label">Preferiti</span></button>
@@ -270,7 +270,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </section>
 </main></div>
 <nav class="mobile-nav" aria-label="Navigazione rapida">
-<button data-nav="home" class="active"><span><i class="fa-solid fa-grid-2"></i></span>Home</button>
+<button data-nav="home" class="active"><span><i class="fa-solid fa-table-cells-large"></i></span>Home</button>
 <button data-nav="results"><span><i class="fa-solid fa-magnifying-glass"></i></span>Cerca</button>
 <button data-nav="compare"><span><i class="fa-solid fa-scale-balanced"></i></span>Confronta</button>
 <button data-nav="saved"><span><i class="fa-regular fa-heart"></i></span>Preferiti</button>
@@ -451,13 +451,14 @@ function card(a){
  var total=a.price?esc(cost.total)+' €/mese'+(cost.unknown?' + spese non note':''):'Costo totale da verificare';
  var walk=a.walking_minutes?esc(a.walking_minutes)+' min a piedi dal PoliTO':geoKm(a)!==null?geoKm(a).toFixed(1).replace('.',',')+' km in linea d’aria':'Distanza da verificare';
  var changed=priceChange(a);
+ var isNew=!!a.seen&&(Date.now()-Date.parse(a.seen))<24*3600000&&(Date.now()-Date.parse(a.seen))>=0;
  var warning=a.availability_state==='potenzialmente_non_disponibile'?'<span class="tp-microtag warn"><i class="fa-solid fa-circle-exclamation"></i> Verifica disponibilità</span>':'';
  var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking"><i class="fa-solid fa-person-walking"></i> Percorso a piedi</a>':'';
  return '<article class="listing">'+
  '<div class="listing-banner"><div class="tile"><i class="fa-solid fa-house"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div>'+
  '<div class="body"><div class="micro">'+esc(a.source)+' · '+esc(a.zone||'Zona non indicata')+'</div>'+
  '<h3>'+esc(a.title)+'</h3>'+
- '<div class="tags"><span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
+ '<div class="tags">'+(isNew?'<span class="tag green">Nuovo</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
