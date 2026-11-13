@@ -553,7 +553,18 @@ function renderResults(){
  sort=el('sort').value,source=el('source-filter').value.toLowerCase(),
  days=Number(el('age-filter').value||0),walking=el('distance-filter').value,stale=el('stale-filter').value;
  arr=arr.filter(function(a){
-  if(flag(a.url).discard||!matchPersonalCriteria(a))return false;
+  if(flag(a.url).discard)return false;
+   if(mode==='candidate'){
+     // I dati mancanti restano visibili come incerti: non scartare case solo perché
+     // la fonte non ha pubblicato metri quadri o percorso fino al Politecnico.
+     if(prefs.minSqm&&a.sqm&&a.sqm<Number(prefs.minSqm))return false;
+     if(prefs.maxWalkMinutes&&a.walking_minutes&&a.walking_minutes>Number(prefs.maxWalkMinutes))return false;
+     if(prefs.propertyType&&prefs.propertyType!=='tutte'){
+       var declaredType=(a.title+' '+a.property_type).toLowerCase();
+       var knownType=declaredType.match(/(?:mono|bi|tri|quadri)locale/);
+       if(knownType&&!knownType[0].includes(prefs.propertyType))return false;
+     }
+   }else if(!matchPersonalCriteria(a))return false;
   if(mode==='candidate'){
      var budgetNow=Number(prefs.budget||700);
      if(a.price&&a.price>budgetNow)return false;
