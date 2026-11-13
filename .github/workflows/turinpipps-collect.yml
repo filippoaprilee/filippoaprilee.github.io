@@ -1,6 +1,8 @@
 name: TurinPipps - raccolta annunci
 # Raccolta automatica gestita da Google Apps Script; evita run falliti su account billing bloccato.
 on:
+  schedule:
+    - cron: '17 */2 * * *'
   workflow_dispatch:
 permissions:
   contents: write
@@ -11,13 +13,21 @@ jobs:
   collect:
     name: Raccolta fonti e avvisi ufficiali
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Python syntax check
         run: python3 -m py_compile turinpipps/collector.py turinpipps/alerts_ingest.py
       - name: Leggi solo fonti pubbliche consentite
         run: python3 turinpipps/collector.py
+      - name: Installa strumenti Python di raccolta HTML pubblica
+        run: |
+          python3 -m pip install --disable-pip-version-check beautifulsoup4==4.14.3 playwright==1.58.0
+          python3 -m playwright install --with-deps chromium
+      - name: Controllo Python con Playwright e BeautifulSoup4
+        run: |
+          python3 -m py_compile turinpipps/collector_playwright.py
+          python3 turinpipps/collector_playwright.py --playwright --pages 5
       - name: Importa avvisi email Subito, Immobiliare.it e altri
         env:
           TURINPIPPS_IMAP_HOST: ${{ vars.TURINPIPPS_IMAP_HOST || 'imap.gmail.com' }}
@@ -30,7 +40,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- turinpipps/data/listings.json turinpipps/data/diagnostics.json
+          git add -- turinpipps/data/listings.json turinpipps/data/diagnostics.json turinpipps/data/playwright_results.json
           if ! git diff --cached --quiet; then
             git commit -m "TurinPipps: aggiornamento annunci"
             git push origin HEAD:filippoaprilee
