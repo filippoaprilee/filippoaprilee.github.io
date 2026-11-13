@@ -1,6 +1,6 @@
 /* TurinPipps PWA offline cache. No private account data is cached here. */
-const CACHE='turinpipps-shell-v1.9.0';
-const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png'];
+const CACHE='turinpipps-shell-v2.0.0';
+const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png','./ui-v2.css?v=2.0.0'];
 const DATA=['./data/listings.json','./data/diagnostics.json','./data/report_status.json'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(async cache=>{
