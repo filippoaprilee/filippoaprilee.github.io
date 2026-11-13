@@ -1,0 +1,163 @@
+/* TurinPipps v3 · ricerca estesa e UX, senza credenziali o scraping lato browser. */
+(function(){
+'use strict';
+var zones=['Tutte le zone','Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
+function $(s){return document.querySelector(s)}
+function node(tag,className,text){var n=document.createElement(tag);if(className)n.className=className;if(text)n.textContent=text;return n}
+function q(){return String($('#tp-radar-term')&&$('#tp-radar-term').value||'bilocale arredato').trim().slice(0,120)}
+function z(){return String($('#tp-radar-zone')&&$('#tp-radar-zone').value||'')}
+function queryFor(engine){
+ var title='affitto appartamento Torino '+(z()?('"'+z()+'" '):'')+q();
+ if(engine==='facebook')return 'site:facebook.com/groups/ Torino "affitto" '+(z()?('"'+z()+'" '):'')+q();
+ if(engine==='privati')return '("affitto da privato" OR "senza agenzia") '+title+' -stanza -postoletto';
+ return title+' -agenzia -intermediario';
+}
+function buildURL(engine){
+ var query=queryFor(engine);
+ if(engine==='bing')return 'https://www.bing.com/search?q='+encodeURIComponent(query)+'&setlang=it';
+ if(engine==='duck')return 'https://duckduckgo.com/?q='+encodeURIComponent(query);
+ return 'https://www.google.com/search?q='+encodeURIComponent(query)+'&tbs=qdr:w';
+}
+function refreshLinks(){
+ document.querySelectorAll('[data-tp-engine]').forEach(function(a){a.href=buildURL(a.dataset.tpEngine)});
+ var info=$('#tp-radar-query-preview');if(info)info.textContent='Zona: '+(z()||'Torino')+' · '+q();
+}
+function createRadar(){
+ var host=$('#view-results'),anchor=$('.tp-search-tools');if(!host||!anchor||$('#tp-radar-v3'))return;
+ var panel=node('section','tp-radar-v3');panel.id='tp-radar-v3';
+ panel.innerHTML='<div class="tp-radar-intro"><div class="tp-radar-symbol" aria-hidden="true"><i class="fa-solid fa-satellite-dish"></i></div><div><span class="tp-radar-kicker">RICERCA ESTESA</span><h2>Non fermarti agli annunci già raccolti.</h2><p>Esplora più motori, anche i post Facebook pubblici indicizzati. Senza account sui portali.</p></div></div>'+
+ '<div class="tp-radar-controls"><label class="tp-radar-field"><span>Che casa cerchi?</span><input id="tp-radar-term" maxlength="120" autocomplete="off" value="bilocale arredato" placeholder="Es. bilocale arredato"></label>'+
+ '<label class="tp-radar-field"><span>In quale zona?</span><select id="tp-radar-zone"></select></label></div>'+
+ '<div class="tp-radar-links">'+
+ '<a data-tp-engine="privati" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-google"></i> Privati su Google <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
+ '<a data-tp-engine="bing" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-magnifying-glass"></i> Bing <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
+ '<a data-tp-engine="duck" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-compass"></i> DuckDuckGo <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
+ '<a data-tp-engine="facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i> Gruppi Facebook pubblici <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
+ '</div><div class="tp-radar-foot"><span id="tp-radar-query-preview"></span><span>Queste ricerche aprono risultati esterni: la disponibilità non è garantita.</span></div>';
+ anchor.parentNode.insertBefore(panel,anchor);
+ var select=$('#tp-radar-zone');
+ zones.forEach(function(zone,i){var opt=document.createElement('option');opt.value=i?zone:'';opt.textContent=zone;select.appendChild(opt)});
+ try{var saved=JSON.parse(localStorage.getItem('tp_radar_v3')||'{}');
+   if(saved.term)$('#tp-radar-term').value=saved.term;
+   if(saved.zone)select.value=saved.zone;
+ }catch(_){}
+ function change(){
+   refreshLinks();
+   try{localStorage.setItem('tp_radar_v3',JSON.stringify({term:q(),zone:z()}))}catch(_){}
+ }
+ $('#tp-radar-term').addEventListener('input',change);select.addEventListener('change',change);
+ $('#tp-radar-term').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();window.open(buildURL('privati'),'_blank','noopener,noreferrer')}});
+ change();
+}
+function brandAndSections(){
+ var eyebrow=$('.topline .eyebrow');
+ if(eyebrow&&!$('#tp-mobile-brand')){
+   var brand=node('div','tp-mobile-brand');brand.id='tp-mobile-brand';
+   brand.innerHTML='<img src="./icon.svg" alt="" aria-hidden="true"><span>TurinPipps<small>RICERCA CASA · TORINO</small></span>';
+   eyebrow.parentNode.insertBefore(brand,eyebrow);
+ }
+ var nav=$('.side .nav');if(nav&&!$('.tp-nav-label')){
+   var home=nav.querySelector('[data-nav="home"]'),compare=nav.querySelector('[data-nav="compare"]'),
+       sources=nav.querySelector('[data-nav="sources"]');
+   [ [home,'SCOPRI'],[compare,'ORGANIZZA'],[sources,'IL TUO ACCOUNT'] ].forEach(function(a){
+     if(!a[0])return;var label=node('div','tp-nav-label',a[1]);a[0].parentNode.insertBefore(label,a[0]);
+   });
+ }
+ var names={results:'Radar casa',saved:'Salvati',sources:'Monitoraggio',settings:'Impostazioni'};
+ Object.keys(names).forEach(function(key){
+   var item=$('.side .nav [data-nav="'+key+'"] .nav-label');if(item){
+     var count=item.querySelector('span');item.textContent=names[key]+' ';if(count)item.appendChild(count);
+   }
+ });
+ var lead=$('#view-results .tp-page-lead h1');if(lead)lead.textContent='Radar casa';
+ var sub=$('#view-results .tp-page-lead p');if(sub)sub.textContent='Gli annunci raccolti e le nuove ricerche su più motori, nello stesso spazio.';
+ var searchButton=$('[data-nav="results"].hero-cta');if(searchButton)searchButton.innerHTML='Apri il radar <i class="fa-solid fa-arrow-right"></i>';
+}
+function decorateHome(){
+ var home=$('#view-home .hero');
+ if(!home)return;
+ var title=home.querySelector('h1');if(title)title.innerHTML='La tua prossima casa.<br>Prima degli altri.';
+ var blurb=home.querySelector('p');
+ if(blurb)blurb.innerHTML='Torino vicino al Politecnico. Annunci da privati, prezzo e condizioni sotto controllo. <b>Un solo posto in cui cercare.</b>';
+ var extra=node('div','tp-home-shortcuts');
+ extra.innerHTML='<button type="button" data-nav="results"><i class="fa-solid fa-satellite-dish"></i> Cerca ovunque</button>'+
+ '<button type="button" data-nav="saved"><i class="fa-regular fa-heart"></i> I miei salvati</button>'+
+ '<button type="button" data-nav="visits"><i class="fa-regular fa-calendar-check"></i> Organizza visite</button>';
+ home.insertAdjacentElement('afterend',extra);
+}
+function improveGuide(){
+ if(typeof window.drawGuide!=='function'||!window.tpGuideSlides)return;
+ window.tpGuideSlides=[
+  {icon:'fa-solid fa-sliders',title:'Cominciamo dalle tue esigenze',
+   text:'Imposta il canone massimo. Puoi modificarlo in qualsiasi momento.'},
+  {icon:'fa-solid fa-location-dot',title:'Scegli i quartieri',
+   text:'Seleziona le zone in cui vuoi cercare. Il Politecnico è il punto di riferimento.'},
+  {icon:'fa-solid fa-satellite-dish',title:'Il radar è pronto',
+   text:'Esplora gli annunci, cerca su altri motori, salva le case migliori e confrontale. Nelle schede troverai sempre ciò che resta da verificare.'}
+ ];
+ var old=window.drawGuide;
+ window.drawGuide=function(){
+   old();var desc=$('#tp-guide-description');if(!desc)return;
+   var existing=$('#tp-guide-fields');if(existing)existing.remove();
+   var extra=node('div','tp-guide-fields');extra.id='tp-guide-fields';
+   var step=window.tpGuideStep||0;
+   if(step===0){
+     var budget=Number(window.prefs&&prefs.budget)||700;
+     extra.innerHTML='<label>Canone massimo mensile (€)<input id="tp-guide-budget" type="number" min="150" max="5000" step="50" value="'+budget+'"></label><p>Le spese aggiuntive saranno mostrate separatamente quando disponibili.</p>';
+   }else if(step===1){
+     var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones.slice(1);
+     extra.innerHTML='<div class="tp-guide-choices">'+zones.slice(1).map(function(area){
+       return '<label><input type="checkbox" value="'+area+'" '+(chosen.indexOf(area)!==-1?'checked':'')+'> '+area+'</label>';
+     }).join('')+'</div>';
+   }else{
+     extra.innerHTML='<div class="tp-guide-success"><i class="fa-solid fa-check-circle"></i> Personalizzazione pronta. Nessun collegamento tecnico da configurare nell’app.</div>';
+   }
+   desc.insertAdjacentElement('afterend',extra);
+ };
+ document.addEventListener('change',function(e){
+   var t=e.target;
+   if(t.id==='tp-guide-budget'){
+     var value=Math.max(150,Math.min(5000,Number(t.value)||700));t.value=value;
+     prefs.budget=value;var target=$('#budget');if(target)target.value=value;
+     if(typeof persist==='function')persist();
+     if(typeof renderHome==='function')renderHome();
+   }
+   if(t.closest&&t.closest('#tp-guide-fields')&&t.type==='checkbox'){
+     var checked=Array.from(document.querySelectorAll('#tp-guide-fields input:checked')).map(function(x){return x.value});
+     if(!checked.length){t.checked=true;return;}
+     prefs.preferredZones=checked;
+     if(typeof fillPersonalSettings==='function')fillPersonalSettings();
+     if(typeof persist==='function')persist();
+   }
+ });
+ // Persist for authenticated profiles through the existing, permission-checked settings workflow.
+ var next=$('#tp-guide-next');if(next)next.addEventListener('click',function(){
+   if(window.tpGuideStep===2&&$('#save-settings'))$('#save-settings').click();
+ },true);
+}
+function initialView(){
+ var params=new URLSearchParams(location.search);
+ var screen=params.get('screen');
+ if(screen==='radar')nav('results');
+ if(screen==='saved')nav('saved');
+ if(screen==='visits')nav('visits');
+ if(screen==='compare')nav('compare');
+}
+function badges(){
+ if(!('setAppBadge'in navigator))return;
+ var active=Array.isArray(window.diagnostics)&&diagnostics.find(function(s){return (s.name||'').indexOf('Google Apps Script')!==-1;});
+ var count=active&&Number(active.new)||0;
+ if(count>0)navigator.setAppBadge(Math.min(99,count)).catch(function(){});
+ else if('clearAppBadge'in navigator)navigator.clearAppBadge().catch(function(){});
+}
+function init(){
+ brandAndSections();createRadar();decorateHome();improveGuide();
+ document.addEventListener('keydown',function(e){
+   if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
+     e.preventDefault();nav('results');var input=$('#tp-main-search');if(input)input.focus();
+   }
+ });
+ window.addEventListener('turinpipps:ready',function(){initialView();badges()},{once:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
