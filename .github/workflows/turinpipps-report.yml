@@ -7,13 +7,7 @@ on:
         type: boolean
         required: false
         default: false
-  push:
-    paths:
-      - 'turinpipps/email_report.py'
-      - '.github/workflows/turinpipps-report.yml'
-  schedule:
-    # Ora legale e solare: il codice controlla le 19:00 Europe/Rome.
-    - cron: '5 17,18 * * *'
+# Invio automatico gestito da Google Apps Script; rimane solo l'avvio manuale di emergenza.
 permissions:
   contents: write
 concurrency:
