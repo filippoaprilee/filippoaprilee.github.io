@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T12:31:47.432Z",
+  "updated_at": "2026-11-13T17:38:52.383Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -210,7 +210,11 @@
       "seen": "2026-07-18",
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-07-18",
-      "property_type": "Bilocale · transitorio · prezzo incerto"
+      "property_type": "Bilocale · transitorio · prezzo incerto",
+      "availability_checked_at": "2026-11-13T17:38:52.383Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T17:38:52.383Z"
     },
     {
       "url": "https://www.immobiliare.it/annunci/133448718/",
@@ -361,8 +365,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T17:38:52.383Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T17:38:52.383Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T17:38:52.383Z"
     },
     {
       "url": "https://www.clickcase.it/camera-spaziosa-con-cucina-e-salotto-in-comune-e-servizi-torino-423888.html",
@@ -376,8 +384,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T17:38:52.383Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T17:38:52.383Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T17:38:52.383Z"
     },
     {
       "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
@@ -391,8 +403,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T17:38:52.383Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T17:38:52.383Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T17:38:52.383Z"
     },
     {
       "url": "https://www.clickcase.it/quadrilocale-transitorio-torino-423592.html",
@@ -406,8 +422,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T17:38:52.383Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T17:38:52.383Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T17:38:52.383Z"
     },
     {
       "url": "https://www.clickcase.it/mini-loft-bilocale-su-due-livelli-con-ascensore-torino-423014.html",
@@ -421,7 +441,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "origin": "automatic_alert"
     },
     {
@@ -436,7 +456,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "origin": "automatic_alert"
     },
     {
@@ -451,7 +471,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "origin": "automatic_alert"
     },
     {
@@ -466,7 +486,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "origin": "automatic_alert"
     },
     {
@@ -481,7 +501,22 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T12:31:47.432Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
+      "title": "Appartamento Torino [Cod. rif 3394397VRG] - Subito",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Crocetta",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T17:38:52.383Z",
       "origin": "automatic_alert"
     }
   ]
