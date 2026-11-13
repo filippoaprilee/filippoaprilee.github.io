@@ -107,3 +107,7 @@ body{background:#f5f7fa;color:var(--tp-ink)}
  .tp-radar-v3{margin-top:0}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.tp-radar-links a{transition:none}}
+
+.tp-radar-manual{display:flex;justify-content:flex-end;padding-top:12px;margin-top:11px;border-top:1px solid #e8eef1}
+.tp-radar-manual #add{font-size:12px;color:#225b70;background:#eef7f6;border-color:#d2e7e4}
+.tp-radar-manual #add:hover{background:#dcf0ec;border-color:#a6d5cd}
