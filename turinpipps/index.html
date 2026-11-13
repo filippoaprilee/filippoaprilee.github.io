@@ -314,7 +314,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </dialog>
 <script>
 (function(){'use strict';
-var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='good',tab='results';
+var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='good',tab='home';
 var guestPrefs=JSON.parse(JSON.stringify(prefs)),accountMode=false,memoListings=null,reportState=null,page=1,pageSize=20;
 var zones=['crocetta','cenisia','san paolo','borgo san paolo','cit turin','santa rita','pozzo strada'];
 var links=[
@@ -440,33 +440,103 @@ function priceTrendSVG(history){
  '<polyline points="'+pts+'" fill="none" stroke="'+trend+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 }
 function card(a){
- var f=flag(a.url),v=a.private_status!=='unverified',p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Da verificare';
- var age=listingAgeDays(a),dupes=duplicateOf(a),change=priceChange(a),km=geoKm(a);
- var meta='';
- if(age!==null&&age>60)meta+='<span class="tp-microtag warn"><i class="fa-solid fa-clock" aria-hidden="true"></i> Datato: '+age+' giorni · verifica disponibilità</span>';
- if(dupes.length)meta+='<span class="tp-microtag warn"><i class="fa-solid fa-copy" aria-hidden="true"></i> Possibile duplicato ('+dupes.length+')</span>';
- if(change)meta+='<span class="tp-microtag '+(change.delta<0?'good':'alert')+'"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> '+(change.delta<0?'Calo ':'Aumento ')+esc(Math.abs(change.delta))+' €/mese</span>';
- if(a.walking_km>0)meta+='<span class="tp-microtag good"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> '+esc(a.walking_km.toFixed(1).replace('.',','))+' km a piedi · ~'+esc(a.walking_minutes)+' min (Maps)</span>';
- else if(km!==null)meta+='<span class="tp-microtag"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> '+km.toFixed(1).replace('.',',')+' km in linea d’aria dal PoliTO</span>';
- else meta+='<span class="tp-microtag">Distanza esatta da verificare</span>';
- var cost=recurringCost(a),rank=intelligentScore(a),cautions=cautionSignals(a);
- if(cautions.length)meta+='<span class="tp-microtag warn"><i class="fa-solid fa-shield-halved"></i> '+esc(cautions.length)+' controlli consigliati</span>';
- if(a.availability_state==='potenzialmente_non_disponibile')meta+='<span class="tp-microtag warn"><i class="fa-solid fa-circle-exclamation"></i> Possibilmente non disponibile · 2 controlli negativi</span>';
- if(a.availability_state==='online_alla_verifica')meta+='<span class="tp-microtag good"><i class="fa-solid fa-link"></i> Link verificato online</span>';
- var costHTML=a.price?'<div class="tp-costbar"><div><span>Canone</span><b>'+esc(a.price)+' €</b></div>'+
- '<div><span>Spese note</span><b>'+(cost.known?esc(cost.known)+' €':cost.included?'Condominio incluso':'Da verificare')+'</b></div>'+
- '<div><span>Totale mensile noto</span><b>'+esc(cost.total)+' €'+(cost.unknown?' + altre spese':'')+'</b></div></div>':'';
- var scoreHTML='<div class="tp-scorebar"><span>TurinPipps Score 2.0 · '+esc(rank.total)+'/100</span><div class="tp-score-track"><i style="width:'+esc(rank.total)+'%"></i></div><details><summary>Come si calcola</summary><p>'+rank.components.map(function(v){return esc(v[0])+': '+v[1]+'/'+v[2]}).join(' · ')+'</p></details></div>';
- var riskHTML=cautions.length?'<details class="tp-history"><summary><i class="fa-solid fa-shield-halved"></i> Verifiche di sicurezza consigliate</summary><ul>'+cautions.map(function(r){return '<li>'+esc(r)+'</li>'}).join('')+'</ul></details>':'';
- var visitHTML=f.visitStatus&&f.visitStatus!=='non_programmata'?'<div class="tp-note"><i class="fa-solid fa-calendar-check"></i> Visita '+esc(f.visitStatus)+(visitText(f)?' · '+esc(visitText(f)):'')+'</div>':'';
- var history=a.price_history.filter(function(v){return v&&Number(v.price)>0});
- var historyHTML=history.length?'<details class="tp-history"><summary><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Storico prezzi ('+history.length+' rilevazioni)</summary>'+priceTrendSVG(history)+'<ul>'+history.slice(-12).map(function(h){return '<li>'+esc(dateLabel(h.observed_at))+' · '+esc(Number(h.price).toLocaleString('it-IT'))+' € · '+esc(h.source||'monitoraggio')+'</li>'}).join('')+'</ul></details>':'';
- var duplicateHTML=dupes.length?'<details class="tp-history"><summary><i class="fa-regular fa-copy" aria-hidden="true"></i> Confronta '+dupes.length+' possibili doppioni</summary><ul>'+dupes.slice(0,5).map(function(url){var m=all().find(function(x){return x.url===url});return '<li><a href="'+esc(url)+'" rel="noopener noreferrer" target="_blank">'+esc((m&&m.title)||'Apri annuncio simile')+'</a> · '+esc(m&&m.price?m.price+' €':'Prezzo da verificare')+'</li>'}).join('')+'</ul></details>':'';
- var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking"><i class="fa-solid fa-person-walking" aria-hidden="true"></i> Verifica percorso a piedi</a>':'';
- return '<article class="listing"><div class="listing-banner"><div class="tile"><i class="fa-solid fa-house" aria-hidden="true"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div><div class="body"><div class="micro">'+esc(a.source)+' <span class="muted">· '+esc(a.zone||'Zona da verificare')+'</span></div><h3>'+esc(a.title)+'</h3><div class="tags"><span class="tag '+(v?'green':'orange')+'">'+(v?'Privato dichiarato · verifica':'Inserzionista da verificare')+'</span><span class="tag">'+(a.sqm?esc(a.sqm)+' m²':'Metratura da verificare')+'</span><span class="tag">'+(a.expenses?esc(a.expenses):'Spese da verificare')+'</span></div><div class="tp-listing-meta">'+meta+'</div><p class="desc">'+esc(a.description||'Apri l’annuncio originale per leggere descrizione, spese e condizioni.')+'</p>'+costHTML+scoreHTML+riskHTML+visitHTML+route+historyHTML+duplicateHTML+(f.notes?'<div class="tp-note"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> '+esc(f.notes)+'</div>':'')+'</div><div class="actions"><a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a><button class="button" data-action="copy" data-url="'+esc(a.url)+'"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copia messaggio</button><button class="button" data-action="save" data-url="'+esc(a.url)+'">'+(f.saved?'<i class="fa-solid fa-heart" aria-hidden="true"></i> Salvato':'<i class="fa-regular fa-heart" aria-hidden="true"></i> Salva')+'</button><button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'<i class="fa-solid fa-check" aria-hidden="true"></i> Contattato':'<i class="fa-solid fa-phone" aria-hidden="true"></i> Da contattare')+'</button><button class="button" data-action="note" data-url="'+esc(a.url)+'"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i> Note</button><button class="button" data-action="compare" data-url="'+esc(a.url)+'"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> '+(f.compare?'In confronto':'Confronta')+'</button><button class="button" data-action="visit" data-url="'+esc(a.url)+'"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i> Visita</button><button class="button" data-action="discard" data-url="'+esc(a.url)+'"><i class="fa-solid fa-ban" aria-hidden="true"></i> '+(f.discard?'Ripristina':'Scarta')+'</button></div></article>'
+ var f=flag(a.url),cost=recurringCost(a),rank=intelligentScore(a),checks=cautionSignals(a);
+ var privateLabel=a.private_status==='confirmed'?'Privato verificato':a.private_status==='source'?'Fonte privata · da confermare':'Inserzionista da verificare';
+ var p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Canone n.d.';
+ var history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
+ var dupes=duplicateOf(a);
+ var historyHTML=history.length>1?'<details class="tp-history"><summary>Andamento prezzo ('+history.length+')</summary>'+priceTrendSVG(history)+'<ul>'+history.slice(-12).map(function(h){return '<li>'+esc(dateLabel(h.observed_at))+' · '+esc(h.price)+' €</li>'}).join('')+'</ul></details>':'';
+ var riskHTML=checks.length?'<details class="tp-history"><summary><i class="fa-solid fa-shield-halved"></i> '+checks.length+' verifiche utili</summary><ul>'+checks.map(function(v){return '<li>'+esc(v)+'</li>'}).join('')+'</ul></details>':'';
+ var dupHTML=dupes.length?'<details class="tp-history"><summary>Possibili duplicati ('+dupes.length+')</summary><ul>'+dupes.slice(0,5).map(function(url){return '<li><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Apri annuncio simile</a></li>'}).join('')+'</ul></details>':'';
+ var total=a.price?esc(cost.total)+' €/mese'+(cost.unknown?' + spese non note':''):'Costo totale da verificare';
+ var walk=a.walking_minutes?esc(a.walking_minutes)+' min a piedi dal PoliTO':geoKm(a)!==null?geoKm(a).toFixed(1).replace('.',',')+' km in linea d’aria':'Distanza da verificare';
+ var changed=priceChange(a);
+ var warning=a.availability_state==='potenzialmente_non_disponibile'?'<span class="tp-microtag warn"><i class="fa-solid fa-circle-exclamation"></i> Verifica disponibilità</span>':'';
+ var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking"><i class="fa-solid fa-person-walking"></i> Percorso a piedi</a>':'';
+ return '<article class="listing">'+
+ '<div class="listing-banner"><div class="tile"><i class="fa-solid fa-house"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div>'+
+ '<div class="body"><div class="micro">'+esc(a.source)+' · '+esc(a.zone||'Zona non indicata')+'</div>'+
+ '<h3>'+esc(a.title)+'</h3>'+
+ '<div class="tags"><span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
+ (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
+ '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
+ '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
+ '<span><i class="fa-solid fa-person-walking"></i> '+walk+'</span></div>'+
+ (changed?'<div class="tp-listing-meta"><span class="tp-microtag '+(changed.delta<0?'good':'alert')+'"><i class="fa-solid fa-arrow-trend-'+(changed.delta<0?'down':'up')+'"></i> '+(changed.delta<0?'Ribasso':'Aumento')+' '+Math.abs(changed.delta)+' €</span></div>':'')+
+ warning+(f.visitStatus&&f.visitStatus!=='non_programmata'?'<div class="tp-note" style="margin-top:10px">Visita '+esc(f.visitStatus)+' · '+esc(visitText(f))+'</div>':'')+
+ '<details class="tp-card-details"><summary>Dettagli, spese e verifiche <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded">'+
+ '<p class="desc" style="display:block;max-height:none">'+esc(a.description||'Apri la scheda per verificare i dettagli.')+'</p>'+
+ '<div class="tp-costbar"><div><span>Canone</span><b>'+esc(a.price||'n.d.')+' €</b></div><div><span>Spese note</span><b>'+esc(cost.known)+' €</b></div><div><span>Totale noto</span><b>'+total+'</b></div></div>'+
+ '<div class="tp-scorebar"><b>Score '+rank.total+'/100</b><div class="tp-score-track"><i style="width:'+rank.total+'%"></i></div><p>'+rank.components.map(function(q){return esc(q[0])+': '+q[1]+'/'+q[2]}).join(' · ')+'</p></div>'+
+ route+historyHTML+riskHTML+dupHTML+
+ (f.notes?'<div class="tp-note"><i class="fa-regular fa-note-sticky"></i> '+esc(f.notes)+'</div>':'')+
+ '</div></details></div>'+
+ '<div class="actions">'+
+ '<a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Annuncio</a>'+
+ '<button class="button" data-action="save" data-url="'+esc(a.url)+'"><i class="'+(f.saved?'fa-solid':'fa-regular')+' fa-heart"></i> '+(f.saved?'Salvato':'Salva')+'</button>'+
+ '<button class="button" data-action="compare" data-url="'+esc(a.url)+'"><i class="fa-solid fa-scale-balanced"></i> '+(f.compare?'Selezionato':'Confronta')+'</button>'+
+ '<details class="tp-card-menu"><summary><i class="fa-solid fa-ellipsis"></i> Altre azioni</summary><div class="tp-card-menu-items">'+
+ '<button class="button" data-action="visit" data-url="'+esc(a.url)+'"><i class="fa-regular fa-calendar-check"></i> Visita</button>'+
+ '<button class="button" data-action="contact" data-url="'+esc(a.url)+'"><i class="fa-solid fa-phone"></i> '+(f.contact?'Contattato':'Da contattare')+'</button>'+
+ '<button class="button" data-action="note" data-url="'+esc(a.url)+'"><i class="fa-regular fa-note-sticky"></i> Note</button>'+
+ '<button class="button" data-action="copy" data-url="'+esc(a.url)+'"><i class="fa-regular fa-copy"></i> Copia testo</button>'+
+ '<button class="button" data-action="discard" data-url="'+esc(a.url)+'"><i class="fa-solid fa-ban"></i> '+(f.discard?'Ripristina':'Scarta')+'</button>'+
+ '</div></details></div></article>';
 }
 function showEmpty(msg){return '<div class="empty"><div style="font-size:38px"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>Nessun annuncio in questa sezione</b><p>'+esc(msg)+'</p><button class="button primary" data-nav="sources"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Apri le ricerche sui portali</button></div>'}
-function renderResults(){var arr=all(),q=el('query').value.trim().toLowerCase(),z=el('zone').value.toLowerCase(),sort=el('sort').value,source=el('source-filter').value.toLowerCase(),days=Number(el('age-filter').value||0),walking=el('distance-filter').value,stale=el('stale-filter').value;arr=arr.filter(function(a){if(flag(a.url).discard||!matchPersonalCriteria(a))return false;if(mode!=='all'&&classify(a)!==mode)return false;if(q&&!((a.title+' '+a.description+' '+a.zone+' '+a.source).toLowerCase().includes(q)))return false;if(z&&!a.zone.toLowerCase().includes(z))return false;if(source&&!a.source.toLowerCase().includes(source))return false;if(walking==='unknown'&&a.walking_minutes>0)return false;if(walking&&walking!=='unknown'&&(!a.walking_minutes||a.walking_minutes>Number(walking)))return false;if(stale==='aged'&&(listingAgeDays(a)===null||listingAgeDays(a)<=60))return false;if(stale==='recent'&&(listingAgeDays(a)===null||listingAgeDays(a)>30))return false;if(days){if(!a.source_updated)return false;var d=new Date(a.source_updated);if(!Number.isFinite(d.getTime())||Date.now()-d.getTime()>days*86400000)return false}return true});arr.sort(function(a,b){if(sort==='price')return (a.price||999999)-(b.price||999999);if(sort==='score')return score(b)-score(a);return String(b.seen).localeCompare(String(a.seen))});el('list').innerHTML=arr.slice(0,page*pageSize).map(card).join('')||showEmpty('Nessun risultato soddisfa tutti i criteri. Puoi consultare gli annunci da verificare oppure aprire le ricerche ufficiali.');el('tp-page-more').hidden=arr.length<=page*pageSize;stats();intelStats()}
+function renderHome(){
+ var list=all().filter(function(x){return !flag(x.url).discard&&classify(x)==='good'})
+   .sort(function(a,b){return score(b)-score(a)});
+ el('tp-home-list').innerHTML=list.slice(0,2).map(card).join('')||
+ '<div class="tp-empty-big"><i class="fa-solid fa-magnifying-glass"></i><h3>Ancora nessuna corrispondenza completa</h3><p>Ci sono annunci da valutare, ma i dati del privato, del prezzo o della zona devono essere verificati.</p><button class="button primary" data-nav="results">Esplora tutti</button></div>';
+ var d=diagnostics.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
+ var last=Date.parse(lastUpdate||''),hours=Number.isFinite(last)?(Date.now()-last)/3600000:Infinity;
+ var light=el('tp-state-light'),title=el('tp-scan-title'),caption=el('tp-scan-caption');
+ var fresh=!!d&&d.status==='ok'&&hours<=12;
+ light.className='tp-status-light '+(fresh?'good':hours<=24?'warning':'');
+ title.textContent=fresh?'Ultimo controllo riuscito':Number.isFinite(last)?'Ultimo controllo da rivedere':'Nessun controllo recente';
+ caption.textContent=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Data non disponibile';
+ el('tp-scan-explain').textContent='I dati cambiano quando viene completata una nuova scansione. Un controllo riuscito non certifica da solo che i prossimi avvii siano programmati.';
+ var m=(d&&d.message||'').match(/link\s+(\d+)/i);
+ var rss=(d&&d.message||'').match(/RSS:\s*(\d+)\s*feed/i);
+ el('tp-home-scan-new').textContent=d&&Number.isFinite(Number(d.new))?d.new:'—';
+ el('tp-home-feeds').textContent=rss?rss[1]:'—';
+ el('tp-home-last-report').textContent=reportState&&reportState.last_sent_at?
+ new Date(reportState.last_sent_at).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}):'—';
+ el('tp-home-compares').textContent=all().filter(function(x){return flag(x.url).compare}).length;
+ el('tp-home-visits').textContent=all().filter(function(x){return flag(x.url).visitStatus&&flag(x.url).visitStatus!=='non_programmata'}).length;
+}
+function updateCompareUI(){
+ var n=all().filter(function(x){return !!flag(x.url).compare}).length;
+ var bar=el('tp-compare-floating'),label=el('tp-compare-floating-label');
+ if(bar){bar.hidden=n===0;label.textContent=n+' '+(n===1?'immobile selezionato':'immobili selezionati');}
+ if(el('tp-nav-compare-count'))el('tp-nav-compare-count').textContent=n?'('+n+')':'';
+}
+function renderResults(){
+ var arr=all(),q=el('query').value.trim().toLowerCase(),z=el('zone').value.toLowerCase(),
+ sort=el('sort').value,source=el('source-filter').value.toLowerCase(),
+ days=Number(el('age-filter').value||0),walking=el('distance-filter').value,stale=el('stale-filter').value;
+ arr=arr.filter(function(a){
+  if(flag(a.url).discard||!matchPersonalCriteria(a))return false;
+  if(mode!=='all'&&classify(a)!==mode)return false;
+  if(q&&!((a.title+' '+a.description+' '+a.zone+' '+a.source).toLowerCase().includes(q)))return false;
+  if(z&&!a.zone.toLowerCase().includes(z))return false;
+  if(source&&!a.source.toLowerCase().includes(source))return false;
+  if(walking==='unknown'&&a.walking_minutes>0)return false;
+  if(walking&&walking!=='unknown'&&(!a.walking_minutes||a.walking_minutes>Number(walking)))return false;
+  if(stale==='aged'&&(listingAgeDays(a)===null||listingAgeDays(a)<=60))return false;
+  if(stale==='recent'&&(listingAgeDays(a)===null||listingAgeDays(a)>30))return false;
+  if(days){if(!a.source_updated)return false;var d=new Date(a.source_updated);if(!Number.isFinite(d.getTime())||Date.now()-d.getTime()>days*86400000)return false}
+  return true;
+ });
+ arr.sort(function(a,b){if(sort==='price')return (a.price||999999)-(b.price||999999);if(sort==='score')return score(b)-score(a);return String(b.seen).localeCompare(String(a.seen))});
+ el('list').innerHTML=arr.slice(0,page*pageSize).map(card).join('')||
+ showEmpty('Nessun immobile soddisfa i filtri selezionati. Allarga la zona oppure consulta gli annunci da verificare.');
+ el('tp-page-more').hidden=arr.length<=page*pageSize;
+ if(el('tp-search-result-count'))el('tp-search-result-count').textContent=arr.length+' immobili';
+ stats();intelStats();updateCompareUI();
+ if(tab==='home')renderHome();
+}
 function renderComparison(){
  var node=el('tp-compare-content');if(!node)return;
  var chosen=all().filter(function(a){return !!flag(a.url).compare}).slice(0,4);
@@ -516,14 +586,62 @@ function savePersonalSettings(){
 }
 function renderSaved(){var a=all().filter(function(x){return flag(x.url).saved});el('saved-list').innerHTML=a.map(card).join('')||showEmpty('Salva un annuncio per ritrovarlo qui, anche dopo aver chiuso la pagina.');stats();renderComparison();renderVisits()}
 function renderReport(){
- var container=el('tp-report-status');if(!container)return;
- if(!reportState||!reportState.last_sent_at){container.innerHTML='<p class="note"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Nessun report automatico risulta confermato. Attiva Google Apps Script oppure sblocca GitHub Actions.</p>';return;}
- var d=new Date(reportState.last_sent_at),date=Number.isFinite(d.getTime())?d.toLocaleString('it-IT'):'Data non disponibile';
- container.innerHTML='<div class="source-head"><b><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ultimo report inviato</b><span class="tag green">'+esc(date)+'</span></div><p class="note">Destinatari: '+esc(reportState.recipient_count||0)+' · Annunci nel report: '+esc(reportState.matching||0)+' · Nuovi: '+esc(reportState.new||0)+'. Gli indirizzi email non sono pubblici.</p>';
+ var box=el('tp-report-status');if(!box)return;
+ if(!reportState||!reportState.last_sent_at){
+   box.innerHTML='<div class="tp-scan-state"><span class="tp-status-light warning"></span><div><strong>Nessun invio confermato</strong><small>Potrai inviare un riepilogo quando vuoi.</small></div></div>';
+   return;
+ }
+ var last=new Date(reportState.last_sent_at);
+ box.innerHTML='<div class="tp-scan-state"><span class="tp-status-light good"></span><div><strong>Ultimo report inviato</strong><small>'+esc(last.toLocaleString('it-IT'))+'</small></div></div>'+
+ '<div class="tp-activity-strip"><div><b>'+esc(reportState.recipient_count||0)+'</b><span>Destinatari</span></div><div><b>'+esc(reportState.matching||0)+'</b><span>Compatibili</span></div><div><b>'+esc(reportState.new||0)+'</b><span>Nuovi</span></div></div>';
 }
-function renderSources(){el('sources').innerHTML=links.map(function(s){return '<article class="source-card"><div class="source-head"><h3>'+esc(s.name)+'</h3><span class="tag">'+esc(s.type)+'</span></div><p>'+esc(s.desc)+'</p><div class="source-actions"><a class="button primary" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri ricerca</a></div></article>'}).join('');
-el('diagnostics').innerHTML=diagnostics.length?diagnostics.map(function(d){return '<div class="diag"><div><b>'+esc(d.name||d.source||'Fonte')+'</b><br><span>'+esc(d.message||'')+'</span></div><div style="text-align:right"><b class="'+(d.status==='ok'?'ok':'bad')+'">'+esc(d.status||'sconosciuto')+'</b><br><span>'+esc(d.links_found||0)+' letti · '+esc(d.new||0)+' nuovi</span></div></div>'}).join(''):'<p class="note">Non sono ancora presenti report di scansione. I collegamenti alle ricerche manuali funzionano indipendentemente dall’automazione.</p>'}
-function nav(next){tab=next;['results','sources','saved','settings'].forEach(function(x){el('view-'+x).classList.toggle('hidden',x!==next)});document.querySelectorAll('[data-nav]').forEach(function(x){x.classList.toggle('active',x.dataset.nav===next)});if(next==='sources')renderSources();if(next==='saved')renderSaved();if(next==='settings')fillPersonalSettings()}
+function renderSources(){
+ var d=diagnostics.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
+ var last=Date.parse(lastUpdate||''),recent=Number.isFinite(last)&&(Date.now()-last)<12*3600000;
+ var caption=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Mai verificato';
+ var msg=d&&d.message||'';
+ var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed\s*\(errori\s*(\d+)\),\s*link\s*(\d+)/i);
+ var click=msg.match(/(\d+)\s+schede ClickCase/i);
+ var count=d&&Number.isFinite(Number(d.new))?d.new:0;
+ el('tp-activity-summary').innerHTML='<div class="tp-scan-state"><span class="tp-status-light '+(recent&&d&&d.status==='ok'?'good':'warning')+'"></span><div><strong>'+
+ (recent&&d&&d.status==='ok'?'Rilevazione recente riuscita':'Ultimo aggiornamento da controllare')+
+ '</strong><small>'+esc(caption)+'</small></div></div>'+
+ '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(rss?esc(rss[0].match(/link\s*(\d+)/i)[1])+' link dalle ricerche monitorate. ':'')+
+ 'Gli annunci vengono aggiornati solo dopo una nuova esecuzione effettiva.</p>'+
+ '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(rss?rss[1]:0)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
+ var rows=[
+  {icon:'fa-solid fa-rotate',title:'Controllo immobili',text:'Ultimo aggiornamento '+caption},
+  {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:rss?rss[1]+' ricerche, '+rss[3]+' link trovati, '+rss[2]+' errori':'Nessun dato disponibile'},
+  {icon:'fa-solid fa-house',title:'Annunci elaborati',text:(click?click[1]:'0')+' schede ClickCase esaminate · '+count+' nuove'},
+  {icon:'fa-regular fa-envelope',title:'Riepilogo email',text:reportState&&reportState.last_sent_at?'Ultimo invio '+new Date(reportState.last_sent_at).toLocaleString('it-IT'):'Nessun invio confermato'}
+ ];
+ el('tp-activity-timeline').innerHTML=rows.map(function(x){
+  return '<div class="tp-activity-timeline-item"><i class="'+x.icon+'"></i><div><strong>'+esc(x.title)+'</strong><small>'+esc(x.text)+'</small></div></div>';
+ }).join('');
+ el('sources').innerHTML=links.filter(function(x){return x.name!=='Facebook'}).map(function(x){
+  return '<div class="tp-source-provider"><div class="tp-provider-name"><i class="fa-solid fa-house"></i><div><strong>'+esc(x.name)+'</strong><span>Annunci da controllare alla fonte</span></div></div><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Visita <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>';
+ }).join('');
+}
+function nav(next){
+ if(!['home','results','compare','saved','visits','sources','settings','more'].includes(next))next='home';
+ tab=next;
+ ['home','results','compare','saved','visits','sources','settings','more'].forEach(function(x){
+   var node=el('view-'+x);if(node)node.classList.toggle('hidden',x!==next);
+ });
+ document.querySelectorAll('[data-nav]').forEach(function(x){
+   var active=x.dataset.nav===next||(x.dataset.nav==='more'&&['visits','sources','settings'].includes(next));
+   x.classList.toggle('active',active);
+   if(x.tagName==='BUTTON')x.setAttribute('aria-current',active?'page':'false');
+ });
+ el('tp-compare-floating').hidden=next==='compare'||all().filter(function(x){return !!flag(x.url).compare}).length===0;
+ if(next==='sources'){renderSources();renderReport()}
+ if(next==='home')renderHome();
+ if(next==='saved')renderSaved();
+ if(next==='visits')renderVisits();
+ if(next==='compare')renderComparison();
+ if(next==='settings')fillPersonalSettings();
+ if(window.matchMedia('(max-width:700px)').matches)window.scrollTo({top:0,behavior:'instant'});
+}
 function download(data,name){var a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}
 function message(a){return 'Buongiorno, mi chiamo '+(prefs.fullname||'[nome]')+'. Ho visto il suo annuncio "'+a.title+'" per un immobile in affitto a Torino'+(a.zone?' (zona '+a.zone+')':'')+'. Vorrei sapere se è ancora disponibile, se tratta direttamente con il proprietario e a quanto ammontano le spese condominiali e le utenze oltre al canone. Sarebbe possibile organizzare una visita?'+(prefs.intro?'\n\n'+prefs.intro:'')+'\n\nGrazie e buona giornata.'}
 async function copy(text){try{await navigator.clipboard.writeText(text);alert('Messaggio copiato. Incollalo nel portale e invialo tu.')}catch(_){prompt('Copia il messaggio:',text)}}
