@@ -232,6 +232,47 @@ async function readGoogleAlerts(feedURLs:string[],time:string){
   return reports;
 }
 
+
+async function collectOtherPublicPages(time:string){
+ const sites=[
+  {engine:"Bakeca privati",origin:"https://torino.bakeca.it",path:"/annunci/offro-casa/inserzionistacase/privato/",expected:"Bakeca"},
+  {engine:"Immobiliare privati",origin:"https://www.immobiliare.it",path:"/affitto-case/torino/da-privati/",expected:"Immobiliare.it"}
+ ];
+ const outputs:any[]=[];
+ for(const site of sites){
+  try{
+   const robots=await robotsPermits(site.origin,site.path);
+   if(!robots.allowed){outputs.push({engine:site.engine,ok:false,count:0,items:0,status:robots.reason,rows:[]});continue}
+   const response=await fetch(site.origin+site.path,{signal:AbortSignal.timeout(9000),
+    headers:{"User-Agent":"TurinPipps/3.1 (public listing collector, respects robots.txt)"}});
+   if(!response.ok){outputs.push({engine:site.engine,ok:false,count:0,items:0,status:"HTTP "+response.status,rows:[]});continue}
+   const html=(await response.text()).slice(0,1800000);
+   if(!/<html/i.test(html)){outputs.push({engine:site.engine,ok:false,count:0,items:0,status:"HTML assente",rows:[]});continue}
+   const regex=/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+   const rows=new Map<string,any>();let m:RegExpExecArray|null,attempts=0;
+   while((m=regex.exec(html))!==null&&attempts<650){
+     attempts++;
+     let absolute:string;try{absolute=new URL(m[1],site.origin).toString()}catch(_){continue}
+     const data=canonical(absolute);
+     if(!data||data.source!==site.expected||rows.has(data.url))continue;
+     const title=unescapeXml(m[2]).slice(0,200);
+     if(!title||title.length<8||/^(?:info|mappa|foto|dettagli|annuncio|apri)$/i.test(title))continue;
+     const near=unescapeXml(html.slice(Math.max(0,m.index-220),Math.min(html.length,m.index+430)));
+     const zone=zoneOf(title+" "+near);if(!zone)continue;
+     if(/\b(?:stanza|camera singola|posto letto)\b/i.test(title))continue;
+     rows.set(data.url,{
+       listing_url:data.url,title,description:"Annuncio trovato nella sezione pubblica dei privati. Condizioni e disponibilità da verificare.",
+       source:site.engine,origin_engine:"pagina_pubblica",zone,price:0,
+       private_status:"unverified",last_seen:time
+     });
+     if(rows.size>=60)break;
+   }
+   outputs.push({engine:site.engine,ok:true,count:rows.size,items:attempts,status:"pagina consultata",rows:[...rows.values()]});
+  }catch(e){outputs.push({engine:site.engine,ok:false,count:0,items:0,status:String(e).slice(0,75),rows:[]})}
+ }
+ return outputs;
+}
+
 async function scan(time:string,feeds:string[]){
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
@@ -239,6 +280,7 @@ async function scan(time:string,feeds:string[]){
     outputs.push(...await Promise.all(QUERY_SET.slice(i,i+3).map(([e,q])=>scanOne(e,q,time))));
   }
   outputs.push(await collectClickCase(time));
+  outputs.push(...await collectOtherPublicPages(time));
   outputs.push(...await readGoogleAlerts(feeds,time));
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
