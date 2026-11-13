@@ -35,6 +35,9 @@ function createRadar(){
  '<a data-tp-engine="facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i> Gruppi Facebook pubblici <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
  '</div><div class="tp-radar-foot"><span id="tp-radar-query-preview"></span><span>Queste ricerche aprono risultati esterni: la disponibilità non è garantita.</span></div>';
  anchor.parentNode.insertBefore(panel,anchor);
+ var live=node('div','tp-radar-live-status','Controllo gli annunci aggiuntivi…');
+ live.id='tp-radar-live-status';panel.appendChild(live);
+
  // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
  var add=$('#add');if(add){
    add.innerHTML='<i class="fa-solid fa-link"></i> Aggiungi annuncio';
@@ -152,6 +155,41 @@ function badges(){
  if(count>0)navigator.setAppBadge(Math.min(99,count)).catch(function(){});
  else if('clearAppBadge'in navigator)navigator.clearAppBadge().catch(function(){});
 }
+/* Lettura pubblica Supabase: nessuna chiave segreta né credenziale utente nel browser. */
+var liveLoading=false,lastLiveFetch=0;
+async function loadLiveListings(force){
+ if(liveLoading||!window.TurinPippsUXV3)return;
+ if(!force&&Date.now()-lastLiveFetch<120000)return;
+ var cfg=window.TURINPIPPS_SUPABASE||{};
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(cfg.url||'')||!cfg.publishableKey)return;
+ liveLoading=true;lastLiveFetch=Date.now();
+ var headers={'apikey':cfg.publishableKey,'Accept':'application/json'};
+ var root=cfg.url.replace(/\/$/,'')+'/rest/v1/';
+ var controller=new AbortController();
+ var timeout=setTimeout(function(){controller.abort()},8500);
+ try{
+   var [a,b]=await Promise.allSettled([
+     fetch(root+'turinpipps_discovered_listings?select=listing_url,title,description,source,origin_engine,zone,price,first_seen,last_seen&order=first_seen.desc&limit=600',{headers:headers,signal:controller.signal,cache:'no-store'})
+       .then(function(r){if(!r.ok)throw new Error('Annunci: HTTP '+r.status);return r.json()}),
+     fetch(root+'turinpipps_scan_runs?select=started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=1',{headers:headers,signal:controller.signal,cache:'no-store'})
+       .then(function(r){if(!r.ok)throw new Error('Scansioni: HTTP '+r.status);return r.json()})
+   ]);
+   if(a.status==='fulfilled'){
+     window.TurinPippsUXV3.addDiscovery(a.value,b.status==='fulfilled'?b.value[0]||null:null);
+     var live=$('#tp-radar-live-status');
+     if(live){
+       var run=b.status==='fulfilled'?b.value[0]:null,when=run&&new Date(run.finished_at||run.started_at);
+       live.className='tp-radar-live-status';
+       live.innerHTML='<i class="fa-solid fa-circle-check"></i> '+a.value.length+' annunci aggiuntivi nell’archivio live'+
+         (when&&isFinite(when.getTime())?' · controllo '+when.toLocaleString('it-IT'):'')+
+         ' <small>Risultati da verificare sulle fonti originali.</small>';
+     }
+   }
+ }catch(err){
+   var status=$('#tp-radar-live-status');
+   if(status)status.textContent='Aggiornamento live temporaneamente non disponibile. Puoi continuare a consultare gli annunci già salvati.';
+ }finally{clearTimeout(timeout);liveLoading=false;}
+}
 function init(){
  brandAndSections();createRadar();decorateHome();improveGuide();
  document.addEventListener('keydown',function(e){
@@ -159,7 +197,9 @@ function init(){
      e.preventDefault();window.TurinPippsUXV3.navigate('results');var input=$('#tp-main-search');if(input)input.focus();
    }
  });
- window.addEventListener('turinpipps:ready',function(){initialView();badges()},{once:true});
+ window.addEventListener('turinpipps:ready',function(){initialView();badges();loadLiveListings(true)},{once:true});
+ document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')loadLiveListings(false)});
+ setInterval(function(){if(document.visibilityState==='visible')loadLiveListings(false)},180000);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
