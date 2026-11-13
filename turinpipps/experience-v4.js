@@ -223,7 +223,7 @@ function mobileHome(){
  '<button type="button" data-nav="results"><i class="fa-solid fa-magnifying-glass"></i><span>Cerca casa</span></button>'+
  '<button type="button" data-nav="saved"><i class="fa-regular fa-heart"></i><span>Salvati</span></button></div>'+
  '<button type="button" class="tp-v4-mobile-scan" data-nav="sources"><span><i class="fa-solid fa-circle-notch"></i><b id="tp-v4-scan-text">Monitoraggio attivo</b></span><span>Dettagli <i class="fa-solid fa-chevron-right"></i></span></button>'+
- '<div class="tp-v4-mobile-title"><div><span>SELEZIONE DI OGGI</span><h2>Da tenere d’occhio</h2></div><button type="button" data-nav="results">Vedi tutti <i class="fa-solid fa-arrow-right"></i></button></div>'+
+ '<div class="tp-v4-mobile-title"><div><span>ANNUNCI DA VALUTARE</span><h2>Da tenere d’occhio</h2></div><button type="button" data-nav="results">Vedi tutti <i class="fa-solid fa-arrow-right"></i></button></div>'+
  '<div id="tp-v4-mobile-list"></div>'+
  '<div class="tp-v4-mobile-tips"><i class="fa-regular fa-lightbulb"></i><div><b>Una casa ti convince?</b><p>Salvala, confrontala con le altre e poi organizza una visita.</p></div></div>';
  var hero=$('.hero',home);hero.insertAdjacentElement('afterend',section);
@@ -239,7 +239,7 @@ function mobileHome(){
     if(Array.isArray(zonePrefs)&&zonePrefs.length&&r.zone&&
        !zonePrefs.some(function(v){return String(v).toLowerCase()===r.zone.toLowerCase()}))return false;
     return !!r.url;
-  }).sort(function(a,b){return (Date.parse(b.source_updated||b.seen||'')||0)-(Date.parse(a.source_updated||a.seen||'')||0)}).slice(0,3);
+  }).sort(function(a,b){return (Date.parse(b.source_updated||b.seen||'')||0)-(Date.parse(a.source_updated||a.seen||'')||0)}).slice(0,2);
   var list=$('#tp-v4-mobile-list');list.replaceChildren();
   if(!rows.length){var empty=document.createElement('div');empty.className='tp-v4-mobile-empty';empty.innerHTML='<i class="fa-solid fa-house-circle-xmark"></i><b>Ancora nessuna casa pronta</b><p>Apri il Radar per vedere anche gli annunci da confermare e avviare nuove ricerche.</p>';list.appendChild(empty)}
   rows.forEach(function(r){
