@@ -17,17 +17,17 @@
     },
     {
       "name": "Subito · annunci da privati",
-      "status": "avvisi da attivare",
+      "status": "RSS da monitorare",
       "links_found": 0,
       "new": 0,
-      "message": "Il portale offre avvisi ufficiali via email. La ricerca e la lettura IMAP sono predisposte; nessuna casella IMAP collegata al workflow."
+      "message": "Google Alerts configurabile in RSS senza creare un account Subito. Nessun annuncio nuovo Subito importato dagli RSS nell'ultima scansione; le schede pubbliche esistenti restano da verificare."
     },
     {
       "name": "Immobiliare.it · affitti privati",
-      "status": "avvisi da attivare",
+      "status": "RSS da monitorare",
       "links_found": 0,
       "new": 0,
-      "message": "Il portale supporta ricerche salvate e avvisi via email. Occorre attivarli sul portale e collegare IMAP. Nessuna acquisizione automatica confermata."
+      "message": "Google Alerts RSS può fornire collegamenti pubblicamente indicizzati. Ultima scansione: 0 link estratti da RSS. Nessuno scraping non autorizzato."
     },
     {
       "name": "Archivio annunci",
@@ -38,10 +38,10 @@
     },
     {
       "name": "Account personali",
-      "status": "backend da collegare",
+      "status": "ok",
       "links_found": 0,
       "new": 0,
-      "message": "Interfaccia e RLS pronte nel codice. Registrazione e sincronizzazione saranno disponibili solo collegando un progetto Supabase."
+      "message": "Supabase Auth operativo con un account email confermato; 3 tabelle RLS e colonne personali per visite, confronti e preferenze verificate il 13/11/2026. Restano da testare i flussi UI dopo il deploy."
     },
     {
       "name": "Google Apps Script · automatico",
@@ -50,5 +50,6 @@
       "new": 9,
       "message": "Google Alerts RSS: 10 feed (errori 0), link 0. Nessuna email di alert. Percorsi a piedi verificati: 5. 10 schede ClickCase; 8 dettagli letti. Nessun bypass dei portali."
     }
-  ]
+  ],
+  "verification_note": "La scansione del 13/11/2026 alle 12:12 ha importato 9 nuovi link ClickCase; i 10 feed RSS non hanno prodotto inserzioni. Dati e disponibilità da verificare sulle fonti."
 }
