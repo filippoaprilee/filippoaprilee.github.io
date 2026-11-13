@@ -882,15 +882,24 @@ el('tp-guide-next').addEventListener('click',function(){
  else {closeGuide();nav('results')}
 });
 window.addEventListener('turinpipps:ready',function(){setTimeout(maybeOpenGuide,650)});
-setInterval(function(){
+setInterval(async function(){
  if(document.visibilityState!=='visible'||tpReportPending)return;
- fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('HTTP');return r.json()}).then(function(j){
-  var next=Array.isArray(j)?j:(j.sources||[]),fresh=next.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
-  var old=diagnostics.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
-  if(fresh&&(!old||fresh.message!==old.message||fresh.new!==old.new)){
-   diagnostics=next;if(tab==='sources')renderSources();if(tab==='home')renderHome();
+ try{
+  var r=await fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)return;var next=await r.json();var newUpdate=next.updated_at||'';
+  var changed=!!newUpdate&&newUpdate!==lastUpdate;
+  if(changed){
+   remote=Array.isArray(next)?next:(next.listings||[]);lastUpdate=newUpdate;memoListings=null;
+   el('updated').textContent='Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT');
   }
- }).catch(function(){});
+  var d=await fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'});
+  if(d.ok)diagnostics=(await d.json()).sources||[];
+  var status=await fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'});
+  if(status.ok)reportState=await status.json();
+  renderReport();
+  if(changed){renderResults();renderSaved();if(tab==='home')renderHome();}
+  if(tab==='sources')renderSources();
+ }catch(_){}
 },300000);
 window.addEventListener('turinpipps:account-ready',function(){setTimeout(maybeOpenGuide,400)});
 
