@@ -109,12 +109,89 @@ async function scanOne(engine:string,query:string,time:string) {
     return {engine,ok:true,count:rows.length,items:itemCount,sample:xmlValue(sample,"link").slice(0,180),status:"ok",rows};
   } catch(e) {return {engine,ok:false,count:0,status:String(e).slice(0,65),rows:[]}}
 }
+
+/** Lettura delle pagine pubbliche ClickCase soltanto dove permesso da robots.txt. */
+async function robotsPermits(origin:string,path:string) {
+  let response:Response;
+  try {response=await fetch(origin+"/robots.txt",{signal:AbortSignal.timeout(6000)});}
+  catch(_) {return {allowed:false,reason:"robots non raggiungibile"};}
+  if(response.status===404)return {allowed:true,reason:"robots assente"};
+  if(!response.ok)return {allowed:false,reason:"robots HTTP "+response.status};
+  const robots=(await response.text()).slice(0,300000);
+  const groups:{agents:string[],rules:{type:string,pattern:string}[]}[]=[];
+  let agents:string[]=[],rules:{type:string,pattern:string}[]=[];
+  const flush=()=>{if(agents.length)groups.push({agents,rules});agents=[];rules=[]};
+  for(const raw of robots.split(/\r?\n/)){
+    const line=raw.split("#")[0].trim();
+    if(!line){flush();continue}
+    const idx=line.indexOf(":");if(idx<0)continue;
+    const key=line.slice(0,idx).trim().toLowerCase(),value=line.slice(idx+1).trim();
+    if(key==="user-agent"){
+      if(rules.length)flush();
+      agents.push(value.toLowerCase());
+    } else if(key==="disallow"||key==="allow") {
+      if(!agents.length)continue;
+      rules.push({type:key,pattern:value});
+    }
+  }
+  flush();
+  const specific=groups.filter(g=>g.agents.some(a=>a==="turinpipps"||a==="turinpipps/3.1"));
+  const applicable=specific.length?specific:groups.filter(g=>g.agents.includes("*"));
+  let best=-1,grant=true;
+  for(const g of applicable)for(const r of g.rules){
+    if(!r.pattern)continue;
+    const prefix=r.pattern.split("*")[0].replace(/\$/,"");
+    if(path.startsWith(prefix)&&prefix.length>=best){best=prefix.length;grant=r.type==="allow"}
+  }
+  return {allowed:grant,reason:grant?"consentito":"vietato da robots.txt"};
+}
+async function collectClickCase(time:string){
+  const origin="https://www.clickcase.it",pages=[
+    "/annunci/affitti-case-privati-torino.html",
+    "/annunci/affitti-appartamenti-privati-torino.html"
+  ];
+  const first=await robotsPermits(origin,pages[0]);
+  if(!first.allowed)return {engine:"ClickCase diretto",ok:false,count:0,items:0,status:first.reason,rows:[]};
+  const found=new Map<string,any>();let success=0;
+  for(const path of pages){
+    const allow=await robotsPermits(origin,path);if(!allow.allowed)continue;
+    try{
+      const response=await fetch(origin+path,{signal:AbortSignal.timeout(7000),
+        headers:{"User-Agent":"TurinPipps/3.1 (+public rental listings)"}});
+      if(!response.ok)continue;
+      const html=(await response.text()).slice(0,1200000);
+      if(!/<html/i.test(html))continue;
+      success++;
+      const re=/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+      let m:RegExpExecArray|null,seenHere=0;
+      while((m=re.exec(html))!==null&&seenHere<70){
+        let u:string;try{u=new URL(m[1],origin).toString()}catch(_){continue}
+        const link=canonical(u);if(!link||link.source!=="ClickCase"||found.has(link.url))continue;
+        const context=unescapeXml(html.slice(Math.max(0,m.index-250),Math.min(html.length,m.index+600)));
+        const area=zoneOf(context);
+        if(!area)continue;
+        const title=unescapeXml(m[2]).slice(0,210);
+        if(!title||title.length<7||/camera|posto letto|stanza/i.test(title))continue;
+        found.set(link.url,{
+          listing_url:link.url,title,description:"Annuncio da pagina pubblica ClickCase, da confermare con il proprietario.",
+          source:"ClickCase",origin_engine:"pagina_pubblica_clickcase",zone:area,
+          price:0,private_status:"source",last_seen:time
+        });
+        seenHere++;
+      }
+    }catch(e){console.warn("ClickCase read",String(e).slice(0,90))}
+  }
+  return {engine:"ClickCase diretto",ok:success>0,count:found.size,items:found.size,
+    status:success?success+" pagine lette":first.reason+"; pagina non leggibile",rows:[...found.values()]};
+}
+
 async function scan(time:string){
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
   for(let i=0;i<QUERY_SET.length;i+=3){
     outputs.push(...await Promise.all(QUERY_SET.slice(i,i+3).map(([e,q])=>scanOne(e,q,time))));
   }
+  outputs.push(await collectClickCase(time));
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
@@ -135,14 +212,14 @@ async function scan(time:string){
     }
   }
   const entry={started_at:time,finished_at:new Date().toISOString(),
-    status:ok===0?"failed":ok===QUERY_SET.length?"ok":"partial",
-    jobs_checked:QUERY_SET.length,jobs_ok:ok,discovered:saved,
+    status:ok===0?"failed":ok===outputs.length?"ok":"partial",
+    jobs_checked:outputs.length,jobs_ok:ok,discovered:saved,
     details:{engines:stats,duration_ms:Date.now()-started}};
   const stored=await fetch(DB_ROOT+"/turinpipps_scan_runs",{
     method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(entry)
   });
   if(!stored.ok)throw new Error("Scan status HTTP "+stored.status);
-  return {success:ok>0,discovered:saved,engines_ok:ok,total_engines:QUERY_SET.length,elapsed_ms:Date.now()-started};
+  return {success:ok>0,discovered:saved,engines_ok:ok,total_engines:outputs.length,elapsed_ms:Date.now()-started};
 }
 Deno.serve(async req=>{
   if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{
