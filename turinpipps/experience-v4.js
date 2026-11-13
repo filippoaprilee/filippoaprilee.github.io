@@ -99,7 +99,7 @@ function persistValues(){
  var range=$('#tp-ob-budget-range'),num=$('#tp-ob-budget-number');
  if(num&&Number(num.value)>0)draft.budget=clamp(num.value,150,5000);
  else if(range)draft.budget=clamp(range.value,150,5000);
- var selected=$$('input[name="tp-ob-zone"]:checked');if(selected.length)draft.zones=selected.map(function(x){return x.value});
+ var selected=$('input[name="tp-ob-zone"]:checked');if(active===2)draft.zones=selected.map(function(x){return x.value});
  var type=$('input[name="tp-ob-type"]:checked');if(type)draft.type=type.value;
  var sqm=$('#tp-ob-sqm');if(sqm)draft.sqm=clamp(sqm.value,0,400);
  var name=$('#tp-ob-name'),intro=$('#tp-ob-intro');
@@ -156,14 +156,14 @@ function bodyForStep(step){return body(step)}
 function savePrefs(){
  var api=window.TurinPippsUXV3;
  var bg=$('#budget'),sqm=$('#tp-min-sqm'),type=$('#tp-property-type'),walk=$('#tp-max-walk'),name=$('#fullname'),intro=$('#intro');
+ api.setZones(draft.zones);
+ api.setBudget(draft.budget);
  if(bg)bg.value=draft.budget;
  if(sqm)sqm.value=draft.sqm;
  if(type)type.value=draft.type;
  if(walk)walk.value=draft.walk||'';
  if(name)name.value=draft.name;
  if(intro)intro.value=draft.intro;
- api.setZones(draft.zones);
- api.setBudget(draft.budget);
  // Click through the real settings workflow: guest localStorage or authenticated Supabase.
  $('#save-settings').click();
  try{localStorage.setItem('turinpipps.search-style.v4',JSON.stringify({furnishing:draft.furnishing,priority:draft.topPriority}))}catch(_){}
@@ -255,7 +255,7 @@ function mobileHome(){
  refresh();
  window.addEventListener('turinpipps:ready',refresh);
  var source=$('#tp-home-list');
- if(source){var mo=new MutationObserver(refresh);mo.observe(source,{childList:true});}
+ if(source){var mo=new MutationObserver(function(){requestAnimationFrame(refresh)});mo.observe(source,{childList:true});}
  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refresh()});
 }
 function init(){
