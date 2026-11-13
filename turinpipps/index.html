@@ -657,7 +657,7 @@ function renderSources(){
  if(liveScan){
   var scanned=Number(liveScan.jobs_ok)||0,total=Number(liveScan.jobs_checked)||0;
   var now=Date.parse(liveScan.finished_at||liveScan.started_at);
-  var output='<div class="tp-activity-timeline-item"><i class="fa-solid fa-satellite-dish"></i><div><strong>Radar multi-motore · Supabase</strong><small>'+esc(scanned)+' fonti consultate su '+esc(total)+'. '+esc(externalRemote.length)+' schede indicizzate utili · ultimo controllo '+esc(Number.isFinite(now)?new Date(now).toLocaleString('it-IT'):'non disponibile')+'</small></div></div>';
+  var output='<div class="tp-activity-timeline-item"><i class="fa-solid fa-satellite-dish"></i><div><strong>Ricerca automatica</strong><small>'+esc(scanned)+' fonti consultate su '+esc(total)+'. '+esc(externalRemote.length)+' schede indicizzate utili · ultimo controllo '+esc(Number.isFinite(now)?new Date(now).toLocaleString('it-IT'):'non disponibile')+'</small></div></div>';
   el('tp-activity-timeline').insertAdjacentHTML('afterbegin',output);
  }
  el('sources').innerHTML=links.filter(function(x){return x.name!=='Facebook'}).map(function(x){
