@@ -185,13 +185,69 @@ async function collectClickCase(time:string){
     status:success?success+" pagine lette":first.reason+"; pagina non leggibile",rows:[...found.values()]};
 }
 
-async function scan(time:string){
+
+function unwrapGoogle(link:string){
+  let value=unescapeXml(link);
+  for(let n=0;n<3;n++){
+    try{
+      const u=new URL(value),host=u.hostname.toLowerCase();
+      if(!/(?:^|\.)google\.(?:com|it)$/.test(host))return value;
+      const next=u.searchParams.get("url")||u.searchParams.get("q")||u.searchParams.get("u");
+      if(!next||!next.startsWith("http"))return value;
+      value=next;
+    }catch(_){return value}
+  }
+  return value;
+}
+/** Lettura di Google Alerts RSS già creati dall'utente; ricevuti solo via cron autenticato. */
+async function readGoogleAlerts(feedURLs:string[],time:string){
+  const feeds=feedURLs.filter(x=>/^https:\/\/(?:www\.)?google\.com\/alerts\/feeds\/[0-9]+\/[0-9]+$/.test(x)).slice(0,20);
+  const reports:any[]=[];
+  for(let offset=0;offset<feeds.length;offset+=4){
+    const out=await Promise.all(feeds.slice(offset,offset+4).map(async feed=>{
+      try{
+        const r=await fetch(feed,{signal:AbortSignal.timeout(7000),
+          headers:{"Accept":"application/atom+xml,application/xml;q=0.9"}});
+        if(!r.ok)return {engine:"Google Alerts",ok:false,count:0,items:0,status:"HTTP "+r.status,rows:[]};
+        const body=(await r.text()).slice(0,750000);
+        if(!/<feed[\s>]/i.test(body))return {engine:"Google Alerts",ok:false,count:0,items:0,status:"Risposta non Atom",rows:[]};
+        const entries=body.match(/<entry(?:\s[^>]*)?>[\s\S]*?<\/entry>/gi)||[];
+        const rows=new Map<string,any>();
+        for(const block of entries.slice(0,65)){
+          const title=xmlValue(block,"title").slice(0,220);
+          const snippet=xmlValue(block,"content")||xmlValue(block,"summary");
+          const linkMatch=block.match(/<link\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*\/?>/i);
+          const raw=linkMatch?linkMatch[1]:"";
+          let found=canonical(unwrapGoogle(raw));
+          if(!found){
+            const candidates=[...snippet.matchAll(/href\s*=\s*["'](https?:[^"']+)["']/gi)];
+            for(const match of candidates){found=canonical(unwrapGoogle(match[1]));if(found)break;}
+          }
+          if(!found)continue;
+          if(!place.test(title+" "+snippet))continue;
+          if(/(?:\bstanza\b|\bcamera singola\b|\bposto letto\b)/i.test(title))continue;
+          rows.set(found.url,{
+            listing_url:found.url,title:title||"Annuncio da verificare",description:snippet.slice(0,1250),
+            source:found.source,origin_engine:"Google Alerts RSS",zone:zoneOf(title+" "+snippet),
+            price:0,private_status:"unverified",last_seen:time
+          });
+        }
+        return {engine:"Google Alerts",ok:true,count:rows.size,items:entries.length,status:"ok",rows:[...rows.values()]};
+      }catch(e){return {engine:"Google Alerts",ok:false,count:0,items:0,status:String(e).slice(0,70),rows:[]};}
+    }));
+    reports.push(...out);
+  }
+  return reports;
+}
+
+async function scan(time:string,feeds:string[]){
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
   for(let i=0;i<QUERY_SET.length;i+=3){
     outputs.push(...await Promise.all(QUERY_SET.slice(i,i+3).map(([e,q])=>scanOne(e,q,time))));
   }
   outputs.push(await collectClickCase(time));
+  outputs.push(...await readGoogleAlerts(feeds,time));
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
@@ -232,6 +288,10 @@ Deno.serve(async req=>{
   if(given.length<40||given.length>256||!constantTime(await sha256(given),JOB_SHA256))
     return reply({error:"Unauthorized"},401);
   if(!SERVICE_KEY||!PROJECT)return reply({error:"Backend non configurato"},503);
-  try{return reply(await scan(new Date().toISOString()))}
+  try{
+    let body:any={};try{body=await req.json()}catch(_){}
+    const feeds=Array.isArray(body.rss_feeds)?body.rss_feeds.filter((v:any)=>typeof v==='string'):[];
+    return reply(await scan(new Date().toISOString(),feeds));
+  }
   catch(e){console.error("TurinPipps collector failure",String(e).slice(0,200));return reply({error:"Scansione non completata"},500)}
 });
