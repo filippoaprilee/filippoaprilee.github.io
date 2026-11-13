@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T12:31:47.432Z",
+  "updated_at": "2026-11-13T17:38:52.383Z",
   "sources": [
     {
       "name": "GitHub Actions · raccolta TurinPipps",
@@ -46,9 +46,9 @@
     {
       "name": "Google Apps Script · automatico",
       "status": "ok",
-      "links_found": 10,
-      "new": 0,
-      "message": "Google Alerts RSS: 10 feed (errori 0), link 0. Nessuna email di alert. Percorsi a piedi verificati: 0. Disponibilità controllate: 5, possibili non disponibili: 0. 10 schede ClickCase; 8 dettagli letti. Nessun bypass dei portali."
+      "links_found": 11,
+      "new": 1,
+      "message": "Google Alerts RSS: 10 feed (errori 0), link 1. Nessuna email di alert. Percorsi a piedi verificati: 0. Disponibilità controllate: 5, possibili non disponibili: 0. 10 schede ClickCase; 8 dettagli letti. Nessun bypass dei portali."
     }
   ],
   "verification_note": "La scansione del 13/11/2026 alle 12:12 ha importato 9 nuovi link ClickCase; i 10 feed RSS non hanno prodotto inserzioni. Dati e disponibilità da verificare sulle fonti."
