@@ -1,14 +1,7 @@
 name: TurinPipps - raccolta annunci
+# Raccolta automatica gestita da Google Apps Script; evita run falliti su account billing bloccato.
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'turinpipps/collector.py'
-      - 'turinpipps/alerts_ingest.py'
-      - 'turinpipps/config/*.json'
-      - '.github/workflows/turinpipps-collect.yml'
-  schedule:
-    - cron: '12 5,11,17,23 * * *'
 permissions:
   contents: write
 concurrency:
