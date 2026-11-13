@@ -268,6 +268,42 @@ function enrichWalkingRoutes_(known,now){
   return {requested:count,updated:changed};
 }
 
+function checkAvailability_(known,now){
+  var keys=Object.keys(known).filter(function(k){
+    return /^https:\/\/(?:www\.)?clickcase\.it\//i.test(k);
+  });
+  if(!keys.length)return {checked:0,potentiallyMissing:0};
+  var props=props_(),offset=Number(props.getProperty('AVAILABILITY_OFFSET')||0),checked=0,missing=0;
+  for(var i=0;i<Math.min(keys.length,5);i++){
+    var row=known[keys[(offset+i)%keys.length]];
+    if(!row)continue;
+    var before=Date.parse(row.availability_checked_at||'');
+    if(Number.isFinite(before)&&Date.now()-before<5*3600*1000)continue;
+    try{
+      if(!allowedByRobots_(row.url))continue;
+      var res=UrlFetchApp.fetch(row.url,{muteHttpExceptions:true,followRedirects:false});
+      var code=res.getResponseCode();
+      row.availability_checked_at=now;
+      if(code===200){
+        row.availability_state='online_alla_verifica';
+        row.availability_consecutive_missing=0;row.availability_last_ok_at=now;
+      }else if(code===404||code===410){
+        row.availability_consecutive_missing=(Number(row.availability_consecutive_missing)||0)+1;
+        row.availability_last_http=code;
+        row.availability_state=row.availability_consecutive_missing>=2?
+          'potenzialmente_non_disponibile':'prima_verifica_negativa';
+        if(row.availability_consecutive_missing>=2)missing++;
+      }else{
+        row.availability_last_http=code;
+        // 403, 429, 5xx and redirects are not proof that a listing disappeared.
+        row.availability_state='verifica_non_conclusiva';
+      }
+      checked++;
+    }catch(e){console.warn('Disponibilità non verificabile: '+String(e.message||e).slice(0,90));}
+  }
+  props.setProperty('AVAILABILITY_OFFSET',String((offset+5)%keys.length));
+  return {checked:checked,potentiallyMissing:missing};
+}
 function runScan(){
   var lock=LockService.getScriptLock();
   if(!lock.tryLock(20000))return;
@@ -308,6 +344,7 @@ function runScan(){
       oldItem.last_seen=timestamp;
     });
     var walking=enrichWalkingRoutes_(known,timestamp);
+    var availability=checkAvailability_(known,timestamp);
     stored.json.listings=Object.keys(known).map(function(key){return known[key];}).slice(-850);
     stored.json.updated_at=timestamp;
     stored.json.verification='Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.';
@@ -315,7 +352,7 @@ function runScan(){
     var sources=(diagnostics.json.sources||[]).filter(function(x){return x.name!=='Google Apps Script · automatico';});
     sources.push({name:'Google Apps Script · automatico',status:!rss.feeds?'RSS da configurare':rss.failures?'parziale':'ok',
       links_found:rss.rows.length+publics.rows.length,new:added,
-      message:'Google Alerts RSS: '+rss.feeds+' feed (errori '+rss.failures+'), link '+rss.rows.length+'. Nessuna email di alert. Percorsi a piedi verificati: '+walking.updated+'. '+publics.status+'. Nessun bypass dei portali.'});
+      message:'Google Alerts RSS: '+rss.feeds+' feed (errori '+rss.failures+'), link '+rss.rows.length+'. Nessuna email di alert. Percorsi a piedi verificati: '+walking.updated+'. Disponibilità controllate: '+availability.checked+', possibili non disponibili: '+availability.potentiallyMissing+'. '+publics.status+'. Nessun bypass dei portali.'});
     diagnostics.json.sources=sources;
     githubSave_(TP.listings,stored,stored.json);
     // The previous PUT changed the repository head but not this file's SHA.
@@ -325,72 +362,145 @@ function runScan(){
   }finally{lock.releaseLock();}
 }
 function htmlEscape_(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function runDailyDigest(){
-  var lock=LockService.getScriptLock();if(!lock.tryLock(20000))return;
+function reportMatches_(listings){
+  return listings.filter(function(x){
+    if(!x||!(Number(x.price)>0&&Number(x.price)<=700)||!x.zone||
+      ['source','confirmed','user'].indexOf(x.private_status)===-1)return false;
+    if(/(?:^|\W)(stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((x.title||'')+' '+(x.property_type||'')))return false;
+    if(!x.title||/^Annuncio /i.test(x.title))return false;
+    if(x.availability_state==='potenzialmente_non_disponibile')return false;
+    return true;
+  });
+}
+function reportSignals_(matches,now){
+  var cutoff=now.getTime()-30*3600*1000,news=[],drops=[],changes=[];
+  matches.forEach(function(x){
+    var d=Date.parse(x.seen||x.first_seen||'');
+    if(Number.isFinite(d)&&d>=cutoff){news.push(x);return;}
+    var h=Array.isArray(x.price_history)?x.price_history:[],
+        last=h[h.length-1],prev=h[h.length-2],changed=Date.parse(x.price_last_changed_at||'');
+    if(!last||!prev||!Number.isFinite(changed)||changed<cutoff)return;
+    var delta=Number(last.price)-Number(prev.price);
+    if(Math.abs(delta)<20&&Math.abs(delta)<Number(prev.price)*0.05)return;
+    if(delta<0)drops.push(x);
+    else changes.push(x);
+  });
+  return {news:news,drops:drops,changes:changes};
+}
+function runDailyDigest(options){
+  var forced=!!(options&&options.force),lock=LockService.getScriptLock();
+  if(!lock.tryLock(20000))throw new Error('Un altro invio è già in corso.');
   try{
-    var timezone='Europe/Rome',today=Utilities.formatDate(new Date(),timezone,'yyyy-MM-dd');
-    if(props_().getProperty('LAST_DIGEST_DATE')===today){console.log('Report già inviato oggi');return;}
-    try{
-      var published=githubFile_('turinpipps/data/report_status.json').json;
-      if(published.last_sent_date===today){
-        console.log('Report già registrato per oggi da un altro motore; invio saltato.');
-        props_().setProperty('LAST_DIGEST_DATE',today);
-        return;
-      }
-    }catch(statusError){console.warn('Impossibile consultare registro report: '+statusError.message);}
+    var now=new Date(),timezone='Europe/Rome',today=Utilities.formatDate(now,timezone,'yyyy-MM-dd');
+    if(!forced){
+      if(props_().getProperty('LAST_DIGEST_DATE')===today){console.log('Report già inviato oggi');return 'already_sent';}
+      try{
+        var published=githubFile_('turinpipps/data/report_status.json').json;
+        if(published.last_sent_date===today){
+          props_().setProperty('LAST_DIGEST_DATE',today);
+          console.log('Report già registrato oggi da altro motore');
+          return 'already_sent';
+        }
+      }catch(e){console.warn('Registro invio non consultabile: '+e.message);}
+    }else{
+      var t=Number(props_().getProperty('LAST_MANUAL_REPORT_TS')||0);
+      if(now.getTime()-t<180000)throw new Error('Report manuale già richiesto di recente. Riprova dopo 3 minuti.');
+    }
     var recipients=(props_().getProperty('EMAIL_TO')||'filippoaprilee@gmail.com')
-      .split(/[,;]/).map(function(s){return s.trim();}).filter(Boolean).slice(0,20);
-    if(!recipients.length)throw new Error('Nessun destinatario EMAIL_TO configurato');
-    var items=githubFile_(TP.listings).json.listings||[];
-    var matching=items.filter(function(x){
-      return x&&Number(x.price)>0&&Number(x.price)<=700&&x.zone&&
-        ['source','confirmed','user'].indexOf(x.private_status)!==-1;
+      .split(/[,;]/).map(function(x){return x.trim();})
+      .filter(function(x){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x);}).slice(0,20);
+    if(!recipients.length)throw new Error('Configura EMAIL_TO con almeno un destinatario valido.');
+    var items=githubFile_(TP.listings).json.listings||[],matching=reportMatches_(items),
+        signals=reportSignals_(matching,now);
+    if(!forced&&!signals.news.length&&!signals.drops.length&&!signals.changes.length){
+      props_().setProperty('LAST_DIGEST_CHECK_DATE',today);
+      console.log('TurinPipps: nessun annuncio nuovo compatibile o variazione rilevante, nessuna email.');
+      return 'no_changes';
+    }
+    var seen={},featured=[];
+    signals.news.concat(signals.drops,signals.changes).concat(forced?matching:[]).forEach(function(x){
+      if(!seen[x.url]&&featured.length<12){seen[x.url]=true;featured.push(x);}
     });
-    var newItems=matching.filter(function(x){
-      var when=new Date(x.seen||x.last_seen||0);
-      return !isNaN(when.getTime())&&Date.now()-when.getTime()<1000*60*60*30;
-    });
-    var featured=(newItems.length?newItems:matching).slice(0,8);
     var rows=featured.map(function(x){
-      return '<tr><td style="padding:12px;border-bottom:1px solid #e7eafa"><a href="'+htmlEscape_(x.url)+
-        '">'+htmlEscape_(x.title)+'</a><div style="font-size:12px;color:#77849d">'+
-        htmlEscape_(x.zone)+' · '+htmlEscape_(x.source)+'</div></td><td style="text-align:right;white-space:nowrap">'+
-        htmlEscape_(x.price)+' €</td></tr>';
+      var label='';if(signals.drops.indexOf(x)>=0)label=' · ribasso';
+      if(signals.changes.indexOf(x)>=0)label=' · prezzo variato';
+      return '<tr><td style="padding:12px;border-bottom:1px solid #e7eafa">'+
+        '<a href="'+htmlEscape_(x.url)+'">'+htmlEscape_(x.title)+'</a>'+
+        '<div style="font-size:12px;color:#77849d">'+htmlEscape_(x.zone)+' · '+htmlEscape_(x.source)+htmlEscape_(label)+'</div>'+
+        '</td><td style="text-align:right;white-space:nowrap">'+htmlEscape_(x.price)+' €</td></tr>';
     }).join('');
-    var subject='TurinPipps | Report affitti Torino '+Utilities.formatDate(new Date(),timezone,'dd/MM/yyyy');
+    var subject='TurinPipps | '+(forced?'Report richiesto':'Nuovi affitti e ribassi')+
+       ' · '+Utilities.formatDate(now,timezone,'dd/MM/yyyy');
     var html='<div style="font-family:Arial,sans-serif;max-width:650px;margin:auto;color:#23314c">'+
       '<div style="background:#13213b;padding:26px;color:white;border-radius:14px 14px 0 0">'+
       '<div style="font-size:11px;letter-spacing:2px">TURINPIPPS · TORINO</div>'+
-      '<h1 style="margin:12px 0 0;font-size:25px">Il tuo report affitti</h1></div>'+
+      '<h1 style="margin:12px 0 0;font-size:25px">'+(forced?'Il report che hai richiesto':'Nuovi annunci da controllare')+'</h1></div>'+
       '<div style="padding:24px;border:1px solid #e6ebf5"><p><b>'+matching.length+
-      ' compatibili · '+newItems.length+' nuovi nelle ultime 30 ore</b></p>'+
-      '<p style="font-size:12px;color:#78849a">Privato e disponibilità sono da confermare. Canone massimo 700 € più spese.</p>'+
-      '<table style="width:100%;border-collapse:collapse">'+(rows||'<tr><td>Nessun annuncio da mostrare.</td></tr>')+
-      '</table><p><a href="'+TP.app+'" style="display:inline-block;background:#5264db;color:white;padding:12px 20px;border-radius:8px;text-decoration:none">Apri TurinPipps</a></p>'+
-      '<p style="font-size:11px;color:#8893a9">Report automatico Google Apps Script. Non vengono contattati i proprietari.</p></div></div>';
-    var plain='TurinPipps: '+matching.length+' compatibili, '+newItems.length+
-      ' nuovi. Apri: '+TP.app;
+      ' compatibili · '+signals.news.length+' nuovi · '+signals.drops.length+' ribassi · '+signals.changes.length+' variazioni</b></p>'+
+      '<p style="font-size:12px;color:#78849a">Privato, disponibilità e spese accessorie sono da confermare direttamente sulla fonte.</p>'+
+      '<table style="width:100%;border-collapse:collapse">'+(rows||'<tr><td>Nessun annuncio compatibile.</td></tr>')+
+      '</table><p><a href="'+TP.app+
+      '" style="display:inline-block;background:#5264db;color:white;padding:12px 20px;border-radius:8px;text-decoration:none">Apri TurinPipps</a></p>'+
+      '<p style="font-size:11px;color:#8893a9">Report '+(forced?'manuale':'automatico')+' Google Apps Script, senza contatti ai proprietari.</p></div></div>';
+    var plain='TurinPipps: '+matching.length+' compatibili, '+signals.news.length+
+      ' nuovi, '+signals.drops.length+' ribassi. '+TP.app;
     recipients.forEach(function(mail){
-      MailApp.sendEmail(mail,subject,plain,{htmlBody:html,name:'TurinPipps'});
+      MailApp.sendEmail({to:mail,subject:subject,body:plain,htmlBody:html,name:'TurinPipps'});
     });
     props_().setProperty('LAST_DIGEST_DATE',today);
+    if(forced)props_().setProperty('LAST_MANUAL_REPORT_TS',String(Date.now()));
     try{
-      var reportPath='turinpipps/data/report_status.json';
-      var state=githubFile_(reportPath);
+      var reportPath='turinpipps/data/report_status.json',state=githubFile_(reportPath);
       state.json={
         last_sent_date:today,last_sent_at:new Date().toISOString(),
         recipient_count:recipients.length,status:'inviato',
-        provider:'Google Apps Script / Gmail',total:items.length,
-        matching:matching.length,new:newItems.length,
-        message:'Invio Gmail completato. Nessun destinatario pubblicato.'
+        provider:'Google Apps Script / Gmail',mode:forced?'manuale':'automatico',
+        total:items.length,matching:matching.length,new:signals.news.length,
+        price_drops:signals.drops.length,price_changes:signals.changes.length,
+        message:'Email inviata. Destinatari mantenuti privati.'
       };
       githubSave_(reportPath,state,state.json);
     }catch(syncError){
-      console.warn('Email inviate ma registro pubblico non aggiornato: '+syncError.message);
+      console.warn('Report inviato, registro GitHub non aggiornato: '+syncError.message);
     }
-    console.log('Report TurinPipps inviato a '+recipients.length+' destinatari.');
+    console.log('TurinPipps: report '+(forced?'manuale':'intelligente')+' inviato a '+recipients.length+' destinatari.');
+    return 'sent';
   }finally{lock.releaseLock();}
 }
+function doPost(e){
+  // The web app runs as its owner. Never accept an unauthenticated POST.
+  try{
+    if(!e||!e.parameter||e.parameter.action!=='manual_report')throw new Error('Operazione non valida.');
+    var token=String(e.parameter.access_token||'');
+    if(token.length<100||token.length>15000)throw new Error('Accedi prima al tuo account TurinPipps.');
+    var pub=props_().getProperty('SUPABASE_PUBLISHABLE_KEY');
+    if(!pub)throw new Error('Manca SUPABASE_PUBLISHABLE_KEY nelle Proprietà script.');
+    var res=UrlFetchApp.fetch('https://akgnxjwkrnuckgxscjdz.supabase.co/auth/v1/user',{
+      headers:{apikey:pub,Authorization:'Bearer '+token},
+      muteHttpExceptions:true,followRedirects:false
+    });
+    if(res.getResponseCode()!==200)throw new Error('Sessione scaduta: effettua nuovamente il login.');
+    var user=JSON.parse(res.getContentText()),email=String(user.email||'').toLowerCase();
+    var owners=(props_().getProperty('MANUAL_REPORT_ALLOWED_EMAILS')||'filippoaprilee@gmail.com')
+      .split(/[,;]/).map(function(x){return x.trim().toLowerCase()});
+    if(!user.id||!user.email_confirmed_at||owners.indexOf(email)===-1)
+      throw new Error('Account non autorizzato a inviare report.');
+    runDailyDigest({force:true});
+    return HtmlService.createHtmlOutput(
+      '<!doctype html><html lang="it"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+      '<body style="font-family:Arial;background:#f3f6fb;color:#17263f;padding:30px;max-width:550px;margin:0 auto">'+
+      '<h2>TurinPipps</h2><p>Report inviato tramite Gmail ai destinatari configurati.</p>'+
+      '<p>Puoi chiudere questa finestra e tornare all’app.</p></body></html>');
+  }catch(err){
+    console.error('Report manuale non eseguito: '+String(err.message||err).slice(0,170));
+    return HtmlService.createHtmlOutput(
+      '<!doctype html><html lang="it"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+      '<body style="font-family:Arial;padding:30px;color:#9a3030;max-width:550px;margin:auto">'+
+      '<h2>Invio non effettuato</h2><p>'+htmlEscape_(String(err.message||'Errore sconosciuto').slice(0,240))+
+      '</p><p>Controlla le proprietà e le esecuzioni di Apps Script.</p></body></html>');
+  }
+}
+
 function sendTestEmail(){
   MailApp.sendEmail(props_().getProperty('EMAIL_TO')||'filippoaprilee@gmail.com',
     'TurinPipps | Test invio','Invio di prova eseguito con Google Apps Script, senza GitHub Actions.');
