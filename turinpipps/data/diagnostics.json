@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T17:38:52.383Z",
+  "updated_at": "2026-11-13T23:38:52.232Z",
   "sources": [
     {
       "name": "GitHub Actions · raccolta TurinPipps",
@@ -47,7 +47,7 @@
       "name": "Google Apps Script · automatico",
       "status": "ok",
       "links_found": 11,
-      "new": 1,
+      "new": 0,
       "message": "Google Alerts RSS: 10 feed (errori 0), link 1. Nessuna email di alert. Percorsi a piedi verificati: 0. Disponibilità controllate: 5, possibili non disponibili: 0. 10 schede ClickCase; 8 dettagli letti. Nessun bypass dei portali."
     }
   ],
