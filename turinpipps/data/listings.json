@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-12T09:28:34Z",
-  "verification": "Ricerca su schede pubbliche 12/11/2026: inserzionista privato dichiarato dal portale, non identificazione indipendente. Nuove schede scoperte oggi ma alcune pubblicate in ottobre. Nessun contatto effettuato; disponibilità e spese da confermare.",
+  "updated_at": "2026-11-13T11:12:09.571Z",
+  "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
       "url": "https://www.subito.it/appartamenti/monolocale-arredato-in-crocetta-torino-668007219.htm",
@@ -65,7 +65,14 @@
           "observed_at": "2026-11-12T15:00:00Z",
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
-      ]
+      ],
+      "walking_km": 1.3,
+      "walking_minutes": 18,
+      "route_checked_at": "2026-11-13T11:12:09.571Z",
+      "route_address": "Via Vigone 28, Torino, Italia",
+      "route_source": "Google Maps Directions (percorso pedonale indicativo)",
+      "lat": 45.0665823,
+      "lng": 7.6521211
     },
     {
       "url": "https://www.clickcase.it/bilocale-gia-arredato-libero-da-fine-marzo-torino-395540.html",
@@ -91,7 +98,7 @@
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
-      "title": "Bilocale arredato in via Monginevro · solo studenti fuori sede",
+      "title": "Bilocale SOLO per Studenti fuori sede comodo al Politecnico",
       "description": "Zona San Paolo, piazza Sabotino · intero bilocale di 40 m², cucina e camera da letto con due letti. Canone annunciato 500 €/mese, spese condominiali incluse; consumi non chiariti. SOLO studenti fuori sede. Annuncio del 15/09/2026, verificare disponibilità.",
       "price": 500,
       "sqm": 40,
@@ -100,7 +107,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-12T09:20:00Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -205,7 +212,14 @@
           "observed_at": "2026-11-12T15:00:00Z",
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
-      ]
+      ],
+      "walking_km": 0.8,
+      "walking_minutes": 11,
+      "route_checked_at": "2026-11-13T11:12:09.571Z",
+      "route_address": "Corso Ferrucci 106, Torino, Italia",
+      "route_source": "Google Maps Directions (percorso pedonale indicativo)",
+      "lat": 45.0631086,
+      "lng": 7.655646
     },
     {
       "url": "https://www.immobiliare.it/annunci/133834776/",
@@ -227,7 +241,14 @@
           "observed_at": "2026-11-12T15:00:00Z",
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
-      ]
+      ],
+      "walking_km": 1.4,
+      "walking_minutes": 19,
+      "route_checked_at": "2026-11-13T11:12:09.571Z",
+      "route_address": "Via Moretta 12, Torino, Italia",
+      "route_source": "Google Maps Directions (percorso pedonale indicativo)",
+      "lat": 45.0678503,
+      "lng": 7.6535811
     },
     {
       "url": "https://www.immobiliare.it/annunci/133148838/",
@@ -249,7 +270,14 @@
           "observed_at": "2026-11-12T15:00:00Z",
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
-      ]
+      ],
+      "walking_km": 1.6,
+      "walking_minutes": 21,
+      "route_checked_at": "2026-11-13T11:12:09.571Z",
+      "route_address": "Via Perrero 13, Torino, Italia",
+      "route_source": "Google Maps Directions (percorso pedonale indicativo)",
+      "lat": 45.0665214,
+      "lng": 7.6477077
     },
     {
       "url": "https://torino.bakeca.it/dettaglio/offro-casa/gioiello-nel-cuore-della-crocetta-trilocale-nuovo-u5v5298583748",
@@ -292,7 +320,149 @@
           "observed_at": "2026-11-12T15:00:00Z",
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
-      ]
+      ],
+      "walking_km": 2,
+      "walking_minutes": 27,
+      "route_checked_at": "2026-11-13T11:12:09.571Z",
+      "route_address": "Via Azzi 10, Torino, Italia",
+      "route_source": "Google Maps Directions (percorso pedonale indicativo)",
+      "lat": 45.06855420000001,
+      "lng": 7.643492299999999
+    },
+    {
+      "url": "https://www.clickcase.it/grazioso-bilocale-torino-424928.html",
+      "title": "Grazioso bilocale",
+      "description": "Grazioso bilocale - Affitto Appartamento da Privato a Torino, San Donato - 424928 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 424928 Grazioso bilocale Appartamento in Affitto da Privato - Zona San Donato, Torino 33 m&sup2; | 2 locali | ",
+      "price": 0,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-spaziosa-con-cucina-e-salotto-in-comune-e-servizi-torino-423888.html",
+      "title": "CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI",
+      "description": "CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI - Affitto Palazzo/Stabile da Privato a Torino, Campidoglio - 423888 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Palazzi/Stabili &raquo; Rif. 423888 CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI ",
+      "price": 450,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
+      "title": "Camera con bagno privato",
+      "description": "Camera con bagno privato - Affitto Appartamento da Privato a Torino, Italia 61 - 423697 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 423697 Camera con bagno privato Appartamento in Affitto da Privato - Via Nizza 386, Torino 93 m&sup2; | ",
+      "price": 500,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/quadrilocale-transitorio-torino-423592.html",
+      "title": "Quadrilocale transitorio",
+      "description": "Quadrilocale transitorio - Affitto Appartamento da Privato a Torino, Nizza - 423592 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 423592 Quadrilocale transitorio Appartamento in Affitto da Privato - Corso Piero Maroncelli 38, Torino 93 m&",
+      "price": 0,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/mini-loft-bilocale-su-due-livelli-con-ascensore-torino-423014.html",
+      "title": "Mini loft bilocale su due livelli con ascensore",
+      "description": "Mini loft bilocale su due livelli con ascensore - Affitto Mansarda da Privato a Torino, Vanchiglia - 423014 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Mansarde &raquo; Rif. 423014 Mini loft bilocale su due livelli con ascensore Mansarda in Affitto da Privato - ",
+      "price": 590,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
+      "title": "DA PRIVATO POSTO LETTO PER MASCHI",
+      "description": "DA PRIVATO POSTO LETTO PER MASCHI - Affitto Appartamento da Privato a Torino, Barriera Milano - 422215 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 422215 DA PRIVATO POSTO LETTO PER MASCHI Appartamento in Affitto da Privato - Via Pierlui",
+      "price": 300,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/stanza-torino-421979.html",
+      "title": "STANZA",
+      "description": "STANZA - Affitto Appartamento da Privato a Torino, Santa Rita - 421979 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 421979 STANZA Appartamento in Affitto da Privato - Zona Santa Rita, Torino 21 m&sup2; | 3 locali | 1 bagno | € 495 mensil",
+      "price": 495,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
+      "title": "Annuncio ClickCase · da verificare",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/affitto-a-studente-universitario-camera-doppia-in-trilocale-torino-421695.html",
+      "title": "Annuncio ClickCase · da verificare",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-13T11:12:09.571Z",
+      "last_seen": "2026-11-13T11:12:09.571Z",
+      "origin": "automatic_alert"
     }
   ]
 }
