@@ -75,6 +75,12 @@ function createRadar(){
  zones.forEach(function(zone,i){var opt=document.createElement('option');opt.value=i?zone:'';opt.textContent=zone;select.appendChild(opt)});
  try{var saved=JSON.parse(localStorage.getItem('tp_radar_v3')||'{}');
    if(saved.term)$('#tp-radar-term').value=saved.term;
+   else {
+     var profile=window.TurinPippsUXV3&&window.TurinPippsUXV3.getPrefs();
+     var house=profile&&profile.propertyType&&profile.propertyType!=='tutte'?profile.propertyType:'appartamento';
+     var style={};try{style=JSON.parse(localStorage.getItem('turinpipps.search-style.v4')||'{}')}catch(_){}
+     $('#tp-radar-term').value=house+(style.furnishing==='non_arredato'?'':style.furnishing==='indifferente'?'':' arredato');
+   }
    if(saved.zone)select.value=saved.zone;
  }catch(_){}
  function change(){
