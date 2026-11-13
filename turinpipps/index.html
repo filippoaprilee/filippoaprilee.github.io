@@ -484,6 +484,12 @@ function card(a){
  '</div></details></div></article>';
 }
 function showEmpty(msg){return '<div class="empty"><div style="font-size:38px"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>Nessun annuncio in questa sezione</b><p>'+esc(msg)+'</p><button class="button primary" data-nav="sources"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Apri le ricerche sui portali</button></div>'}
+function showToast(message,kind){
+ var n=el('tp-toast');if(!n)return;
+ n.textContent=message;n.className='tp-toast '+(kind||'');n.hidden=false;
+ if(n._tpTimer)clearTimeout(n._tpTimer);
+ n._tpTimer=setTimeout(function(){n.hidden=true},4800);
+}
 function renderHome(){
  var list=all().filter(function(x){return !flag(x.url).discard&&classify(x)==='good'})
    .sort(function(a,b){return score(b)-score(a)});
@@ -649,9 +655,18 @@ async function load(){memoListings=null;page=1;el('updated').textContent='Verifi
 document.addEventListener('click',function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
-if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){var note=prompt('Note personali (solo per te):',f.notes||'');if(note===null)return;f.notes=note.slice(0,1000)}prefs.flags[a.url]=f;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);renderResults();renderSaved()});
+if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){var note=prompt('Note personali (solo per te):',f.notes||'');if(note===null)return;f.notes=note.slice(0,1000)}prefs.flags[a.url]=f;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);renderResults();renderSaved();updateCompareUI();
+ if(b.dataset.action==='compare'){
+   var c=all().filter(function(x){return !!flag(x.url).compare}).length;
+   if(c>0)showToast(c+' immobili selezionati. Premi «Confronta ora» per aprire la tabella.','good');
+ }
+});
 document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){page=1;mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(function(x){x.classList.toggle('selected',x===b)});renderResults()})});
-['query','zone','sort','source-filter','age-filter','distance-filter','stale-filter'].forEach(function(id){el(id).addEventListener('input',function(){page=1;renderResults()})});el('tp-more').addEventListener('click',function(){page+=1;renderResults()});el('reload').addEventListener('click',load);el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;setupPersonalZones();fillPersonalSettings();
+['query','zone','sort','source-filter','age-filter','distance-filter','stale-filter'].forEach(function(id){el(id).addEventListener('input',function(){page=1;renderResults()})});el('tp-more').addEventListener('click',function(){page+=1;renderResults()});el('reload').addEventListener('click',load);el('tp-home-reload').addEventListener('click',load);
+el('tp-activity-refresh').addEventListener('click',load);
+el('tp-filter-toggle').addEventListener('click',function(){
+ var filter=el('tp-filterbar');filter.hidden=!filter.hidden;this.setAttribute('aria-expanded',String(!filter.hidden));
+});el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;setupPersonalZones();fillPersonalSettings();
 el('save-settings').addEventListener('click',function(){savePersonalSettings();prefs.budget=Math.max(100,Number(el('budget').value||700));prefs.fullname=el('fullname').value.trim();prefs.intro=el('intro').value.trim();persist();renderResults();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.savePreferences(prefs);alert(accountMode?'Preferenze salvate sul tuo account':'Preferenze salvate su questo dispositivo')});
 el('csv-button').addEventListener('click',function(){var rows=[['Titolo','Zona','Canone','Spese','Fonte','Privato','URL','Stato']];all().forEach(function(x){rows.push([x.title,x.zone,x.price||'',x.expenses,x.source,x.private_status,x.url,classify(x)])});var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v==null?'':v).replace(/^([=+@\-\t\r])/,"'$1").replace(/"/g,'""')+'"'}).join(';')}).join('\r\n');var a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=u;a.download='turinpipps-annunci.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},800)});
 el('export').addEventListener('click',function(){download({listings:all(),flags:prefs.flags,settings:{budget:prefs.budget}},'turinpipps-annunci.json')});
@@ -732,33 +747,74 @@ el('tp-toggle-map').addEventListener('click',function(){
  this.innerHTML=show?'<i class="fa-solid fa-map"></i> Nascondi mappa':'<i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili';
  if(show)drawTurinMap();
 });
+async function readLatestReport(){
+ var sources=[
+  'https://raw.githubusercontent.com/filippoaprilee/filippoaprilee.github.io/filippoaprilee/turinpipps/data/report_status.json?u='+Date.now(),
+  './data/report_status.json?v='+Date.now()
+ ];
+ for(var i=0;i<sources.length;i++){
+  try{
+   var response=await fetch(sources[i],{cache:'no-store'});
+   if(response.ok){var data=await response.json();if(data&&data.last_sent_at)return data;}
+  }catch(_){}
+ }
+ return null;
+}
+var tpReportPending=false;
 async function sendTurinPippsReport(){
- var statusNode=el('tp-manual-report-state');
+ var statusNode=el('tp-manual-report-state'),btn=el('tp-send-report');
+ if(tpReportPending)return;
  var endpoint=String(window.TURINPIPPS_REPORT_ENDPOINT||'').trim();
  if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(endpoint)){
-  statusNode.textContent='Invio da configurare: pubblica il Web App Google Apps Script e inserisci la URL nel file report-config.js.';
-  return;
+  statusNode.textContent='L’invio è momentaneamente indisponibile. Riprova più tardi.';
+  showToast('Invio non disponibile in questo momento.','warn');return;
  }
  if(!window.TurinPippsAuth||!window.TurinPippsAuth.isSignedIn()){
-  statusNode.textContent='Accedi al tuo account per richiedere un report.';
-  if(window.TurinPippsAuth)window.TurinPippsAuth.open();
-  return;
+  statusNode.textContent='Accedi con il tuo account per inviare il report.';
+  if(window.TurinPippsAuth)window.TurinPippsAuth.open();return;
  }
- var btn=el('tp-send-report');btn.disabled=true;
- statusNode.textContent='Verifica sessione e preparazione della richiesta…';
+ if(!confirm('Inviare adesso il riepilogo alla tua casella email?'))return;
+ var started=Date.now(),baseline=Date.parse((reportState&&reportState.last_sent_at)||'')||0;
+ tpReportPending=true;btn.disabled=true;
+ btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Invio in corso…';
+ statusNode.textContent='Sto inviando il report e verificando la conferma del servizio…';
  try{
   var token=await window.TurinPippsAuth.getAccessToken();
-  if(!token)throw new Error('Sessione non valida. Effettua nuovamente il login.');
-  if(!confirm('Inviare ora un report agli indirizzi configurati su Google Apps Script?'))return;
-  var form=document.createElement('form');form.method='POST';form.action=endpoint;form.target='_blank';
-  form.style.display='none';form.referrerPolicy='no-referrer';
-  [['action','manual_report'],['access_token',token]].forEach(function(pair){
-    var input=document.createElement('input');input.type='hidden';input.name=pair[0];input.value=pair[1];form.appendChild(input);
-  });
-  document.body.appendChild(form);form.submit();form.remove();
-  statusNode.textContent='Richiesta aperta in una nuova scheda. Controlla l’esito lì: qui non consideriamo l’email inviata finché il server non lo conferma.';
- }catch(e){statusNode.textContent='Richiesta non riuscita: '+e.message}
- finally{btn.disabled=false}
+  if(!token)throw new Error('La sessione è scaduta. Accedi nuovamente.');
+  var payload=new URLSearchParams();payload.set('action','manual_report');payload.set('access_token',token);
+  // Browser access is cross-origin. An opaque response is NOT proof of delivery.
+  await fetch(endpoint,{method:'POST',mode:'no-cors',credentials:'omit',
+    body:payload,redirect:'follow',referrerPolicy:'no-referrer',cache:'no-store'});
+  // The backend commits a report_status record only after MailApp.sendEmail returns.
+  // Poll the public read-only record: no GitHub token is required in the browser.
+  var confirmed=null;
+  for(var attempt=0;attempt<32;attempt++){
+   await new Promise(function(resolve){setTimeout(resolve,3000)});
+   var latest=await readLatestReport();
+   var ts=latest&&Date.parse(latest.last_sent_at||'');
+   if(latest&&latest.mode==='manuale'&&Number.isFinite(ts)&&ts>Math.max(baseline,started-15000)){
+     confirmed=latest;break;
+   }
+   if(attempt===10)statusNode.textContent='Richiesta inviata. Verifico la conferma della consegna al servizio email…';
+   if(attempt===20)statusNode.textContent='La risposta del servizio è lenta. Continuo a controllare l’esito…';
+  }
+  if(confirmed){
+   reportState=confirmed;renderReport();
+   statusNode.textContent='Report inviato · '+new Date(confirmed.last_sent_at).toLocaleString('it-IT')+
+    ' · '+confirmed.recipient_count+' destinatari. Controlla la casella email.';
+   showToast('Report inviato e registrato.','good');
+   renderHome();renderSources();
+  }else{
+   statusNode.textContent='Non ho ricevuto la conferma del servizio. Controlla la Posta inviata prima di riprovare.';
+   showToast('Invio non verificato: controlla la Posta inviata.','warn');
+  }
+ }catch(err){
+  statusNode.textContent='Non è stato possibile completare la richiesta. '+(err&&err.message||'Riprova dopo aver verificato la connessione.');
+  showToast('Richiesta email non completata.','err');
+ }finally{
+  tpReportPending=false;btn.disabled=false;
+  btn.innerHTML='<i class="fa-regular fa-paper-plane"></i> Invia report adesso';
+ }
 }
 el('tp-send-report').addEventListener('click',sendTurinPippsReport);
 el('add').addEventListener('click',function(){var url=prompt('Incolla il link dell’annuncio:');if(!url)return;url=canonical(url);if(!url){alert('Inserisci un indirizzo web valido');return}var title=prompt('Titolo dell’immobile:')||'Annuncio inserito a mano';var price=Number(prompt('Canone mensile in euro (0 se sconosciuto):','0')||0);var zone=prompt('Zona (es. San Paolo, Crocetta, Cenisia):','')||'';var privateConfirmed=confirm('Hai verificato che l’inserzionista è un privato e non un’agenzia?');var newRow={url:url,title:title,price:price,zone:zone,source:'Inserito da te',private_status:privateConfirmed?'user':'unverified',seen:new Date().toISOString()};prefs.manual.push(newRow);memoListings=null;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveManual(newRow);renderResults();alert('Annuncio aggiunto')});
