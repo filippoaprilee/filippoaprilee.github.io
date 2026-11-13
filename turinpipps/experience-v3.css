@@ -117,3 +117,14 @@ body{background:#f5f7fa;color:var(--tp-ink)}
 .tp-radar-live-status small{color:#7a8c99;font-size:10px;font-weight:500}
 .tp-mobile-brand{position:relative;z-index:51}
 @media(max-width:800px){.tp-mobile-brand{display:flex}}
+
+.tp-ios-quick{border-top:1px solid #e2eaf0;padding:21px 0 3px;margin-top:24px}
+.tp-ios-quick-title{display:flex;align-items:flex-start;gap:13px}
+.tp-ios-quick-title>i{font-size:20px;color:#22758b;background:#e7f3f2;padding:13px;border-radius:12px}
+.tp-ios-quick h3{font-size:18px;letter-spacing:-.5px;margin:0 0 4px;color:#17354a}
+.tp-ios-quick p{font-size:12px;color:#6e8192;line-height:1.6;margin:0}
+.tp-ios-quick-actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.tp-ios-quick-actions .button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.tp-ios-quick details{background:#f6f9fa;border:1px solid #e2eaf0;border-radius:11px;padding:13px 15px}
+.tp-ios-quick details summary{cursor:pointer;color:#284f64;font-size:12px;font-weight:750}
+.tp-ios-quick details p{padding-top:11px}
