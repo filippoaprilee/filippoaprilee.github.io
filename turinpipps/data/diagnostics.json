@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-12T14:24:26.652Z",
+  "updated_at": "2026-11-13T11:12:09.571Z",
   "sources": [
     {
       "name": "GitHub Actions · raccolta TurinPipps",
@@ -42,6 +42,13 @@
       "links_found": 0,
       "new": 0,
       "message": "Interfaccia e RLS pronte nel codice. Registrazione e sincronizzazione saranno disponibili solo collegando un progetto Supabase."
+    },
+    {
+      "name": "Google Apps Script · automatico",
+      "status": "ok",
+      "links_found": 10,
+      "new": 9,
+      "message": "Google Alerts RSS: 10 feed (errori 0), link 0. Nessuna email di alert. Percorsi a piedi verificati: 5. 10 schede ClickCase; 8 dettagli letti. Nessun bypass dei portali."
     }
   ]
 }
