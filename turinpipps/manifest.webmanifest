@@ -26,6 +26,18 @@
   "orientation": "any",
   "shortcuts": [
     {
+      "name": "Panoramica veloce",
+      "short_name": "Oggi",
+      "description": "Ultimi annunci pubblici",
+      "url": "./today.html",
+      "icons": [
+        {
+          "src": "./icon.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
       "name": "Apri Radar casa",
       "short_name": "Radar",
       "description": "Esplora annunci e motori",
