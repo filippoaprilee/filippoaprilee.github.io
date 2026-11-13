@@ -173,7 +173,34 @@ def write_output(result: dict) -> None:
     target = HERE / "data" / "playwright_results.json"
     target.parent.mkdir(exist_ok=True)
     target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", "utf-8")
-    print(f"Raccolta Python: {len(result['listings'])} link; diagnostica {len(result['sources'])} pagine")
+    # Unifica i dati senza scartare i collegamenti già presenti o modificarne la prima scoperta.
+    listing_file = HERE / "data" / "listings.json"
+    try:
+        archive = json.loads(listing_file.read_text("utf-8"))
+    except (OSError, ValueError):
+        archive = {"listings": []}
+    existing = {row["url"]: row for row in archive.get("listings", [])
+                if isinstance(row, dict) and row.get("url")}
+    newly_found = 0
+    for row in result["listings"]:
+        uri = row["url"]
+        old = existing.get(uri, {})
+        if not old:
+            newly_found += 1
+        combined = dict(old)
+        for key, value in row.items():
+            if value not in ("", None, 0, []):
+                combined[key] = value
+        combined["seen"] = old.get("seen") or row["seen"]
+        combined["last_seen"] = result["updated_at"]
+        existing[uri] = combined
+    archive["listings"] = sorted(existing.values(),
+                                key=lambda x: x.get("last_seen") or x.get("seen") or "",
+                                reverse=True)[:700]
+    archive["updated_at"] = result["updated_at"]
+    listing_file.write_text(json.dumps(archive, ensure_ascii=False, indent=2) + "\n", "utf-8")
+    print(f"Raccolta Python: {len(result['listings'])} link, {newly_found} nuovi, "
+          f"{len(result['sources'])} pagine consultate")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
