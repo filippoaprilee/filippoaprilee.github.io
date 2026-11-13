@@ -201,11 +201,11 @@ async function readGoogleAlerts(feedURLs:string[],time:string){
         const r=await fetch(feed,{signal:AbortSignal.timeout(7000),
           headers:{"Accept":"application/atom+xml,application/xml;q=0.9"}});
         if(!r.ok)return {engine:"Google Alerts",ok:false,count:0,items:0,status:"HTTP "+r.status,rows:[]};
-        const body=(await r.text()).slice(0,750000);
+        const body=(await r.text()).slice(0,1500000);
         if(!/<feed[\s>]/i.test(body))return {engine:"Google Alerts",ok:false,count:0,items:0,status:"Risposta non Atom",rows:[]};
         const entries=body.match(/<entry(?:\s[^>]*)?>[\s\S]*?<\/entry>/gi)||[];
         const rows=new Map<string,any>();
-        for(const block of entries.slice(0,65)){
+        for(const block of entries){
           const title=xmlValue(block,"title").slice(0,220);
           const snippet=xmlValue(block,"content")||xmlValue(block,"summary");
           const linkMatch=block.match(/<link\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*\/?>/i);
@@ -288,10 +288,29 @@ async function scan(time:string,feeds:string[]){
   const stats=outputs.map(({engine,ok,count,items,status})=>({engine,ok,count,items:items||0,status}));
   let saved=0;
   if(all.length){
-    const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen&limit=10000",{headers:dbHeaders()});
+    const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen,title,description,price,expenses,source_updated,sqm,address,property_type,origin_engine,evidence_url,private_status&limit=10000",{headers:dbHeaders()});
     if(!existingRes.ok)throw new Error("Database read HTTP "+existingRes.status);
-    const existing=new Map((await existingRes.json()).map((v:any)=>[v.listing_url,v.first_seen]));
-    const rows=all.map(x=>({...x,first_seen:existing.get(x.listing_url)||time}));
+    const existing=new Map((await existingRes.json()).map((v:any)=>[v.listing_url,v]));
+    const rows=all.map(x=>{
+      const old:any=existing.get(x.listing_url)||{};
+      // Non cancellare canone, data originale e informazioni verificate quando un feed
+      // contiene soltanto titolo e URL. Il feed rinnova last_seen, non published_at.
+      const richer=old.origin_engine==="ricerca_web_verificata";
+      return {...x,
+        first_seen:old.first_seen||time,
+        title:richer&&old.title?old.title:x.title,
+        description:richer&&old.description?old.description:x.description,
+        price:Number(old.price)>0?old.price:x.price,
+        expenses:Number(old.expenses)||0,
+        sqm:Number(old.sqm)||0,
+        address:old.address||"",
+        property_type:old.property_type||"",
+        source_updated:old.source_updated||null,
+        evidence_url:old.evidence_url||"",
+        origin_engine:richer?old.origin_engine:x.origin_engine,
+        private_status:richer?old.private_status:x.private_status
+      }
+    });
     for(let i=0;i<rows.length;i+=100){
       const r=await fetch(DB_ROOT+"/turinpipps_discovered_listings?on_conflict=listing_url",{
         method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}),
