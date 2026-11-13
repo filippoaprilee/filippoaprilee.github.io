@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13T17:38:52.383Z",
+  "updated_at": "2026-11-13T23:38:52.232Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-13T17:38:52.383Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-13T17:38:52.383Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-13T17:38:52.383Z",
       "availability_state": "online_alla_verifica",
@@ -422,7 +422,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-13T17:38:52.383Z",
       "availability_state": "online_alla_verifica",
@@ -441,8 +441,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T23:38:52.232Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T23:38:52.232Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T23:38:52.232Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -456,8 +460,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T23:38:52.232Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T23:38:52.232Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T23:38:52.232Z"
     },
     {
       "url": "https://www.clickcase.it/stanza-torino-421979.html",
@@ -471,8 +479,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T23:38:52.232Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T23:38:52.232Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T23:38:52.232Z"
     },
     {
       "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
@@ -486,8 +498,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T23:38:52.232Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T23:38:52.232Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T23:38:52.232Z"
     },
     {
       "url": "https://www.clickcase.it/affitto-a-studente-universitario-camera-doppia-in-trilocale-torino-421695.html",
@@ -501,8 +517,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
-      "origin": "automatic_alert"
+      "last_seen": "2026-11-13T23:38:52.232Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-13T23:38:52.232Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-13T23:38:52.232Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -516,7 +536,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T17:38:52.383Z",
-      "last_seen": "2026-11-13T17:38:52.383Z",
+      "last_seen": "2026-11-13T23:38:52.232Z",
       "origin": "automatic_alert"
     }
   ]
