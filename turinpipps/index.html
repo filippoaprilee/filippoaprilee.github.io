@@ -227,9 +227,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="cards tp-home-highlight" id="tp-home-list"></div>
 </section>
 <section id="view-results" class="hidden"><div class="tp-page-lead"><div><div class="tp-kicker">ESPLORA</div><h1>Trova la tua prossima casa</h1><p>Cerca nella raccolta, filtra per zona e valuta gli immobili direttamente dalla scheda originale.</p></div><button class="button" id="reload"><i class="fa-solid fa-rotate"></i> Aggiorna</button></div><div class="tp-intelbar" id="tp-intelbar" aria-label="Analisi annunci"></div><div class="section-heading"><div><h2>Annunci trovati</h2><p>Solo privati, budget e vicinanza al campus: ogni dato è verificabile.</p></div><button class="button" id="csv-button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta CSV</button></div>
-<div class="tp-search-tools"><div class="tp-kicker">RISULTATI</div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
+<div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tp-map-toolbar"><button class="button" type="button" id="tp-toggle-map"><i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili</button><span class="note">Localizzazione solo per gli annunci con coordinate verificabili.</span></div><div id="tp-map" class="tp-app-map" hidden></div>
-<div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
+<div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
 <section id="view-sources" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">MONITORAGGIO</div><h1>Attività della ricerca</h1><p>Quando abbiamo cercato, che cosa è cambiato e quando ti abbiamo inviato un riepilogo.</p></div>
 <button class="button" id="tp-activity-refresh" type="button"><i class="fa-solid fa-rotate"></i> Ricarica stato</button></div>
@@ -266,7 +266,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="field"><label class="label" for="tp-property-type">Tipologia preferita</label><select id="tp-property-type" class="input"><option value="tutte">Tutte le tipologie</option><option value="monolocale">Monolocale</option><option value="bilocale">Bilocale</option><option value="trilocale">Trilocale</option><option value="quadrilocale">Quadrilocale</option></select></div>
 <div class="field"><label class="label" for="tp-max-walk">Massimo minuti a piedi dal Politecnico (verificati)</label><input id="tp-max-walk" class="input" type="number" min="5" max="180" placeholder="Vuoto = nessun limite"></div>
 <div class="field"><label class="label" for="tp-zones">Quartieri preferiti</label><div id="tp-zones" class="tp-zones-choices"></div></div>
-<div class="field"><label class="label" for="fullname">Nome per il messaggio ai proprietari</label><input id="fullname" class="input" placeholder="Es. Mario" maxlength="70"></div><div class="field"><label class="label" for="intro">Informazioni aggiuntive da comunicare</label><textarea id="intro" class="input" rows="3" placeholder="Es. Studente al Politecnico, cerco da gennaio…"></textarea></div><button class="button primary" id="save-settings">Salva preferenze</button></div><div><b>Installazione gratuita su iPhone</b><p class="note">Apri questo indirizzo in Safari, premi Condividi → Aggiungi alla schermata Home → Apri come app. L’icona apparirà come un’app normale.</p><div class="line"></div><b>Importa annunci</b><p class="note">Puoi importare un file JSON esportato dal vecchio agente o un elenco JSON di annunci. I dati restano in questo browser, senza essere pubblicati su GitHub.</p><input type="file" accept=".json,application/json" id="import-file" class="input"><div style="height:8px"></div><button class="button" id="export">Esporta miei annunci (.json)</button></div></div></div>
+<div class="field"><label class="label" for="fullname">Nome per il messaggio ai proprietari</label><input id="fullname" class="input" placeholder="Es. Mario" maxlength="70"></div><div class="field"><label class="label" for="intro">Informazioni aggiuntive da comunicare</label><textarea id="intro" class="input" rows="3" placeholder="Es. Studente al Politecnico, cerco da gennaio…"></textarea></div><button class="button primary" id="save-settings">Salva preferenze</button></div><div><b>La tua applicazione su iPhone</b><p class="note">Apri questo indirizzo in Safari, premi Condividi → Aggiungi alla schermata Home → Apri come app. L’icona apparirà come un’app normale.</p><details class="tp-card-details" style="margin-top:20px"><summary>Importa o esporta i tuoi dati <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded"><p class="note">Puoi trasferire i tuoi annunci personali tra dispositivi con un file.</p><input type="file" accept=".json,application/json" id="import-file" class="input"><div style="height:8px"></div><button class="button" id="export">Esporta i miei dati</button></div></details></div></div></div>
 </section>
 </main></div>
 <nav class="mobile-nav" aria-label="Navigazione rapida">
@@ -662,8 +662,10 @@ if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.
  }
 });
 document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){page=1;mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(function(x){x.classList.toggle('selected',x===b)});renderResults()})});
+el('tp-main-search').addEventListener('input',function(){el('query').value=this.value;page=1;renderResults()});
 ['query','zone','sort','source-filter','age-filter','distance-filter','stale-filter'].forEach(function(id){el(id).addEventListener('input',function(){page=1;renderResults()})});el('tp-more').addEventListener('click',function(){page+=1;renderResults()});el('reload').addEventListener('click',load);el('tp-home-reload').addEventListener('click',load);
 el('tp-activity-refresh').addEventListener('click',load);
+el('tp-filter-toggle').setAttribute('aria-expanded','false');
 el('tp-filter-toggle').addEventListener('click',function(){
  var filter=el('tp-filterbar');filter.hidden=!filter.hidden;this.setAttribute('aria-expanded',String(!filter.hidden));
 });el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;setupPersonalZones();fillPersonalSettings();
@@ -817,6 +819,51 @@ async function sendTurinPippsReport(){
  }
 }
 el('tp-send-report').addEventListener('click',sendTurinPippsReport);
+var tpGuideStep=0;
+var tpGuideSlides=[
+ {icon:'fa-solid fa-magnifying-glass',title:'Trova la tua prossima casa',
+  text:'In Cerca casa trovi gli annunci raccolti. Puoi cercare per indirizzo o quartiere e filtrare le opzioni in pochi secondi.'},
+ {icon:'fa-solid fa-scale-balanced',title:'Scegli, salva e confronta',
+  text:'Premi Confronta su almeno due immobili: TurinPipps li mette affiancati per canone, metratura e distanza. I preferiti sono sempre a portata di mano.'},
+ {icon:'fa-regular fa-calendar-check',title:'Tieni tutto sotto controllo',
+  text:'Organizza una visita, aggiungi le tue note e controlla in Attività quando sono stati aggiornati gli annunci e inviati i report.'}
+];
+function drawGuide(){
+ var d=tpGuideSlides[tpGuideStep];
+ el('tp-guide-icon').innerHTML='<i class="'+d.icon+'"></i>';
+ el('tp-guide-title').textContent=d.title;
+ el('tp-guide-description').textContent=d.text;
+ el('tp-guide-kicker').textContent='PASSO '+(tpGuideStep+1)+' DI '+tpGuideSlides.length;
+ el('tp-guide-progress').style.width=((tpGuideStep+1)/tpGuideSlides.length*100)+'%';
+ el('tp-guide-next').innerHTML=tpGuideStep===tpGuideSlides.length-1?'Inizia a cercare <i class="fa-solid fa-arrow-right"></i>':'Continua <i class="fa-solid fa-arrow-right"></i>';
+ el('tp-guide-skip').textContent=tpGuideStep===0?'Salta guida':'Indietro';
+}
+function openGuide(){
+ tpGuideStep=0;drawGuide();
+ var dialog=el('tp-guide-dialog');if(!dialog.open)dialog.showModal();
+}
+function closeGuide(){
+ try{localStorage.setItem('turinpipps.onboard.v2','1')}catch(_){}
+ el('tp-guide-dialog').close();
+}
+function maybeOpenGuide(){
+ var completed=false;
+ try{completed=localStorage.getItem('turinpipps.onboard.v2')==='1'}catch(_){}
+ var welcome=el('tp-welcome');
+ if(!completed&&(!welcome||welcome.hidden)&&!el('tp-guide-dialog').open)openGuide();
+}
+el('tp-guide-open').addEventListener('click',openGuide);
+el('tp-more-guide').addEventListener('click',openGuide);
+el('tp-guide-skip').addEventListener('click',function(){
+ if(tpGuideStep>0){tpGuideStep--;drawGuide()}else closeGuide();
+});
+el('tp-guide-next').addEventListener('click',function(){
+ if(tpGuideStep<tpGuideSlides.length-1){tpGuideStep++;drawGuide()}
+ else {closeGuide();nav('results')}
+});
+window.addEventListener('turinpipps:ready',function(){setTimeout(maybeOpenGuide,650)});
+window.addEventListener('turinpipps:account-ready',function(){setTimeout(maybeOpenGuide,400)});
+
 el('add').addEventListener('click',function(){var url=prompt('Incolla il link dell’annuncio:');if(!url)return;url=canonical(url);if(!url){alert('Inserisci un indirizzo web valido');return}var title=prompt('Titolo dell’immobile:')||'Annuncio inserito a mano';var price=Number(prompt('Canone mensile in euro (0 se sconosciuto):','0')||0);var zone=prompt('Zona (es. San Paolo, Crocetta, Cenisia):','')||'';var privateConfirmed=confirm('Hai verificato che l’inserzionista è un privato e non un’agenzia?');var newRow={url:url,title:title,price:price,zone:zone,source:'Inserito da te',private_status:privateConfirmed?'user':'unverified',seen:new Date().toISOString()};prefs.manual.push(newRow);memoListings=null;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveManual(newRow);renderResults();alert('Annuncio aggiunto')});
 
 window.TurinPippsBridge={
@@ -863,7 +910,7 @@ window.TurinPippsBridge={
  };
  load().catch(function(){if(splashLabel)splashLabel.textContent='Alcune fonti non sono disponibili'}).finally(function(){window.TurinPippsBoot.dataReady()});
  setTimeout(function(){if(!gotAuth)window.TurinPippsBoot.authReady(false,false)},6000);
- document.getElementById('tp-welcome-guest').addEventListener('click',function(){sessionStorage.setItem('turinpipps-guest-session','1');document.getElementById('tp-welcome').hidden=true});
+ document.getElementById('tp-welcome-guest').addEventListener('click',function(){sessionStorage.setItem('turinpipps-guest-session','1');document.getElementById('tp-welcome').hidden=true;setTimeout(maybeOpenGuide,400)});
 })();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
 })();
 </script>
