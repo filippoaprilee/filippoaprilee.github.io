@@ -280,7 +280,7 @@ async function scan(time:string,feeds:string[]){
     outputs.push(...await Promise.all(QUERY_SET.slice(i,i+3).map(([e,q])=>scanOne(e,q,time))));
   }
   outputs.push(await collectClickCase(time));
-  outputs.push(...await collectOtherPublicPages(time));
+  // Bakeca e Immobiliare.it: robots.txt ne vieta la lettura automatica; consultabili manualmente dal Radar.
   outputs.push(...await readGoogleAlerts(feeds,time));
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
