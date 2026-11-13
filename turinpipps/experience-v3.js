@@ -181,7 +181,7 @@ async function loadLiveListings(force){
  var timeout=setTimeout(function(){controller.abort()},8500);
  try{
    var [a,b]=await Promise.allSettled([
-     fetch(root+'turinpipps_discovered_listings?select=listing_url,title,description,source,origin_engine,zone,price,first_seen,last_seen&order=first_seen.desc&limit=600',{headers:headers,signal:controller.signal,cache:'no-store'})
+     fetch(root+'turinpipps_discovered_listings?select=listing_url,title,description,source,origin_engine,zone,price,first_seen,last_seen,source_updated,sqm,expenses,address,property_type&order=first_seen.desc&limit=600',{headers:headers,signal:controller.signal,cache:'no-store'})
        .then(function(r){if(!r.ok)throw new Error('Annunci: HTTP '+r.status);return r.json()}),
      fetch(root+'turinpipps_scan_runs?select=started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=1',{headers:headers,signal:controller.signal,cache:'no-store'})
        .then(function(r){if(!r.ok)throw new Error('Scansioni: HTTP '+r.status);return r.json()})
