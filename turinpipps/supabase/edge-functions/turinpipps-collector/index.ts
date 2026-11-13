@@ -2,16 +2,8 @@
 // Scansioni di ricerca pubblica via indice Bing RSS, senza login o scraping dei portali.
 // Invocazione server-to-server protetta da chiave casuale conservata in Supabase Vault.
 const JOB_SHA256 = "f56439eb86364195905be2060527f091e4404619203a6ce0f55493dc934a3542";
-const QUERY_SET = [
-  ["Subito", "site:subito.it/appartamenti/ Torino affitto privato bilocale Cenisia San Paolo"],
-  ["Immobiliare.it", "site:immobiliare.it/annunci/ Torino affitto privato Politecnico Crocetta"],
-  ["Idealista", "site:idealista.it/immobile/ Torino affitto da privato appartamento"],
-  ["ClickCase", "site:clickcase.it Torino affitto privato bilocale arredato"],
-  ["Bakeca", "site:bakeca.it/dettaglio/offro-casa/ Torino affitto privato"],
-  ["Casa.it", "site:casa.it/immobili/ Torino affitto privato"],
-  ["Facebook gruppi", "site:facebook.com/groups/ Torino affitto appartamento privato Politecnico"],
-  ["Facebook annunci", "site:facebook.com/groups/ Torino bilocale affitto Cenisia Crocetta"]
-] as const;
+// Bing RSS non fornisce risultati pertinenti in modo affidabile: resta ricerca manuale in UI.
+const QUERY_SET = [] as const;
 const PROJECT = Deno.env.get("SUPABASE_URL") || "";
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const DB_ROOT = PROJECT + "/rest/v1";
@@ -105,7 +97,7 @@ async function scanOne(engine:string,query:string,time:string) {
     const pos=body.toLowerCase().indexOf("<item>");
     const end=pos<0?-1:body.toLowerCase().indexOf("</item>",pos);
     const sample=pos<0||end<0?"":body.slice(pos,end+7);
-    console.log("scan",engine,"items",itemCount,"recognized",rows.length,"sample",xmlValue(sample,"link").slice(0,130));
+    // Non pubblicare esempi di URL nella diagnostica.
     return {engine,ok:true,count:rows.length,items:itemCount,sample:xmlValue(sample,"link").slice(0,180),status:"ok",rows};
   } catch(e) {return {engine,ok:false,count:0,status:String(e).slice(0,65),rows:[]}}
 }
@@ -251,7 +243,7 @@ async function scan(time:string,feeds:string[]){
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
-  const stats=outputs.map(({engine,ok,count,items,sample,status})=>({engine,ok,count,items:items||0,sample:sample||"",status}));
+  const stats=outputs.map(({engine,ok,count,items,status})=>({engine,ok,count,items:items||0,status}));
   let saved=0;
   if(all.length){
     const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen&limit=10000",{headers:dbHeaders()});
