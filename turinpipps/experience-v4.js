@@ -99,7 +99,7 @@ function persistValues(){
  var range=$('#tp-ob-budget-range'),num=$('#tp-ob-budget-number');
  if(num&&Number(num.value)>0)draft.budget=clamp(num.value,150,5000);
  else if(range)draft.budget=clamp(range.value,150,5000);
- var selected=$('input[name="tp-ob-zone"]:checked');if(active===2)draft.zones=selected.map(function(x){return x.value});
+ var selected=$$('input[name="tp-ob-zone"]:checked');if(active===2)draft.zones=selected.map(function(x){return x.value});
  var type=$('input[name="tp-ob-type"]:checked');if(type)draft.type=type.value;
  var sqm=$('#tp-ob-sqm');if(sqm)draft.sqm=clamp(sqm.value,0,400);
  var name=$('#tp-ob-name'),intro=$('#tp-ob-intro');
