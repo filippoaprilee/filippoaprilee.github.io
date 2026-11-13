@@ -114,39 +114,83 @@ function row_(url,source,near,now){
     origin:'automatic_alert'};
 }
 function rssListings_(now){
-  // Inserisci fino a 20 URL RSS da Google Alerts nelle Script Properties,
-  // uno per riga o separati da virgole. Zero email degli alert in Gmail.
+  // Motore multi-fonte: Google Alerts e risultati RSS pubblici di Bing.
+  // I risultati indicizzati NON confermano prezzo, disponibilità o identità del locatore.
   var raw=props_().getProperty('ALERT_FEEDS')||'';
-  var feeds=raw.split(/[\s,;]+/).map(function(v){return v.trim();}).filter(Boolean).slice(0,20);
-  var out=[],seen={};var failures=0;
-  feeds.forEach(function(feed){
-    if(!/^https:\/\/(?:www\.)?google\.com\/alerts\/feeds\/[a-zA-Z0-9/_%-]+$/.test(feed)){failures++;return;}
+  var feeds=raw.split(/[\s,;]+/).map(function(v){return v.trim();})
+    .filter(function(v){return /^https:\/\/(?:www\.)?google\.com\/alerts\/feeds\/[a-zA-Z0-9/_%-]+$/.test(v);}).slice(0,20);
+  var searches=[
+    'site:immobiliare.it/annunci/ Torino affitto privato Cenisia',
+    'site:immobiliare.it/annunci/ Torino affitto privato Crocetta',
+    'site:subito.it/appartamenti/ Torino affitto privato San Paolo',
+    'site:subito.it/appartamenti/ Torino affitto privato Santa Rita',
+    'site:idealista.it/immobile/ Torino affitto privato Politecnico',
+    'site:clickcase.it Torino bilocale affitto senza agenzia',
+    'site:bakeca.it/dettaglio/offro-casa/ Torino affitto privato',
+    'site:casa.it/immobili/ Torino affitto privato'
+  ];
+  var bingOn=props_().getProperty('ENABLE_BING_RSS')!=='false';
+  var jobs=feeds.map(function(f){return {engine:'Google Alerts',url:f};});
+  if(bingOn)searches.forEach(function(q){
+    jobs.push({engine:'Bing RSS',url:'https://www.bing.com/search?q='+encodeURIComponent(q)+'&format=rss&setlang=it'});
+  });
+  var out=[],seen={},failures=0,counts={'Google Alerts':0,'Bing RSS':0};
+  var requests=jobs.map(function(j){return {
+    url:j.url,muteHttpExceptions:true,followRedirects:false,
+    headers:{'Accept':'application/rss+xml, application/atom+xml, application/xml;q=0.9'}
+  };});
+  var responses=[];
+  try{if(requests.length)responses=UrlFetchApp.fetchAll(requests);}
+  catch(error){
+    console.warn('Fetch parallelo non disponibile: '+String(error).slice(0,90));
+    responses=requests.map(function(req){
+      try{return UrlFetchApp.fetch(req.url,req);}catch(e){return null;}
+    });
+  }
+  jobs.forEach(function(job,index){
     try{
-      var response=UrlFetchApp.fetch(feed,{muteHttpExceptions:true,followRedirects:false});
-      if(response.getResponseCode()!==200){failures++;return;}
-      var xml=XmlService.parse(response.getContentText());
-      var root=xml.getRootElement();
-      var entries=root.getChildren('entry',XmlService.getNamespace('http://www.w3.org/2005/Atom'));
-      entries.slice(0,60).forEach(function(entry){
+      var response=responses[index];
+      if(!response||response.getResponseCode()!==200){failures++;return;}
+      var body=response.getContentText().trim();
+      if(body.slice(0,20).toLowerCase().indexOf('<!doctype html')!==-1){failures++;return;}
+      var root=XmlService.parse(body).getRootElement(),items=[];
+      if(root.getName().toLowerCase()==='rss'){
+        var channel=root.getChild('channel');
+        if(channel)items=channel.getChildren('item').map(function(item){
+          return {title:item.getChildText('title')||'',summary:item.getChildText('description')||'',href:item.getChildText('link')||''};
+        });
+      }else if(root.getName().toLowerCase()==='feed'){
         var ns=XmlService.getNamespace('http://www.w3.org/2005/Atom');
-        var title=entry.getChildText('title',ns)||'';
-        var content=entry.getChildText('content',ns)||entry.getChildText('summary',ns)||'';
-        var link=entry.getChild('link',ns);
-        var href=link?(link.getAttribute('href')||{}).getValue?.():'';
-        var found=portal_(href);
+        items=root.getChildren('entry',ns).map(function(item){
+          var anchor=item.getChild('link',ns),attr=anchor&&anchor.getAttribute('href');
+          return {title:item.getChildText('title',ns)||'',
+            summary:item.getChildText('content',ns)||item.getChildText('summary',ns)||'',
+            href:attr?attr.getValue():''};
+        });
+      }else{failures++;return;}
+      counts[job.engine]++;
+      items.slice(0,45).forEach(function(item){
+        var found=portal_(item.href);
         if(!found){
-          var candidates=links_(content);
-          if(candidates.length)found=candidates[0].link;
+          var options=links_(item.summary);
+          if(options.length)found=options[0].link;
         }
         if(!found||seen[found.url])return;
+        var nearby=text_(item.title+' '+item.summary);
+        // Solo link alle singole inserzioni; niente pagine generiche o dati inventati.
+        if(!/torino|crocetta|cenisia|san paolo|cit turin|santa rita|pozzo strada|politecnico/i.test(nearby))return;
         seen[found.url]=1;
-        var row=row_(found.url,found.source+' · Google Alerts RSS',text_(title+' '+content),now);
-        row.title=text_(title).slice(0,170)||row.title;
+        var row=row_(found.url,found.source+' · '+job.engine,nearby,now);
+        row.title=text_(item.title).slice(0,170)||row.title;
+        row.origin=job.engine==='Bing RSS'?'public_search_index':'automatic_alert';
         out.push(row);
       });
-    }catch(e){failures++;console.warn('TurinPipps RSS: feed non letto ('+String(e.message||e).slice(0,80)+')');}
+    }catch(error){
+      failures++;console.warn('TurinPipps RSS '+job.engine+': '+String(error.message||error).slice(0,90));
+    }
   });
-  return {rows:out,feeds:feeds.length,failures:failures};
+  return {rows:out,feeds:feeds.length,bing:bingOn?searches.length:0,
+    checked:jobs.length,successes:counts,failures:failures};
 }
 /* RSS Google Alerts: nessuna email in arrivo, nessun accesso di lettura Gmail necessario. */
 function allowedByRobots_(url){
@@ -350,9 +394,9 @@ function runScan(){
     stored.json.verification='Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.';
     diagnostics.json.updated_at=timestamp;
     var sources=(diagnostics.json.sources||[]).filter(function(x){return x.name!=='Google Apps Script · automatico';});
-    sources.push({name:'Google Apps Script · automatico',status:!rss.feeds?'RSS da configurare':rss.failures?'parziale':'ok',
+    sources.push({name:'Google Apps Script · automatico',status:!rss.feeds&&!rss.bing?'RSS da configurare':rss.failures?'parziale':'ok',
       links_found:rss.rows.length+publics.rows.length,new:added,
-      message:'Google Alerts RSS: '+rss.feeds+' feed (errori '+rss.failures+'), link '+rss.rows.length+'. Nessuna email di alert. Percorsi a piedi verificati: '+walking.updated+'. Disponibilità controllate: '+availability.checked+', possibili non disponibili: '+availability.potentiallyMissing+'. '+publics.status+'. Nessun bypass dei portali.'});
+      message:'Google Alerts RSS: '+rss.feeds+' feed, Bing RSS: '+rss.bing+' ricerche pubbliche, errori '+rss.failures+', link '+rss.rows.length+'. Nessuna email di alert. Percorsi a piedi verificati: '+walking.updated+'. Disponibilità controllate: '+availability.checked+', possibili non disponibili: '+availability.potentiallyMissing+'. '+publics.status+'. Nessun bypass dei portali.'});
     diagnostics.json.sources=sources;
     githubSave_(TP.listings,stored,stored.json);
     // The previous PUT changed the repository head but not this file's SHA.
@@ -511,8 +555,8 @@ function installTurinPipps(){
   ScriptApp.getProjectTriggers().forEach(function(t){
     if(['runScan','runDailyDigest'].indexOf(t.getHandlerFunction())!==-1)ScriptApp.deleteTrigger(t);
   });
-  ScriptApp.newTrigger('runScan').timeBased().everyHours(6).create();
+  ScriptApp.newTrigger('runScan').timeBased().everyHours(2).create();
   ScriptApp.newTrigger('runDailyDigest').timeBased().atHour(19).nearMinute(0)
     .everyDays(1).inTimezone('Europe/Rome').create();
-  console.log('TurinPipps installato. Scansione ogni 6 ore, report circa alle 19:00 Europe/Rome.');
+  console.log('TurinPipps installato. Scansione ogni 2 ore, report circa alle 19:00 Europe/Rome.');
 }
