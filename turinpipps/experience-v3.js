@@ -47,7 +47,20 @@ function createRadar(){
  '<a target="_blank" rel="noopener noreferrer" href="https://www.clickcase.it/annunci/affitti-case-privati-torino.html"><span>ClickCase</span><small>Da privato a privato</small></a>'+
  '<a target="_blank" rel="noopener noreferrer" href="https://www.subito.it/annunci-piemonte/affitto/appartamenti/torino/torino/da-privati/"><span>Subito</span><small>Affitti privati</small></a>'+
  '</div>';
- panel.appendChild(direct);
+ // Raggruppa i motori secondari in un pannello espandibile: il Radar resta ordinato.
+ var secondary=panel.querySelector('.tp-radar-links');
+ var group=node('details','tp-radar-extra-sources');group.id='tp-radar-extra-sources';
+ var summary=node('summary','','Altri motori e portali (8)');
+ summary.setAttribute('aria-label','Apri altre fonti: Bing, DuckDuckGo, Facebook, Immobiliare, Bakeca, TrovaCasa, ClickCase e Subito');
+ var wrap=node('div','tp-radar-extra-content');
+ var otherLinks=node('div','tp-radar-links tp-radar-secondary-links');
+ ['bing','duck','facebook'].forEach(function(engine){
+  var link=secondary.querySelector('[data-tp-engine="'+engine+'"]');
+  if(link)otherLinks.appendChild(link);
+ });
+ wrap.appendChild(otherLinks);wrap.appendChild(direct);
+ group.appendChild(summary);group.appendChild(wrap);
+ panel.appendChild(group);
 
 
  // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
