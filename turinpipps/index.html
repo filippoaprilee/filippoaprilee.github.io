@@ -677,7 +677,32 @@ function nav(next){
 function download(data,name){var a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}
 function message(a){return 'Buongiorno, mi chiamo '+(prefs.fullname||'[nome]')+'. Ho visto il suo annuncio "'+a.title+'" per un immobile in affitto a Torino'+(a.zone?' (zona '+a.zone+')':'')+'. Vorrei sapere se è ancora disponibile, se tratta direttamente con il proprietario e a quanto ammontano le spese condominiali e le utenze oltre al canone. Sarebbe possibile organizzare una visita?'+(prefs.intro?'\n\n'+prefs.intro:'')+'\n\nGrazie e buona giornata.'}
 async function copy(text){try{await navigator.clipboard.writeText(text);showToast('Messaggio copiato. L’invio al proprietario resta manuale.','good')}catch(_){showToast('Copia non disponibile da questo browser.','warn')}}
-async function load(){memoListings=null;page=1;el('updated').textContent='Verifica dati online…';try{var r=await fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);var j=await r.json();remote=Array.isArray(j)?j:(j.listings||[]);lastUpdate=j.updated_at||''}catch(_){remote=[];lastUpdate=''}try{var d=await fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'});var x=await d.json();diagnostics=Array.isArray(x)?x:(x.sources||[])}catch(_){diagnostics=[]}try{var r=await fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error();reportState=await r.json()}catch(_){reportState=null}renderReport();el('updated').textContent=lastUpdate?'Ultimo aggiornamento dati '+new Date(lastUpdate).toLocaleString('it-IT'):'Raccolta automatica non ancora attiva';renderResults();renderSaved();if(tab==='sources')renderSources()}
+async function load(){
+ memoListings=null;page=1;
+ el('updated').textContent='Aggiornamento annunci…';
+ // Richieste indipendenti in parallelo: il report non deve rallentare l'elenco immobili.
+ var [listings,health,report]=await Promise.allSettled([
+   fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Annunci '+r.status);return r.json()}),
+   fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Monitoraggio '+r.status);return r.json()}),
+   fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Report '+r.status);return r.json()})
+ ]);
+ if(listings.status==='fulfilled'){
+   var j=listings.value;
+   remote=Array.isArray(j)?j:(Array.isArray(j.listings)?j.listings:[]);
+   lastUpdate=j.updated_at||'';
+ }else{
+   // Non cancellare gli annunci già visualizzati se una richiesta temporanea fallisce.
+   if(!remote.length)remote=[];
+ }
+ if(health.status==='fulfilled'){
+   var x=health.value;
+   diagnostics=Array.isArray(x)?x:(x.sources||[]);
+ }
+ if(report.status==='fulfilled')reportState=report.value;
+ renderReport();
+ el('updated').textContent=lastUpdate?'Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT'):'Ricerca in attesa di dati';
+ renderResults();renderSaved();if(tab==='sources')renderSources();
+}
 document.addEventListener('click',function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
@@ -996,7 +1021,7 @@ window.TurinPippsBridge={
 };
 function finish(){
    if(finished||!gotData||!gotAuth)return;
-   finished=true;var delay=Math.max(0,2500-(Date.now()-started));
+   finished=true;var delay=Math.max(0,480-(Date.now()-started));
    setTimeout(function(){
      document.body.classList.add('tp-ready');
      window.dispatchEvent(new Event('turinpipps:ready'));
