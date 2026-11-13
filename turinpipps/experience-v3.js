@@ -35,6 +35,14 @@ function createRadar(){
  '<a data-tp-engine="facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i> Gruppi Facebook pubblici <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
  '</div><div class="tp-radar-foot"><span id="tp-radar-query-preview"></span><span>Queste ricerche aprono risultati esterni: la disponibilità non è garantita.</span></div>';
  anchor.parentNode.insertBefore(panel,anchor);
+ // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
+ var add=$('#add');if(add){
+   add.innerHTML='<i class="fa-solid fa-link"></i> Aggiungi annuncio';
+   var quick=node('div','tp-radar-manual');
+   quick.appendChild(add);
+   panel.appendChild(quick);
+ }
+
  var select=$('#tp-radar-zone');
  zones.forEach(function(zone,i){var opt=document.createElement('option');opt.value=i?zone:'';opt.textContent=zone;select.appendChild(opt)});
  try{var saved=JSON.parse(localStorage.getItem('tp_radar_v3')||'{}');
