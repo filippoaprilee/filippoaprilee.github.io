@@ -101,6 +101,7 @@
           minSqm:settings.min_sqm,preferredZones:settings.preferred_zones,
           propertyType:settings.property_type,maxWalkMinutes:settings.max_walk_minutes}:null});
       current=next;setButton();
+      window.dispatchEvent(new Event('turinpipps:account-ready'));
       status('Preferiti, note e annunci personali sincronizzati.','ok');
     }catch(err){
       status('Accesso riuscito ma sincronizzazione non disponibile: '+(err.message||'controlla le regole RLS e le tabelle.'),'error');
