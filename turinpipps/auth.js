@@ -204,50 +204,6 @@
     el('tp-auth-change-password').hidden=true;
     status('Password aggiornata.','ok');
   }
-  async function oauthLogin(provider){
-    if(!client){status('Accesso non disponibile: verificare configurazione Supabase o connessione.','error');open();return}
-    if(loading)return;
-    loading=true;
-    try{
-      sessionStorage.removeItem('turinpipps-guest-session');
-      var r=await client.auth.signInWithOAuth({
-        provider:provider,
-        options:{redirectTo:location.origin+location.pathname}
-      });
-      if(r.error)throw r.error;
-      // Supabase redirects to Google/Apple; tokens are never handled by TurinPipps.
-    }catch(err){
-      if(welcome)welcome.hidden=false;
-      if(!dialog.open&&dialog.showModal)dialog.showModal();
-      status('Accesso '+(provider==='google'?'Google':'Apple')+' non riuscito: '+(err.message||'provider OAuth non configurato')+'. Controlla che il provider sia abilitato in Supabase.','error');
-    }finally{loading=false;}
-  }
-  [['tp-welcome-google','google'],['tp-welcome-apple','apple'],
-   ['tp-auth-google','google'],['tp-auth-apple','apple']].forEach(function(pair){
-    var node=el(pair[0]);
-    if(node)node.addEventListener('click',function(){oauthLogin(pair[1])});
-  });
-  async function updateProviderAvailability(){
-    if(!client)return;
-    try{
-      var r=await fetch(String(cfg.url).replace(/\/$/,'')+'/auth/v1/settings',{cache:'no-store'});
-      if(!r.ok)return;
-      var settings=await r.json(),external=settings&&settings.external||{};
-      ['google','apple'].forEach(function(provider){
-        if(external[provider]!==false)return;
-        ['tp-welcome-'+provider,'tp-auth-'+provider].forEach(function(id){
-          var b=el(id);
-          if(!b)return;
-          b.disabled=true;
-          b.title='Accesso '+(provider==='google'?'Google':'Apple')+' non ancora configurato nel progetto Supabase';
-          b.style.opacity='0.5';
-          b.style.cursor='not-allowed';
-          b.setAttribute('aria-label',b.textContent.trim()+' (non ancora attivo)');
-        });
-      });
-    }catch(_){/* OAuth handles provider errors when this check is unavailable. */}
-  }
-  updateProviderAvailability();
   button.addEventListener('click',open);
   if(el('tp-show-password'))el('tp-show-password').addEventListener('click',function(){
     var pass=el('tp-auth-password'),show=pass.type==='password';
