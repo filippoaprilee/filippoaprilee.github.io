@@ -482,7 +482,7 @@ function card(a){
  '<div class="listing-banner"><div class="tile"><i class="fa-solid fa-house"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div>'+
  '<div class="body"><div class="micro">'+esc(a.source)+' · '+esc(a.zone||'Zona non indicata')+'</div>'+
  '<h3>'+esc(a.title)+'</h3>'+
- '<div class="tags">'+(isNew?'<span class="tag green">Nuovo</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
+ '<div class="tags">'+(isNew?'<span class="tag green">Scoperto da poco</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
@@ -491,7 +491,7 @@ function card(a){
  warning+(f.visitStatus&&f.visitStatus!=='non_programmata'?'<div class="tp-note" style="margin-top:10px">Visita '+esc(f.visitStatus)+' · '+esc(visitText(f))+'</div>':'')+
  '<details class="tp-card-details"><summary>Dettagli, spese e verifiche <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded">'+
  '<p class="desc" style="display:block;max-height:none">'+esc(a.description||'Apri la scheda per verificare i dettagli.')+'</p>'+
- '<div class="tp-costbar"><div><span>Canone</span><b>'+esc(a.price||'n.d.')+' €</b></div><div><span>Spese note</span><b>'+esc(cost.known)+' €</b></div><div><span>Totale noto</span><b>'+total+'</b></div></div>'+
+ '<div class="tp-costbar"><div><span>Canone</span><b>'+(a.price?esc(a.price)+' €':'Da verificare')+'</b></div><div><span>Spese note</span><b>'+(cost.unknown&&!cost.known?'Da chiarire':esc(cost.known)+' €')+'</b></div><div><span>Totale noto</span><b>'+total+'</b></div></div>'+
  '<div class="tp-scorebar"><b>Score '+rank.total+'/100</b><div class="tp-score-track"><i style="width:'+rank.total+'%"></i></div><p>'+rank.components.map(function(q){return esc(q[0])+': '+q[1]+'/'+q[2]}).join(' · ')+'</p></div>'+
  route+historyHTML+riskHTML+dupHTML+
  (f.notes?'<div class="tp-note"><i class="fa-regular fa-note-sticky"></i> '+esc(f.notes)+'</div>':'')+
