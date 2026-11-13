@@ -25,7 +25,7 @@ function refreshLinks(){
 function createRadar(){
  var host=$('#view-results'),anchor=$('.tp-search-tools');if(!host||!anchor||$('#tp-radar-v3'))return;
  var panel=node('section','tp-radar-v3');panel.id='tp-radar-v3';
- panel.innerHTML='<div class="tp-radar-intro"><div class="tp-radar-symbol" aria-hidden="true"><i class="fa-solid fa-satellite-dish"></i></div><div><span class="tp-radar-kicker">RICERCA ESTESA</span><h2>Non fermarti agli annunci già raccolti.</h2><p>Esplora più motori, anche i post Facebook pubblici indicizzati. Senza account sui portali.</p></div></div>'+
+ panel.innerHTML='<div class="tp-radar-intro"><div class="tp-radar-symbol" aria-hidden="true"><i class="fa-solid fa-satellite-dish"></i></div><div><span class="tp-radar-kicker">RICERCA ESTESA</span><h2>Non fermarti agli annunci già raccolti.</h2><p>Esplora più motori e i post Facebook pubblici indicizzati. Alcune fonti potrebbero richiedere l’accesso.</p></div></div>'+
  '<div class="tp-radar-controls"><label class="tp-radar-field"><span>Che casa cerchi?</span><input id="tp-radar-term" maxlength="120" autocomplete="off" value="bilocale arredato" placeholder="Es. bilocale arredato"></label>'+
  '<label class="tp-radar-field"><span>In quale zona?</span><select id="tp-radar-zone"></select></label></div>'+
  '<div class="tp-radar-links">'+
@@ -190,8 +190,23 @@ async function loadLiveListings(force){
    if(status)status.textContent='Aggiornamento live temporaneamente non disponibile. Puoi continuare a consultare gli annunci già salvati.';
  }finally{clearTimeout(timeout);liveLoading=false;}
 }
+
+function setupIphoneDashboard(){
+ var panel=$('#view-settings .panel');if(!panel||$('#tp-ios-quick'))return;
+ var section=node('section','tp-ios-quick');section.id='tp-ios-quick';
+ section.innerHTML='<div class="tp-ios-quick-title"><i class="fa-solid fa-mobile-screen-button"></i><div><h3>TurinPipps a portata di mano</h3><p>Apri la tua panoramica veloce dal telefono senza attraversare i menu.</p></div></div>'+
+ '<div class="tp-ios-quick-actions"><a href="./today.html" class="button primary">Apri panoramica veloce</a><button type="button" class="button" id="tp-ios-copy">Copia link per iPhone</button></div>'+
+ '<details><summary>Come aggiungerlo ai widget su iPhone</summary><p>Apri l’app <b>Comandi Rapidi</b> e crea un comando con l’azione <b>Apri URL</b>, incollando il link della panoramica. Aggiungi poi il widget di Comandi Rapidi alla schermata Home e seleziona il comando. Il widget avvia la panoramica, ma non mostra dati aggiornati direttamente sul riquadro.</p></details>';
+ panel.appendChild(section);
+ $('#tp-ios-copy').addEventListener('click',async function(){
+   var url=new URL('./today.html',location.href).href;
+   try{await navigator.clipboard.writeText(url);this.textContent='Link copiato';}
+   catch(_){this.textContent='Copia dall’indirizzo: '+url}
+ });
+}
+
 function init(){
- brandAndSections();createRadar();decorateHome();improveGuide();
+ brandAndSections();createRadar();decorateHome();improveGuide();setupIphoneDashboard();
  document.addEventListener('keydown',function(e){
    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
      e.preventDefault();window.TurinPippsUXV3.navigate('results');var input=$('#tp-main-search');if(input)input.focus();
