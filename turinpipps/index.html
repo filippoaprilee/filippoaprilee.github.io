@@ -181,7 +181,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:650px){.tp-costbar{grid-template-columns:1fr}.tp-costbar>div{border-right:0;border-bottom:1px solid #e3e9f2;padding:9px 12px}.tp-costbar>div:last-child{border-bottom:0}}
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
-</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"></head><body>
+</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -333,7 +333,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <script>
 (function(){'use strict';
 var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='good',tab='home';
-var guestPrefs=JSON.parse(JSON.stringify(prefs)),accountMode=false,memoListings=null,reportState=null,page=1,pageSize=20;
+var guestPrefs=JSON.parse(JSON.stringify(prefs)),accountMode=false,memoListings=null,reportState=null,page=1,pageSize=20,externalRemote=[],liveScan=null;
 var zones=['crocetta','cenisia','san paolo','borgo san paolo','cit turin','santa rita','pozzo strada'];
 var links=[
 {name:'Subito',type:'Privati · Torino città',desc:'Annunci da privati. Con Google Alerts puoi ricevere link pubblici senza creare un account Subito; le schede sono da verificare.',url:'https://www.subito.it/annunci-piemonte/affitto/appartamenti/torino/torino/da-privati/',kind:'live'},
@@ -352,8 +352,14 @@ function normalize(item){if(!item||typeof item!=='object')return null;var url=ca
 var source=String(item.source||item.portal||'Web');var privateStatus=item.private_status||item.owner_status||((source.toLowerCase().includes('clickcase')||source.toLowerCase().includes('subito privati'))?'source':'unverified');
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
 return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0}}
-function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=remote.concat(prefs.manual||[]).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
-function classify(a){var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;if(!chosen.some(function(x){return z.includes(x.toLowerCase())}))return 'excluded';return 'good'}
+function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=remote.concat(externalRemote,prefs.manual||[]).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
+function classify(a){
+ // Audience-specific adverts require explicit eligibility verification.
+ var eligibility=(a.title||'')+' '+(a.description||'');
+ if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,65}\b(?:studentesse|studenti|donne|uomini|lavoratrici|lavoratori|ragazze|ragazzi|coppie)\b/i.test(eligibility))return 'review';
+ if(a.availability_state==='potenzialmente_non_disponibile')return 'review';
+ if(listingAgeDays(a)!==null&&listingAgeDays(a)>75)return 'review';
+ var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;if(!chosen.some(function(x){return z.includes(x.toLowerCase())}))return 'excluded';return 'good'}
 
 function recurringCost(a){
  var t=String(a.expenses||''),known=0,recognized=false;
@@ -517,15 +523,19 @@ function renderHome(){
  var d=diagnostics.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
  var last=Date.parse(lastUpdate||''),hours=Number.isFinite(last)?(Date.now()-last)/3600000:Infinity;
  var light=el('tp-state-light'),title=el('tp-scan-title'),caption=el('tp-scan-caption');
- var fresh=!!d&&d.status==='ok'&&hours<=12;
+ var liveTime=liveScan?Date.parse(liveScan.finished_at||liveScan.started_at):NaN;
+ var liveAge=Number.isFinite(liveTime)?(Date.now()-liveTime)/3600000:Infinity;
+ var liveGood=liveScan&&['ok','partial'].includes(liveScan.status)&&liveAge<=2;
+ var fresh=!!d&&d.status==='ok'&&hours<=12||liveGood;
+ var displayTime=liveGood?liveTime:last;
  light.className='tp-status-light '+(fresh?'good':hours<=24?'warning':'');
  title.textContent=fresh?'Ultimo controllo riuscito':Number.isFinite(last)?'Ultimo controllo da rivedere':'Nessun controllo recente';
- caption.textContent=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Data non disponibile';
+ caption.textContent=Number.isFinite(displayTime)?new Date(displayTime).toLocaleString('it-IT'):'Data non disponibile';
  el('tp-scan-explain').textContent='I nuovi annunci compaiono dopo una nuova verifica. Per le case con informazioni incomplete servono ulteriori controlli.';
  var m=(d&&d.message||'').match(/link\s+(\d+)/i);
  var rss=(d&&d.message||'').match(/RSS:\s*(\d+)\s*feed/i);
- el('tp-home-scan-new').textContent=d&&Number.isFinite(Number(d.new))?d.new:'—';
- el('tp-home-feeds').textContent=rss?rss[1]:'—';
+ el('tp-home-scan-new').textContent=liveGood?externalRemote.filter(function(x){return Date.now()-Date.parse(x.seen||'')<24*3600000}).length:d&&Number.isFinite(Number(d.new))?d.new:'—';
+ el('tp-home-feeds').textContent=liveGood?liveScan.jobs_checked:rss?rss[1]:'—';
  el('tp-home-last-report').textContent=reportState&&reportState.last_sent_at?
  new Date(reportState.last_sent_at).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}):'—';
  if(el('tp-home-budget'))el('tp-home-budget').textContent=(Number(prefs.budget)||700).toLocaleString('it-IT')+' €';
@@ -626,24 +636,30 @@ function renderSources(){
  var last=Date.parse(lastUpdate||''),recent=Number.isFinite(last)&&(Date.now()-last)<12*3600000;
  var caption=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Mai verificato';
  var msg=d&&d.message||'';
- var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed\s*\(errori\s*(\d+)\),\s*link\s*(\d+)/i);
+ var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed/i),bing=msg.match(/Bing RSS:\s*(\d+)\s*ricerche/i),linkCount=msg.match(/link\s+(\d+)/i),rssErrors=msg.match(/errori\s+(\d+)/i),searched=(rss?Number(rss[1]):0)+(bing?Number(bing[1]):0);
  var click=msg.match(/(\d+)\s+schede ClickCase/i);
  var count=d&&Number.isFinite(Number(d.new))?d.new:0;
  el('tp-activity-summary').innerHTML='<div class="tp-scan-state"><span class="tp-status-light '+(recent&&d&&d.status==='ok'?'good':'warning')+'"></span><div><strong>'+
  (recent&&d&&d.status==='ok'?'Rilevazione recente riuscita':'Ultimo aggiornamento da controllare')+
  '</strong><small>'+esc(caption)+'</small></div></div>'+
- '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(rss?esc(rss[0].match(/link\s*(\d+)/i)[1])+' link dalle ricerche monitorate. ':'')+
+ '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(linkCount?esc(linkCount[1])+' link dalle ricerche monitorate. ':'')+
  'La raccolta cambia quando vengono rilevate nuove informazioni.</p>'+
- '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(rss?rss[1]:0)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
+ '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(searched)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
  var rows=[
   {icon:'fa-solid fa-rotate',title:'Controllo immobili',text:'Ultimo aggiornamento '+caption},
-  {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:rss?rss[1]+' ricerche, '+rss[3]+' link trovati, '+rss[2]+' errori':'Nessun dato disponibile'},
+  {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:searched?searched+' ricerche, '+(linkCount?linkCount[1]:'0')+' link trovati, '+(rssErrors?rssErrors[1]:'0')+' errori':'Nessun dato disponibile'},
   {icon:'fa-solid fa-house',title:'Annunci elaborati',text:(click?click[1]:'0')+' schede ClickCase esaminate · '+count+' nuove'},
   {icon:'fa-regular fa-envelope',title:'Riepilogo email',text:reportState&&reportState.last_sent_at?'Ultimo invio '+new Date(reportState.last_sent_at).toLocaleString('it-IT'):'Nessun invio confermato'}
  ];
  el('tp-activity-timeline').innerHTML=rows.map(function(x){
   return '<div class="tp-activity-timeline-item"><i class="'+x.icon+'"></i><div><strong>'+esc(x.title)+'</strong><small>'+esc(x.text)+'</small></div></div>';
  }).join('');
+ if(liveScan){
+  var scanned=Number(liveScan.jobs_ok)||0,total=Number(liveScan.jobs_checked)||0;
+  var now=Date.parse(liveScan.finished_at||liveScan.started_at);
+  var output='<div class="tp-activity-timeline-item"><i class="fa-solid fa-satellite-dish"></i><div><strong>Ricerca automatica</strong><small>'+esc(scanned)+' fonti consultate su '+esc(total)+'. '+esc(externalRemote.length)+' schede indicizzate utili · ultimo controllo '+esc(Number.isFinite(now)?new Date(now).toLocaleString('it-IT'):'non disponibile')+'</small></div></div>';
+  el('tp-activity-timeline').insertAdjacentHTML('afterbegin',output);
+ }
  el('sources').innerHTML=links.filter(function(x){return x.name!=='Facebook'}).map(function(x){
   return '<div class="tp-source-provider"><div class="tp-provider-name"><i class="fa-solid fa-house"></i><div><strong>'+esc(x.name)+'</strong><span>Annunci da controllare alla fonte</span></div></div><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Visita <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>';
  }).join('');
@@ -671,7 +687,32 @@ function nav(next){
 function download(data,name){var a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}
 function message(a){return 'Buongiorno, mi chiamo '+(prefs.fullname||'[nome]')+'. Ho visto il suo annuncio "'+a.title+'" per un immobile in affitto a Torino'+(a.zone?' (zona '+a.zone+')':'')+'. Vorrei sapere se è ancora disponibile, se tratta direttamente con il proprietario e a quanto ammontano le spese condominiali e le utenze oltre al canone. Sarebbe possibile organizzare una visita?'+(prefs.intro?'\n\n'+prefs.intro:'')+'\n\nGrazie e buona giornata.'}
 async function copy(text){try{await navigator.clipboard.writeText(text);showToast('Messaggio copiato. L’invio al proprietario resta manuale.','good')}catch(_){showToast('Copia non disponibile da questo browser.','warn')}}
-async function load(){memoListings=null;page=1;el('updated').textContent='Verifica dati online…';try{var r=await fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);var j=await r.json();remote=Array.isArray(j)?j:(j.listings||[]);lastUpdate=j.updated_at||''}catch(_){remote=[];lastUpdate=''}try{var d=await fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'});var x=await d.json();diagnostics=Array.isArray(x)?x:(x.sources||[])}catch(_){diagnostics=[]}try{var r=await fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error();reportState=await r.json()}catch(_){reportState=null}renderReport();el('updated').textContent=lastUpdate?'Ultimo aggiornamento dati '+new Date(lastUpdate).toLocaleString('it-IT'):'Raccolta automatica non ancora attiva';renderResults();renderSaved();if(tab==='sources')renderSources()}
+async function load(){
+ memoListings=null;page=1;
+ el('updated').textContent='Aggiornamento annunci…';
+ // Richieste indipendenti in parallelo: il report non deve rallentare l'elenco immobili.
+ var [listings,health,report]=await Promise.allSettled([
+   fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Annunci '+r.status);return r.json()}),
+   fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Monitoraggio '+r.status);return r.json()}),
+   fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('Report '+r.status);return r.json()})
+ ]);
+ if(listings.status==='fulfilled'){
+   var j=listings.value;
+   remote=Array.isArray(j)?j:(Array.isArray(j.listings)?j.listings:[]);
+   lastUpdate=j.updated_at||'';
+ }else{
+   // Non cancellare gli annunci già visualizzati se una richiesta temporanea fallisce.
+   if(!remote.length)remote=[];
+ }
+ if(health.status==='fulfilled'){
+   var x=health.value;
+   diagnostics=Array.isArray(x)?x:(x.sources||[]);
+ }
+ if(report.status==='fulfilled')reportState=report.value;
+ renderReport();
+ el('updated').textContent=lastUpdate?'Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT'):'Ricerca in attesa di dati';
+ renderResults();renderSaved();if(tab==='sources')renderSources();
+}
 document.addEventListener('click',function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
@@ -858,6 +899,7 @@ function drawGuide(){
  el('tp-guide-progress').style.width=((tpGuideStep+1)/tpGuideSlides.length*100)+'%';
  el('tp-guide-next').innerHTML=tpGuideStep===tpGuideSlides.length-1?'Inizia a cercare <i class="fa-solid fa-arrow-right"></i>':'Continua <i class="fa-solid fa-arrow-right"></i>';
  el('tp-guide-skip').textContent=tpGuideStep===0?'Salta guida':'Indietro';
+ if(typeof window.TurinPippsEnhanceGuide==='function')window.TurinPippsEnhanceGuide(tpGuideStep);
 }
 function openGuide(){
  tpGuideStep=0;drawGuide();
@@ -970,9 +1012,36 @@ window.TurinPippsBridge={
 (function(){
  var started=Date.now(),gotData=false,gotAuth=false,finished=false;
  var splashLabel=document.getElementById('tp-loading-label');
- function finish(){
+ window.TurinPippsUXV3={
+ navigate:function(view){nav(view)},
+ getPrefs:function(){return prefs},
+ getDiagnostics:function(){return diagnostics},
+ addDiscovery:function(rows,scan){
+   externalRemote=Array.isArray(rows)?rows.map(function(x){
+     return {url:x.listing_url,title:x.title,description:x.description,price:x.price,
+       zone:x.zone,source:x.source,private_status:'unverified',
+       seen:x.first_seen,last_seen:x.last_seen,origin_engine:x.origin_engine};
+   }):[];
+   liveScan=scan||null;memoListings=null;page=1;
+   renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();
+ },
+
+ guideSlides:function(slides){tpGuideSlides=slides},
+ setBudget:function(value){
+   prefs.budget=Math.max(150,Math.min(5000,Number(value)||700));
+   el('budget').value=prefs.budget;
+   persist();memoListings=null;
+   stats();renderHome();renderResults();
+ },
+ setZones:function(z){
+   prefs.preferredZones=Array.isArray(z)&&z.length?z:zones;
+   fillPersonalSettings();persist();memoListings=null;
+   stats();renderHome();renderResults();
+ }
+};
+function finish(){
    if(finished||!gotData||!gotAuth)return;
-   finished=true;var delay=Math.max(0,2500-(Date.now()-started));
+   finished=true;var delay=Math.max(0,480-(Date.now()-started));
    setTimeout(function(){
      document.body.classList.add('tp-ready');
      window.dispatchEvent(new Event('turinpipps:ready'));
@@ -997,4 +1066,5 @@ window.TurinPippsBridge={
 <script defer src="./report-config.js?v=1.0.0"></script>
 <script defer src="./auth-config.js?v=1.4.0"></script>
 <script defer src="./auth-loader.js?v=1.6.0"></script>
+<script defer src="./experience-v3.js?v=3.0.0"></script>
 </body></html>
