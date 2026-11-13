@@ -126,15 +126,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
  .topline{gap:8px}
 }
 
-/* TurinPipps 1.5 · social access */
-.tp-social-buttons{display:grid;gap:9px;margin:14px 0}
-.tp-social-btn{display:flex;align-items:center;justify-content:center;gap:12px;min-height:45px;width:100%;border-radius:11px;border:1px solid #d7deeb;background:white;color:#26344e;font-size:13px;font-weight:750}
-.tp-social-btn .fa-google{color:#4285f4}.tp-social-btn .fa-apple{color:#202c3e;font-size:19px}
-.tp-social-btn:hover{background:#f7f9fe}
-.tp-social-separator{display:flex;align-items:center;gap:11px;color:#8d98aa;font-size:10px;margin:12px 0}
-.tp-social-separator:before,.tp-social-separator:after{content:"";height:1px;background:#e1e7f0;flex:1}
-.tp-social-buttons button:focus-visible{outline:2px solid #6377ed;outline-offset:2px}
-.tp-social-hint{font-size:11px;color:#8793a8;line-height:1.5}
 
 
 /* TurinPipps · housing intelligence */
@@ -177,7 +168,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:710px){.tp-intelbar{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.tp-intelstat{flex-direction:column;align-items:flex-start;padding:10px 9px;gap:7px}.tp-intelstat>i{width:28px;height:28px;font-size:13px}.tp-intelstat b{font-size:19px}.tp-intelstat span{font-size:10px}}
 </style></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
-<div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="tp-social-btn" id="tp-welcome-google"><i class="fa-brands fa-google" aria-hidden="true"></i> Continua con Google</button><button type="button" class="tp-social-btn" id="tp-welcome-apple"><i class="fa-brands fa-apple" aria-hidden="true"></i> Continua con Apple</button><div class="tp-social-separator">Oppure utilizza email e password</div><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
+<div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
 <aside class="side"><div class="brand"><span class="brand-mark"><img src="./icon.svg" alt="" aria-hidden="true"></span><div class="brand-name">TurinPipps<small>TORINO · PRIVATI</small></div></div><nav class="nav">
 <button data-nav="results" class="active"><i class="fa-solid fa-house" aria-hidden="true"></i> <span class="nav-label">Annunci</span></button>
@@ -210,7 +201,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
   <p class="tp-auth-small">Un account per ogni persona. Preferiti, annunci e note sincronizzati su tutti i tuoi dispositivi.</p>
   <div id="tp-auth-config" class="tp-auth-config" hidden>Per abilitare la registrazione è necessario creare un progetto Supabase Free, eseguire lo schema SQL e inserire URL e chiave pubblica nel file <code>auth-config.js</code>. Nessuna password sarà salvata su GitHub.</div>
   <div id="tp-auth-welcome" class="tp-note" hidden></div>
-  <div class="tp-social-buttons" id="tp-auth-social"><button type="button" class="tp-social-btn" id="tp-auth-google"><i class="fa-brands fa-google" aria-hidden="true"></i> Accedi con Google</button><button type="button" class="tp-social-btn" id="tp-auth-apple"><i class="fa-brands fa-apple" aria-hidden="true"></i> Accedi con Apple</button><div class="tp-social-separator">Oppure usa email e password</div><div class="tp-social-hint">L'accesso avviene sul sito Google o Apple. Non ricevi una seconda email di verifica TurinPipps per questi accessi.</div></div><form id="tp-auth-form">
+  <form id="tp-auth-form">
    <div class="tp-auth-tabs"><button type="button" data-auth-mode="signin" class="active">Accedi</button><button type="button" data-auth-mode="register">Registrati</button></div>
    <div class="tp-auth-field"><label for="tp-auth-email">Indirizzo email</label><input type="email" id="tp-auth-email" required autocomplete="username" placeholder="nome@email.it"></div>
    <div class="tp-auth-field"><label for="tp-auth-password">Password</label><div class="tp-auth-password-wrap"><input type="password" id="tp-auth-password" required minlength="8" autocomplete="current-password" placeholder="Almeno 8 caratteri"><button class="tp-auth-toggle" type="button" id="tp-show-password" aria-label="Mostra password"><i class="fa-regular fa-eye" aria-hidden="true"></i></button></div></div>
