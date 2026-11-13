@@ -1021,7 +1021,8 @@ window.TurinPippsBridge={
    externalRemote=Array.isArray(rows)?rows.map(function(x){
      return {url:x.listing_url,title:x.title,description:x.description,price:x.price,
        zone:x.zone,source:x.source,private_status:'unverified',
-       seen:x.first_seen,last_seen:x.last_seen,origin_engine:x.origin_engine};
+       seen:x.first_seen,last_seen:x.last_seen,source_updated:x.source_updated||'',
+       sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',origin_engine:x.origin_engine};
    }):[];
    liveScan=scan||null;memoListings=null;page=1;
    renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();
