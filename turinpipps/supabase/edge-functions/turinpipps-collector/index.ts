@@ -101,7 +101,12 @@ async function scanOne(engine:string,query:string,time:string) {
     if(body.length>1200000||!/<rss\b/i.test(body)||!/<item[\s>]/i.test(body))
       return {engine,ok:false,count:0,status:"Non RSS/nessun elemento",rows:[]};
     const rows=parseRss(body,engine,time);
-    return {engine,ok:true,count:rows.length,status:"ok",rows};
+    const itemCount=body.toLowerCase().split("<item>").length-1;
+    const pos=body.toLowerCase().indexOf("<item>");
+    const end=pos<0?-1:body.toLowerCase().indexOf("</item>",pos);
+    const sample=pos<0||end<0?"":body.slice(pos,end+7);
+    console.log("scan",engine,"items",itemCount,"recognized",rows.length,"sample",xmlValue(sample,"link").slice(0,130));
+    return {engine,ok:true,count:rows.length,items:itemCount,status:"ok",rows};
   } catch(e) {return {engine,ok:false,count:0,status:String(e).slice(0,65),rows:[]}}
 }
 async function scan(time:string){
@@ -113,7 +118,7 @@ async function scan(time:string){
   const found=new Map<string,any>();
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
-  const stats=outputs.map(({engine,ok,count,status})=>({engine,ok,count,status}));
+  const stats=outputs.map(({engine,ok,count,items,status})=>({engine,ok,count,items:items||0,status}));
   let saved=0;
   if(all.length){
     const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen&limit=10000",{headers:dbHeaders()});
