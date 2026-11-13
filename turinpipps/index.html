@@ -200,7 +200,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <main class="content"><div class="topline"><div class="eyebrow">LA TUA RICERCA CASA</div><div class="top-actions"><button class="tp-guide-trigger" id="tp-guide-open" type="button"><i class="fa-regular fa-circle-question"></i> <span class="tp-guide-label">Come funziona</span></button><span class="sync" id="updated">Caricamento dati…</span><button id="tp-account-button" class="tp-account" type="button"><i class="fa-solid fa-user-circle" aria-hidden="true"></i> <span>Account</span></button></div></div>
 <section id="view-home">
 <section class="hero"><div><small>TORINO · SENZA AGENZIE</small><h1>La casa giusta,<br>senza perdere tempo.</h1>
-<p>Scopri immobili, tieni sotto controllo i nuovi annunci, confronta le opzioni e organizza le visite. Tutto in un unico posto.</p></div>
+<p>Affitti vicini al Politecnico, canone massimo <b id="tp-home-budget">700 €</b> al mese più spese. Ricerca, confronta e organizza le visite.</p></div>
 <button type="button" class="hero-cta" data-nav="results">Esplora gli annunci <i class="fa-solid fa-arrow-right"></i></button></section>
 <div class="stats">
 <div class="stat"><div class="k">Da valutare</div><div class="n" id="stat-good">—</div><div class="sub">Potenzialmente compatibili</div></div>
@@ -521,13 +521,14 @@ function renderHome(){
  light.className='tp-status-light '+(fresh?'good':hours<=24?'warning':'');
  title.textContent=fresh?'Ultimo controllo riuscito':Number.isFinite(last)?'Ultimo controllo da rivedere':'Nessun controllo recente';
  caption.textContent=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Data non disponibile';
- el('tp-scan-explain').textContent='I dati cambiano quando viene completata una nuova scansione. Un controllo riuscito non certifica da solo che i prossimi avvii siano programmati.';
+ el('tp-scan-explain').textContent='I nuovi annunci compaiono dopo una nuova verifica. Per le case con informazioni incomplete servono ulteriori controlli.';
  var m=(d&&d.message||'').match(/link\s+(\d+)/i);
  var rss=(d&&d.message||'').match(/RSS:\s*(\d+)\s*feed/i);
  el('tp-home-scan-new').textContent=d&&Number.isFinite(Number(d.new))?d.new:'—';
  el('tp-home-feeds').textContent=rss?rss[1]:'—';
  el('tp-home-last-report').textContent=reportState&&reportState.last_sent_at?
  new Date(reportState.last_sent_at).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}):'—';
+ if(el('tp-home-budget'))el('tp-home-budget').textContent=(Number(prefs.budget)||700).toLocaleString('it-IT')+' €';
  el('tp-home-compares').textContent=all().filter(function(x){return flag(x.url).compare}).length;
  el('tp-home-visits').textContent=all().filter(function(x){return flag(x.url).visitStatus&&flag(x.url).visitStatus!=='non_programmata'}).length;
 }
@@ -632,7 +633,7 @@ function renderSources(){
  (recent&&d&&d.status==='ok'?'Rilevazione recente riuscita':'Ultimo aggiornamento da controllare')+
  '</strong><small>'+esc(caption)+'</small></div></div>'+
  '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(rss?esc(rss[0].match(/link\s*(\d+)/i)[1])+' link dalle ricerche monitorate. ':'')+
- 'Gli annunci vengono aggiornati solo dopo una nuova esecuzione effettiva.</p>'+
+ 'La raccolta cambia quando vengono rilevate nuove informazioni.</p>'+
  '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(rss?rss[1]:0)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
  var rows=[
   {icon:'fa-solid fa-rotate',title:'Controllo immobili',text:'Ultimo aggiornamento '+caption},
@@ -881,6 +882,16 @@ el('tp-guide-next').addEventListener('click',function(){
  else {closeGuide();nav('results')}
 });
 window.addEventListener('turinpipps:ready',function(){setTimeout(maybeOpenGuide,650)});
+setInterval(function(){
+ if(document.visibilityState!=='visible'||tpReportPending)return;
+ fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw Error('HTTP');return r.json()}).then(function(j){
+  var next=Array.isArray(j)?j:(j.sources||[]),fresh=next.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
+  var old=diagnostics.find(function(x){return (x.name||'').includes('Google Apps Script · automatico')});
+  if(fresh&&(!old||fresh.message!==old.message||fresh.new!==old.new)){
+   diagnostics=next;if(tab==='sources')renderSources();if(tab==='home')renderHome();
+  }
+ }).catch(function(){});
+},300000);
 window.addEventListener('turinpipps:account-ready',function(){setTimeout(maybeOpenGuide,400)});
 
 
