@@ -218,7 +218,7 @@ function setupIphoneDashboard(){
 }
 
 function init(){
- brandAndSections();createRadar();decorateHome();improveGuide();setupIphoneDashboard();
+ brandAndSections();createRadar();decorateHome();setupIphoneDashboard();
  document.addEventListener('keydown',function(e){
    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
      e.preventDefault();window.TurinPippsUXV3.navigate('results');var input=$('#tp-main-search');if(input)input.focus();
