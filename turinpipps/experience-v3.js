@@ -86,26 +86,24 @@ function decorateHome(){
  home.insertAdjacentElement('afterend',extra);
 }
 function improveGuide(){
- if(typeof window.drawGuide!=='function'||!window.tpGuideSlides)return;
- window.tpGuideSlides=[
+ var api=window.TurinPippsUXV3;if(!api||!api.guideSlides)return;
+ api.guideSlides([
   {icon:'fa-solid fa-sliders',title:'Cominciamo dalle tue esigenze',
    text:'Imposta il canone massimo. Puoi modificarlo in qualsiasi momento.'},
   {icon:'fa-solid fa-location-dot',title:'Scegli i quartieri',
    text:'Seleziona le zone in cui vuoi cercare. Il Politecnico è il punto di riferimento.'},
   {icon:'fa-solid fa-satellite-dish',title:'Il radar è pronto',
    text:'Esplora gli annunci, cerca su altri motori, salva le case migliori e confrontale. Nelle schede troverai sempre ciò che resta da verificare.'}
- ];
- var old=window.drawGuide;
- window.drawGuide=function(){
-   old();var desc=$('#tp-guide-description');if(!desc)return;
+ ]);
+ window.TurinPippsEnhanceGuide=function(step){
+   var desc=$('#tp-guide-description');if(!desc)return;
    var existing=$('#tp-guide-fields');if(existing)existing.remove();
    var extra=node('div','tp-guide-fields');extra.id='tp-guide-fields';
-   var step=window.tpGuideStep||0;
    if(step===0){
-     var budget=Number(window.prefs&&prefs.budget)||700;
+     var budget=Number(api.getPrefs().budget)||700;
      extra.innerHTML='<label>Canone massimo mensile (€)<input id="tp-guide-budget" type="number" min="150" max="5000" step="50" value="'+budget+'"></label><p>Le spese aggiuntive saranno mostrate separatamente quando disponibili.</p>';
    }else if(step===1){
-     var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones.slice(1);
+     var prefs=api.getPrefs(),chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones.slice(1);
      extra.innerHTML='<div class="tp-guide-choices">'+zones.slice(1).map(function(area){
        return '<label><input type="checkbox" value="'+area+'" '+(chosen.indexOf(area)!==-1?'checked':'')+'> '+area+'</label>';
      }).join('')+'</div>';
@@ -118,34 +116,30 @@ function improveGuide(){
    var t=e.target;
    if(t.id==='tp-guide-budget'){
      var value=Math.max(150,Math.min(5000,Number(t.value)||700));t.value=value;
-     prefs.budget=value;var target=$('#budget');if(target)target.value=value;
-     if(typeof persist==='function')persist();
-     if(typeof renderHome==='function')renderHome();
+     api.setBudget(value);
    }
    if(t.closest&&t.closest('#tp-guide-fields')&&t.type==='checkbox'){
      var checked=Array.from(document.querySelectorAll('#tp-guide-fields input:checked')).map(function(x){return x.value});
      if(!checked.length){t.checked=true;return;}
-     prefs.preferredZones=checked;
-     if(typeof fillPersonalSettings==='function')fillPersonalSettings();
-     if(typeof persist==='function')persist();
+     api.setZones(checked);
    }
  });
  // Persist for authenticated profiles through the existing, permission-checked settings workflow.
  var next=$('#tp-guide-next');if(next)next.addEventListener('click',function(){
-   if(window.tpGuideStep===2&&$('#save-settings'))$('#save-settings').click();
+   if($('#tp-guide-fields .tp-guide-success')&&$('#save-settings'))$('#save-settings').click();
  },true);
 }
 function initialView(){
  var params=new URLSearchParams(location.search);
  var screen=params.get('screen');
- if(screen==='radar')nav('results');
- if(screen==='saved')nav('saved');
- if(screen==='visits')nav('visits');
- if(screen==='compare')nav('compare');
+ if(screen==='radar')window.TurinPippsUXV3.navigate('results');
+ if(screen==='saved')window.TurinPippsUXV3.navigate('saved');
+ if(screen==='visits')window.TurinPippsUXV3.navigate('visits');
+ if(screen==='compare')window.TurinPippsUXV3.navigate('compare');
 }
 function badges(){
  if(!('setAppBadge'in navigator))return;
- var active=Array.isArray(window.diagnostics)&&diagnostics.find(function(s){return (s.name||'').indexOf('Google Apps Script')!==-1;});
+ var items=window.TurinPippsUXV3.getDiagnostics()||[],active=items.find(function(s){return (s.name||'').indexOf('Google Apps Script')!==-1;});
  var count=active&&Number(active.new)||0;
  if(count>0)navigator.setAppBadge(Math.min(99,count)).catch(function(){});
  else if('clearAppBadge'in navigator)navigator.clearAppBadge().catch(function(){});
@@ -154,7 +148,7 @@ function init(){
  brandAndSections();createRadar();decorateHome();improveGuide();
  document.addEventListener('keydown',function(e){
    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
-     e.preventDefault();nav('results');var input=$('#tp-main-search');if(input)input.focus();
+     e.preventDefault();window.TurinPippsUXV3.navigate('results');var input=$('#tp-main-search');if(input)input.focus();
    }
  });
  window.addEventListener('turinpipps:ready',function(){initialView();badges()},{once:true});
