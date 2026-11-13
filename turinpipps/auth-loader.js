@@ -9,7 +9,7 @@
   function startAuth(){
     if(loaded)return;loaded=true;
     var s=document.createElement('script');
-    s.src='./auth.js?v=1.4.0';
+    s.src='./auth.js?v=1.6.0';
     s.async=false;
     s.onerror=function(){
       if(window.TurinPippsBoot)window.TurinPippsBoot.authReady(false,false);
