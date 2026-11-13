@@ -47,7 +47,20 @@ function createRadar(){
  '<a target="_blank" rel="noopener noreferrer" href="https://www.clickcase.it/annunci/affitti-case-privati-torino.html"><span>ClickCase</span><small>Da privato a privato</small></a>'+
  '<a target="_blank" rel="noopener noreferrer" href="https://www.subito.it/annunci-piemonte/affitto/appartamenti/torino/torino/da-privati/"><span>Subito</span><small>Affitti privati</small></a>'+
  '</div>';
- panel.appendChild(direct);
+ // Raggruppa i motori secondari in un pannello espandibile: il Radar resta ordinato.
+ var secondary=panel.querySelector('.tp-radar-links');
+ var group=node('details','tp-radar-extra-sources');group.id='tp-radar-extra-sources';
+ var summary=node('summary','','Altri motori e portali (8)');
+ summary.setAttribute('aria-label','Apri altre fonti: Bing, DuckDuckGo, Facebook, Immobiliare, Bakeca, TrovaCasa, ClickCase e Subito');
+ var wrap=node('div','tp-radar-extra-content');
+ var otherLinks=node('div','tp-radar-links tp-radar-secondary-links');
+ ['bing','duck','facebook'].forEach(function(engine){
+  var link=secondary.querySelector('[data-tp-engine="'+engine+'"]');
+  if(link)otherLinks.appendChild(link);
+ });
+ wrap.appendChild(otherLinks);wrap.appendChild(direct);
+ group.appendChild(summary);group.appendChild(wrap);
+ panel.appendChild(group);
 
 
  // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
@@ -181,7 +194,7 @@ async function loadLiveListings(force){
  var timeout=setTimeout(function(){controller.abort()},8500);
  try{
    var [a,b]=await Promise.allSettled([
-     fetch(root+'turinpipps_discovered_listings?select=listing_url,title,description,source,origin_engine,zone,price,first_seen,last_seen&order=first_seen.desc&limit=600',{headers:headers,signal:controller.signal,cache:'no-store'})
+     fetch(root+'turinpipps_discovered_listings?select=listing_url,title,description,source,origin_engine,zone,price,first_seen,last_seen,source_updated,sqm,expenses,address,property_type&order=first_seen.desc&limit=600',{headers:headers,signal:controller.signal,cache:'no-store'})
        .then(function(r){if(!r.ok)throw new Error('Annunci: HTTP '+r.status);return r.json()}),
      fetch(root+'turinpipps_scan_runs?select=started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=1',{headers:headers,signal:controller.signal,cache:'no-store'})
        .then(function(r){if(!r.ok)throw new Error('Scansioni: HTTP '+r.status);return r.json()})
@@ -218,7 +231,7 @@ function setupIphoneDashboard(){
 }
 
 function init(){
- brandAndSections();createRadar();decorateHome();improveGuide();setupIphoneDashboard();
+ brandAndSections();createRadar();decorateHome();setupIphoneDashboard();
  document.addEventListener('keydown',function(e){
    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){
      e.preventDefault();window.TurinPippsUXV3.navigate('results');var input=$('#tp-main-search');if(input)input.focus();
