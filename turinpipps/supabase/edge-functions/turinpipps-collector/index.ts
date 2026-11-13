@@ -138,45 +138,57 @@ async function robotsPermits(origin:string,path:string) {
   return {allowed:grant,reason:grant?"consentito":"vietato da robots.txt"};
 }
 async function collectClickCase(time:string){
-  const origin="https://www.clickcase.it",pages=[
+  const origin="https://www.clickcase.it";
+  const paths=[
     "/annunci/affitti-case-privati-torino.html",
-    "/annunci/affitti-appartamenti-privati-torino.html"
+    "/annunci/affitti-appartamenti-privati-torino.html",
+    "/annunci/appartamenti-in-affitto-privati-torino.html"
   ];
-  const first=await robotsPermits(origin,pages[0]);
-  if(!first.allowed)return {engine:"ClickCase diretto",ok:false,count:0,items:0,status:first.reason,rows:[]};
-  const found=new Map<string,any>();let success=0;
-  for(const path of pages){
-    const allow=await robotsPermits(origin,path);if(!allow.allowed)continue;
-    try{
-      const response=await fetch(origin+path,{signal:AbortSignal.timeout(7000),
-        headers:{"User-Agent":"TurinPipps/3.1 (+public rental listings)"}});
-      if(!response.ok)continue;
-      const html=(await response.text()).slice(0,1200000);
-      if(!/<html/i.test(html))continue;
-      success++;
-      const re=/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
-      let m:RegExpExecArray|null,seenHere=0;
-      while((m=re.exec(html))!==null&&seenHere<70){
-        let u:string;try{u=new URL(m[1],origin).toString()}catch(_){continue}
-        const link=canonical(u);if(!link||link.source!=="ClickCase"||found.has(link.url))continue;
-        const context=unescapeXml(html.slice(Math.max(0,m.index-250),Math.min(html.length,m.index+600)));
-        const area=zoneOf(context);
-        if(!area)continue;
-        const title=unescapeXml(m[2]).slice(0,210);
-        if(!title||title.length<7||/camera|posto letto|stanza/i.test(title))continue;
-        found.set(link.url,{
-          listing_url:link.url,title,description:"Annuncio da pagina pubblica ClickCase, da confermare con il proprietario.",
-          source:"ClickCase",origin_engine:"pagina_pubblica_clickcase",zone:area,
-          price:0,private_status:"source",last_seen:time
-        });
-        seenHere++;
-      }
-    }catch(e){console.warn("ClickCase read",String(e).slice(0,90))}
+  const found=new Map<string,any>();let pagesRead=0,denied=0,attempts=0;
+  // Consultazione graduale di pagine pubbliche, solo se autorizzate. Nessuna autenticazione.
+  for(const path of paths){
+    for(let page=1;page<=5;page++){
+      const requested=path+(page>1?"?pagina="+page:"");
+      const allowed=await robotsPermits(origin,requested);
+      if(!allowed.allowed){denied++;break}
+      try{
+        const response=await fetch(origin+requested,{signal:AbortSignal.timeout(7500),
+          headers:{"User-Agent":"TurinPipps/4.0 (+public housing index)","Accept":"text/html"}});
+        if(!response.ok)break;
+        const html=(await response.text()).slice(0,1400000);
+        if(!/<html/i.test(html))break;
+        pagesRead++;
+        const re=/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+        let m:RegExpExecArray|null,newOnPage=0,localCount=0;
+        while((m=re.exec(html))!==null&&localCount++<550){
+          let full:string;try{full=new URL(m[1],origin).toString()}catch(_){continue}
+          const item=canonical(full);
+          if(!item||item.source!=="ClickCase"||found.has(item.url))continue;
+          const headline=unescapeXml(m[2]).slice(0,220);
+          if(!headline||headline.length<7||/\b(?:camera|posto letto|stanza|doppia per ragazze)\b/i.test(headline))continue;
+          const snippet=unescapeXml(html.slice(Math.max(0,m.index-160),Math.min(html.length,m.index+750)));
+          const zone=zoneOf(headline+" "+snippet);
+          if(!zone)continue;
+          // Il canone viene acquisito solo se la cifra compare vicino alla scheda; altrimenti è sconosciuto.
+          const match=snippet.match(/(?:€\s*(\d{2,4})|\b(\d{2,4})\s*€)\b/);
+          const price=match?Number(match[1]||match[2]):0;
+          const monthly=price>=180&&price<=2500?price:0;
+          found.set(item.url,{
+            listing_url:item.url,title:headline,description:snippet.slice(0,450),
+            source:"ClickCase",origin_engine:"ClickCase: pagine pubbliche",zone,
+            price:monthly,private_status:"source",last_seen:time
+          });
+          newOnPage++;
+        }
+        attempts++;
+        if(newOnPage===0&&page>2)break;
+      }catch(e){console.warn("ClickCase source error",String(e).slice(0,90));break}
+    }
   }
-  return {engine:"ClickCase diretto",ok:success>0,count:found.size,items:found.size,
-    status:success?success+" pagine lette":first.reason+"; pagina non leggibile",rows:[...found.values()]};
+  return {engine:"ClickCase diretto",ok:pagesRead>0,count:found.size,items:attempts,
+    status:pagesRead+" pagine consultate"+(denied?", "+denied+" escluse da robots.txt":""),
+    rows:[...found.values()]};
 }
-
 
 function unwrapGoogle(link:string){
   let value=unescapeXml(link);
