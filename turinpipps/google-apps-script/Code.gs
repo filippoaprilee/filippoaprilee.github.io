@@ -129,7 +129,7 @@ function rssListings_(now){
     'site:bakeca.it/dettaglio/offro-casa/ Torino affitto privato',
     'site:casa.it/immobili/ Torino affitto privato'
   ];
-  var bingOn=props_().getProperty('ENABLE_BING_RSS')!=='false';
+  var bingOn=props_().getProperty('ENABLE_BING_RSS')==='true';
   var jobs=feeds.map(function(f){return {engine:'Google Alerts',url:f};});
   if(bingOn)searches.forEach(function(q){
     jobs.push({engine:'Bing RSS',url:'https://www.bing.com/search?q='+encodeURIComponent(q)+'&format=rss&setlang=it'});
