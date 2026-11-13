@@ -165,7 +165,7 @@ async function collectClickCase(time:string){
           const item=canonical(full);
           if(!item||item.source!=="ClickCase"||found.has(item.url))continue;
           const headline=unescapeXml(m[2]).slice(0,220);
-          if(!headline||headline.length<7||/\b(?:camera|posto letto|stanza|doppia per ragazze)\b/i.test(headline))continue;
+          if(!headline||headline.length<10||/^(?:affitto|cenisia|appartamento|disponibile)$/i.test(headline)||/\b(?:camera|posto letto|stanza|doppia per ragazze|box|garage|posto auto|autorimessa|magazzino|negozio)\b/i.test(headline))continue;
           const snippet=unescapeXml(html.slice(Math.max(0,m.index-160),Math.min(html.length,m.index+750)));
           const zone=zoneOf(headline+" "+snippet);
           if(!zone)continue;
