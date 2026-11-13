@@ -181,7 +181,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:650px){.tp-costbar{grid-template-columns:1fr}.tp-costbar>div{border-right:0;border-bottom:1px solid #e3e9f2;padding:9px 12px}.tp-costbar>div:last-child{border-bottom:0}}
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
-</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"></head><body>
+</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"><link rel="stylesheet" href="./experience-v4.css?v=4.0.0"></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -911,7 +911,7 @@ function closeGuide(){
 }
 function maybeOpenGuide(){
  var completed=false;
- try{completed=localStorage.getItem('turinpipps.onboard.v2')==='1'}catch(_){}
+ try{completed=localStorage.getItem('turinpipps.onboard.v4')==='1'}catch(_){}
  var welcome=el('tp-welcome');
  if(!completed&&(!welcome||welcome.hidden)&&!el('tp-guide-dialog').open)openGuide();
 }
@@ -1016,6 +1016,7 @@ window.TurinPippsBridge={
  navigate:function(view){nav(view)},
  getPrefs:function(){return prefs},
  getDiagnostics:function(){return diagnostics},
+ getListings:function(){return all().map(function(x){return Object.assign({},x)})},
  addDiscovery:function(rows,scan){
    externalRemote=Array.isArray(rows)?rows.map(function(x){
      return {url:x.listing_url,title:x.title,description:x.description,price:x.price,
@@ -1067,4 +1068,5 @@ function finish(){
 <script defer src="./auth-config.js?v=1.4.0"></script>
 <script defer src="./auth-loader.js?v=1.6.0"></script>
 <script defer src="./experience-v3.js?v=3.0.0"></script>
+<script defer src="./experience-v4.js?v=4.0.0"></script>
 </body></html>
