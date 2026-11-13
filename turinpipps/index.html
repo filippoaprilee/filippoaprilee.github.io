@@ -222,6 +222,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </main></div>
 <nav class="mobile-nav"><button data-nav="results" class="active"><span><i class="fa-solid fa-house" aria-hidden="true"></i></span>Annunci</button><button data-nav="sources"><span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>Fonti</button><button data-nav="saved"><span><i class="fa-regular fa-heart" aria-hidden="true"></i></span>Preferiti</button><button data-nav="settings"><span><i class="fa-solid fa-sliders" aria-hidden="true"></i></span>Impostazioni</button></nav>
 
+<dialog class="tp-auth-dialog" id="tp-visit-dialog" aria-labelledby="tp-visit-title">
+ <div class="tp-auth-wrap"><div class="tp-auth-head"><div><div class="eyebrow">TURINPIPPS · VISITE</div><h2 id="tp-visit-title">Organizza una visita</h2></div>
+ <button type="button" class="tp-auth-close" id="tp-visit-close" aria-label="Chiudi"><i class="fa-solid fa-xmark"></i></button></div>
+ <p class="tp-auth-small" id="tp-visit-property">Appartamento selezionato</p>
+ <form id="tp-visit-form"><div class="tp-auth-field"><label for="tp-visit-date">Data e ora</label><input id="tp-visit-date" type="datetime-local"></div>
+ <div class="tp-auth-field"><label for="tp-visit-status">Stato</label><select id="tp-visit-status" class="input">
+ <option value="programmata">Programmata</option><option value="effettuata">Effettuata</option><option value="annullata">Annullata</option><option value="non_programmata">Nessuna visita</option></select></div>
+ <div class="tp-auth-field"><label for="tp-visit-notes">Note personali sulla visita</label><textarea id="tp-visit-notes" class="input" rows="4" maxlength="2000" placeholder="Condizioni dell'immobile, disponibilità, impressioni..."></textarea></div>
+ <div class="tp-report-action"><button type="submit" class="button primary"><i class="fa-solid fa-check"></i> Salva visita</button>
+ <button type="button" class="button" id="tp-visit-cancel">Annulla</button></div></form></div></dialog>
 <dialog class="tp-auth-dialog" id="tp-auth-dialog" aria-labelledby="tp-auth-title">
  <div class="tp-auth-wrap">
   <div class="tp-auth-head"><div><div class="eyebrow">TURINPIPPS · AREA PERSONALE</div><h2 id="tp-auth-title">Il tuo account</h2></div>
@@ -458,23 +468,8 @@ function message(a){return 'Buongiorno, mi chiamo '+(prefs.fullname||'[nome]')+'
 async function copy(text){try{await navigator.clipboard.writeText(text);alert('Messaggio copiato. Incollalo nel portale e invialo tu.')}catch(_){prompt('Copia il messaggio:',text)}}
 async function load(){memoListings=null;page=1;el('updated').textContent='Verifica dati online…';try{var r=await fetch('./data/listings.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);var j=await r.json();remote=Array.isArray(j)?j:(j.listings||[]);lastUpdate=j.updated_at||''}catch(_){remote=[];lastUpdate=''}try{var d=await fetch('./data/diagnostics.json?t='+Date.now(),{cache:'no-store'});var x=await d.json();diagnostics=Array.isArray(x)?x:(x.sources||[])}catch(_){diagnostics=[]}try{var r=await fetch('./data/report_status.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error();reportState=await r.json()}catch(_){reportState=null}renderReport();el('updated').textContent=lastUpdate?'Ultimo aggiornamento dati '+new Date(lastUpdate).toLocaleString('it-IT'):'Raccolta automatica non ancora attiva';renderResults();renderSaved();if(tab==='sources')renderSources()}
 document.addEventListener('click',function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
-if(b.dataset.action==='visit'){
- var previous=f.visitAt||'',value=prompt('Data e ora della visita (AAAA-MM-GG HH:MM). Lascia vuoto per togliere la visita:',previous?previous.slice(0,16).replace('T',' '):'');
- if(value===null)return;
- if(!value.trim()){f.visitAt='';f.visitStatus='non_programmata';f.visitNotes='';}
- else{
-   var dt=new Date(value.trim().replace(' ','T'));
-   if(isNaN(dt.getTime())){alert('Formato data non valido. Usa AAAA-MM-GG HH:MM');return}
-   f.visitAt=dt.toISOString();
-   var state=prompt('Stato: programmata, effettuata o annullata',f.visitStatus&&f.visitStatus!=='non_programmata'?f.visitStatus:'programmata');
-   if(state===null)return;
-   state=state.trim().toLowerCase();
-   if(!['programmata','effettuata','annullata'].includes(state)){alert('Stato non valido');return}
-   f.visitStatus=state;
-   var details=prompt('Note personali sulla visita (facoltative)',f.visitNotes||'');
-   if(details!==null)f.visitNotes=details.slice(0,2000);
- }
-}
+if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
+
 if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){var note=prompt('Note personali (solo per te):',f.notes||'');if(note===null)return;f.notes=note.slice(0,1000)}prefs.flags[a.url]=f;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);renderResults();renderSaved()});
 document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){page=1;mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(function(x){x.classList.toggle('selected',x===b)});renderResults()})});
 ['query','zone','sort','source-filter','age-filter','distance-filter','stale-filter'].forEach(function(id){el(id).addEventListener('input',function(){page=1;renderResults()})});el('tp-more').addEventListener('click',function(){page+=1;renderResults()});el('reload').addEventListener('click',load);el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;setupPersonalZones();fillPersonalSettings();
@@ -483,6 +478,36 @@ el('csv-button').addEventListener('click',function(){var rows=[['Titolo','Zona',
 el('export').addEventListener('click',function(){download({listings:all(),flags:prefs.flags,settings:{budget:prefs.budget}},'turinpipps-annunci.json')});
 el('import-file').addEventListener('change',async function(e){var f=e.target.files[0];if(!f)return;try{var j=JSON.parse(await f.text());var a=(Array.isArray(j)?j:(j.listings||[])).map(normalize).filter(Boolean);if(!a.length)throw new Error('Nessun annuncio valido nel file');if(a.length>200)throw new Error('Importa al massimo 200 annunci per volta');prefs.manual=prefs.manual.concat(a);memoListings=null;if(accountMode&&window.TurinPippsAuth)a.forEach(function(row){window.TurinPippsAuth.saveManual(row)});if(j.flags&&typeof j.flags==='object'){Object.assign(prefs.flags,j.flags);if(accountMode&&window.TurinPippsAuth)Object.keys(j.flags).slice(0,300).forEach(function(url){window.TurinPippsAuth.saveFlag(url,prefs.flags[url]||{})})}persist();renderResults();alert('Importati '+a.length+' annunci. '+(accountMode?'Sincronizzazione account richiesta.':'Salvati sul dispositivo.'))}catch(err){alert('Importazione non riuscita: '+err.message)}e.target.value=''});
 
+var tpVisitEditingUrl='';
+function visitISOtoLocal(value){
+ if(!value)return '';
+ var d=new Date(value);if(isNaN(d.getTime()))return '';
+ var pad=function(n){return String(n).padStart(2,'0')};
+ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function openVisitEditor(a,f){
+ tpVisitEditingUrl=a.url;
+ el('tp-visit-property').textContent=a.title;
+ el('tp-visit-date').value=visitISOtoLocal(f.visitAt);
+ el('tp-visit-status').value=f.visitStatus||'programmata';
+ el('tp-visit-notes').value=f.visitNotes||'';
+ var dialog=el('tp-visit-dialog');if(!dialog.open)dialog.showModal();
+}
+function closeVisitEditor(){el('tp-visit-dialog').close()}
+el('tp-visit-close').addEventListener('click',closeVisitEditor);
+el('tp-visit-cancel').addEventListener('click',closeVisitEditor);
+el('tp-visit-form').addEventListener('submit',function(event){
+ event.preventDefault();
+ var a=all().find(function(x){return x.url===tpVisitEditingUrl});if(!a)return;
+ var f=flag(a.url),kind=el('tp-visit-status').value,date=el('tp-visit-date').value;
+ if(kind!=='non_programmata'&&!date){alert('Indica data e ora della visita.');return}
+ f.visitStatus=kind;
+ f.visitAt=kind==='non_programmata'?'':new Date(date).toISOString();
+ f.visitNotes=kind==='non_programmata'?'':el('tp-visit-notes').value.slice(0,2000);
+ prefs.flags[a.url]=f;persist();
+ if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);
+ renderResults();renderSaved();closeVisitEditor();
+});
 var tpMap=null;
 function ensureLeaflet(callback){
  if(window.L){callback();return}
