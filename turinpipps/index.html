@@ -217,7 +217,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div><b id="tp-home-feeds">—</b><span>Ricerche consultate</span></div>
 <div><b id="tp-home-last-report">—</b><span>Ultimo report</span></div>
 </div>
-<div class="tp-home-actions"><button class="button primary" data-nav="sources"><i class="fa-solid fa-chart-line"></i> Vedi attività</button><button class="button" id="tp-home-reload"><i class="fa-solid fa-rotate"></i> Aggiorna dati</button></div>
+<div class="tp-home-actions"><button class="button primary" data-nav="sources"><i class="fa-solid fa-chart-line"></i> Vedi attività</button><button class="button" id="tp-home-reload"><i class="fa-solid fa-rotate"></i> Aggiorna dati</button><button class="button" id="tp-home-send-report"><i class="fa-regular fa-paper-plane"></i> Invia riepilogo</button></div>
 </div>
 <div class="tp-home-panel"><div class="tp-kicker">IL TUO PERCORSO</div><h3>Organizza la ricerca</h3>
 <p>Seleziona i migliori appartamenti, mettili a confronto e programma le visite: così non perdi informazioni tra una ricerca e l'altra.</p>
@@ -839,6 +839,7 @@ async function sendTurinPippsReport(){
  }
 }
 el('tp-send-report').addEventListener('click',sendTurinPippsReport);
+el('tp-home-send-report').addEventListener('click',function(){nav('sources');sendTurinPippsReport()});
 var tpGuideStep=0;
 var tpGuideSlides=[
  {icon:'fa-solid fa-magnifying-glass',title:'Trova la tua prossima casa',
