@@ -1,48 +1,47 @@
-# TurinPipps 3.0 · radar, velocità e interfaccia
+# TurinPipps 3.0 — stato tecnico e pubblicazione
 
-## Modifiche predisposte su branch di sviluppo
+## Sistema attivato (13 novembre 2026)
 
-- Navigazione e interfaccia responsive riorganizzate, marchio SVG e icona iPhone aggiornati, logo sempre visibile su sidebar desktop e barra mobile.
-- "Radar casa": ricerca estesa Google, Bing, DuckDuckGo; ricerca di **post dei gruppi Facebook pubblicamente indicizzati** da Google, senza login automatico. Le ricerche esterne aprono i rispettivi siti e non importano direttamente annunci nell'archivio.
-- Scansione server pianificata ogni 2 ore (invece di 6) nel file Google Apps Script; la nuova funzione raccoglie fino a 20 feed Google Alerts e 8 ricerche pubbliche Bing RSS in parallelo. Disponibilità e prezzo restano da confermare alla fonte. I portali con login, CAPTCHA o divieto di scraping sono rispettati.
-- Dati front-end (annunci/diagnostica/report) richiesti in parallelo anziché in sequenza; ridotto ritardo minimo di schermata iniziale da 2500 a 480 ms.
-- Classificazione prudenziale: annunci riservati a categorie specifiche di locatari, segnalati come potenzialmente non disponibili o datati oltre 75 giorni non compaiono automaticamente tra i compatibili.
-- Onboarding con selezione budget e quartieri; radar utilizzabile come ospite; aggiunta manuale sempre visibile.
-- Manifest PWA con scorciatoie a Radar, Salvati e Visite; cache service worker versionata; badge app soltanto sui sistemi che lo supportano.
+- **Supabase**: progetto `akgnxjwkrnuckgxscjdz`, nuovo archivio `turinpipps_discovered_listings` e log `turinpipps_scan_runs`, entrambi leggibili pubblicamente e protetti da RLS contro modifiche anonime.
+- **Edge Function**: `turinpipps-collector` distribuita, autorizzazione con token segreto verificato via SHA-256 e token conservato in Supabase Vault. Nessuna password o chiave amministrativa nel browser.
+- **Schedulazione automatica**: job `turinpipps-v3-collector` ogni **30 minuti**, mediante pg_cron + pg_net; 14 Google Alerts RSS già appartenenti all'utente vengono trasmessi da Vault alla funzione tramite richiesta HTTPS autenticata.
+- **Fonte diretta**: lettura periodica delle pagine pubbliche ClickCase soltanto dopo verifica di robots.txt, senza login e senza bypass dei blocchi. I risultati sono controllati, deduplicati e salvati come link da verificare.
+- **Bing RSS**: disattivato per la scansione automatica: i test restituivano risultati generici (per esempio Wikipedia) invece di annunci pertinenti. Rimane disponibile come ricerca manuale nell'interfaccia insieme a Google, DuckDuckGo e post Facebook pubblici indicizzati.
+- **Prima verifica backend**: 15 controlli riusciti su 15, due schede ClickCase acquisite, zero nuove voci nei feed Google Alerts al momento del test. Non si può garantire il ritrovamento di annunci su tutte le piattaforme.
 
-## Importantissimo: come attivare
+## Interfaccia e utilizzo
 
-Il branch `turinpipps-v3-radar-ux` **non è ancora distribuito** su GitHub Pages. Prima dell'unione con `filippoaprilee`, verificare la nuova UI e l'account Supabase con test desktop e mobile.
+- Design responsive, logo sempre visibile in sidebar desktop e header mobile, icona PWA rinnovata.
+- **Radar casa**: ricerca manuale multi-motore per zona e tipologia, aggiunta annunci, archivio unificato GitHub Pages + Supabase (aggiornamento mentre l'app è aperta).
+- **Onboarding**: selezione di budget e quartieri, accesso guest o account.
+- **Filtri più cauti**: annunci riservati a categorie specifiche, potenzialmente non disponibili e datati oltre 75 giorni non sono automaticamente classificati come pienamente compatibili.
+- **Prestazioni**: caricamento annunci/monitoraggio/report parallelo e splash iniziale abbreviato; supporto offline di base tramite Service Worker.
+- **iPhone**: pagina `today.html` come panoramica rapida e accesso tramite shortcut manifest o Comandi Rapidi (azione Apri URL). Un widget nativo iOS con dati visibili richiede un'app/widget WidgetKit ed è fuori dalla portata della sola PWA.
 
-**Google Apps Script è una copia separata**: unire il branch di GitHub NON aggiorna automaticamente il progetto Apps Script in esecuzione.
+## Separazione dei dati
 
-Per abilitare la raccolta:
-1. Aprire il progetto Google Apps Script "TurinPipps Agent" già attivo.
-2. Copiare l'intero file `turinpipps/google-apps-script/Code.gs` del branch aggiornato nell'editor Apps Script esistente. Conservare le *Script Properties* già configurate (in particolare `GITHUB_TOKEN`, `ALERT_FEEDS`, `EMAIL_TO`) **senza pubblicarle**.
-3. Salvare e lanciare **una volta** `installTurinPipps()` per sostituire solo i trigger `runScan` e `runDailyDigest` con quelli nuovi. Autorizzare i permessi necessari e controllare le esecuzioni.
-4. Eseguire una scansione manuale `runScan()` e verificare che il registro `turinpipps/data/diagnostics.json` mostri i feed riusciti, gli errori e il numero di link; non assumere un numero minimo di annunci. Se Bing restituisce risultati non XML, disattivare la ricerca Bing con Script Property `ENABLE_BING_RSS=false`.
-5. Verificare nell'app annunci, confronto, preferiti, visite, login, logout, report e filtro "solo studentesse" su desktop e Safari iPhone prima del merge.
-6. Se il test è superato, unire il PR alla branch pubblicata.
+- Le tabelle `turinpipps_listing_states`, `turinpipps_preferences`, `turinpipps_manual_listings` non sono state modificate.
+- Annunci pubblici leggibili da anon e authenticated, ma nessuno dei due ruoli può inserirli o modificarli; solo la Edge Function server può fare upsert.
+- I feed Google Alerts personali non sono stati committati nel repository e risiedono in Vault.
+- Nessun invio automatico di messaggi ai proprietari.
 
-## Limitazioni esplicite
+## Apps Script e report email
 
-**Facebook:** gli annunci nei gruppi privati, contenuti non indicizzati e Marketplace soggetto a login non possono essere cercati automaticamente senza un accesso autorizzato, né è garantita la visualizzazione dei risultati senza login. Il radar apre ricerche esterne di contenuti Facebook indicizzati, non fa scraping Facebook.
+Il progetto Google Apps Script esterno conserva il suo codice e i suoi due trigger esistenti, che **non vengono modificati** dal merge GitHub né dal nuovo collector Supabase. Un file `google-apps-script/Code.gs` aggiornato è mantenuto come riferimento, ma non va sostituito senza verificare i trigger attivi.
 
-**iPhone:** un sito PWA non può installare veri widget WidgetKit per Home Screen/Lock Screen come un'app iOS nativa. Le scorciatoie del manifest e il badge PWA non sono widget nativi e dipendono dal supporto del sistema. Notifiche push web su PWA aggiunta alla Home richiedono consenso utente e un servizio push lato server, non incluso in questa release.
+I report Gmail restano indipendenti dal nuovo collector: per continuare a inviarli occorre che il trigger e il deployment Apps Script effettivi rimangano attivi e autorizzati.
 
-**Prezzi e disponibilità:** Bing RSS non è una API ufficiale con copertura garantita. Ogni nuovo risultato indicizzato rimane da verificare prima di definirlo compatibile o attualmente disponibile.
+## Test già eseguiti
 
-**Sicurezza:** GitHub Pages contiene soltanto dati di annuncio pubblici. Account e stato privato restano su Supabase con accesso per utente. Non inserire token GitHub, credenziali mail, Service Role Supabase o password nei file pubblici.
+- Compilazione Edge Function e invocazione HTTPS autenticata riuscite.
+- Esecuzione e risposta 200 dei controlli pubblici: 15 fonti/feed, 2 risultati ClickCase, 14 feed Google vuoti.
+- Test privilegi: `anon` può leggere l'archivio, ma non inserirlo; `authenticated` non può aggiornarlo.
+- Sintassi dei JS statici, JSON del manifest, collegamenti alle risorse verificabili nel repository.
+- Advisory sicurezza: nessuna nuova vulnerabilità RLS; warning preesistente su password compromesse in Auth.
 
-## Checklist di collaudo
+## Limiti e verifiche successive
 
-- Test sintattico JS di `index.html`, `experience-v3.js`, `Code.gs`.
-- Primo accesso ospite, account registrato e utente di ritorno.
-- Onboarding personalizza budget/zone e aggiorna correttamente le sezioni.
-- Aggiunta annuncio visibile anche con filtri avanzati nascosti.
-- Browser Google/Bing/DuckDuckGo/Facebook apre ricerca per zona/termine senza popup impliciti.
-- Score e classificazione: affitto solo per studentesse non viene trattato come pienamente compatibile.
-- Dati di login, preferiti e note non devono finire nel cache storage pubblico.
-- Scansione riuscita visibile nei log Apps Script; nessuna email inviata a proprietari.
-- Report manuale conserva la pagina originale e mostra uno stato confermato solo dopo il registro backend.
-- Installazione iPhone: manifest, icona, scorciatoie ove supportate, esperienza standalone.
+1. Gli annunci indicizzati e quelli presenti nei portali non sono necessariamente ancora liberi: non qualificare i link come disponibilità confermate senza riscontro.
+2. Google Alerts può fornire 0 voci anche con trigger perfettamente funzionanti; regolare la frequenza delle *notifiche* dalla pagina Google Alerts è un'azione separata.
+3. Facebook senza login: soltanto ricerca esterna di post pubblici indicizzati, nessuna lettura automatizzata di gruppi privati o Marketplace autenticato.
+4. Prima di considerare completo il collaudo di produzione, testare manualmente login, logout, preferiti, note, confronto, visite e PWA in Safari su iPhone e su desktop.
