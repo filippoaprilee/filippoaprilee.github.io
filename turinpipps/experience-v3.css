@@ -128,3 +128,15 @@ body{background:#f5f7fa;color:var(--tp-ink)}
 .tp-ios-quick details{background:#f6f9fa;border:1px solid #e2eaf0;border-radius:11px;padding:13px 15px}
 .tp-ios-quick details summary{cursor:pointer;color:#284f64;font-size:12px;font-weight:750}
 .tp-ios-quick details p{padding-top:11px}
+
+.tp-radar-direct{margin-top:17px;border-top:1px solid #e5edf0;padding-top:15px}
+.tp-radar-direct-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.tp-radar-direct-heading b{font-size:12px;color:#234659}
+.tp-radar-direct-heading span{font-size:10px;color:#8394a3}
+.tp-radar-direct-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.tp-radar-direct-grid a{display:flex;flex-direction:column;justify-content:center;gap:3px;border:1px solid #e0e9ed;background:#f8fafb;border-radius:10px;padding:12px 10px;text-decoration:none;color:#28475a;min-height:57px}
+.tp-radar-direct-grid a:hover{background:#e6f4f1;border-color:#aacfc9}
+.tp-radar-direct-grid a span{font-weight:800;font-size:11px}
+.tp-radar-direct-grid a small{font-size:10px;color:#8494a4;line-height:1.4}
+@media(max-width:1100px){.tp-radar-direct-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){.tp-radar-direct-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
