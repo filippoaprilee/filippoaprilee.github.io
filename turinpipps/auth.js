@@ -79,9 +79,9 @@
     try{
       var uid=next.id;
       var results=await Promise.all([
-        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes').eq('user_id',uid),
+        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes,compare_selected,visit_at,visit_status,visit_notes').eq('user_id',uid),
         client.from('turinpipps_manual_listings').select('payload').eq('user_id',uid),
-        client.from('turinpipps_preferences').select('budget,display_name,introduction').eq('user_id',uid).maybeSingle()
+        client.from('turinpipps_preferences').select('budget,display_name,introduction,min_sqm,preferred_zones,property_type,max_walk_minutes').eq('user_id',uid).maybeSingle()
       ]);
       for(var i=0;i<results.length;i++){
         if(results[i].error)throw results[i].error;
@@ -89,12 +89,17 @@
       var flags={};
       (results[0].data||[]).forEach(function(row){
         flags[row.listing_url]={saved:!!row.saved,contact:!!row.contacted,
-           discard:!!row.discarded,notes:row.notes||''};
+           discard:!!row.discarded,notes:row.notes||'',
+           compare:!!row.compare_selected,visitAt:row.visit_at||'',
+           visitStatus:row.visit_status||'non_programmata',
+           visitNotes:row.visit_notes||''};
       });
       var manual=(results[1].data||[]).map(function(x){return x.payload}).filter(Boolean);
       var settings=results[2].data||null;
       if(bridge&&bridge.useAccount)bridge.useAccount({flags:flags,manual:manual,
-        settings:settings?{budget:settings.budget,fullname:settings.display_name,intro:settings.introduction}:null});
+        settings:settings?{budget:settings.budget,fullname:settings.display_name,intro:settings.introduction,
+          minSqm:settings.min_sqm,preferredZones:settings.preferred_zones,
+          propertyType:settings.property_type,maxWalkMinutes:settings.max_walk_minutes}:null});
       current=next;setButton();
       status('Preferiti, note e annunci personali sincronizzati.','ok');
     }catch(err){
@@ -112,7 +117,12 @@
     if(!requireUser())return;
     var value={user_id:current.id,listing_url:url,saved:!!flag.saved,
       contacted:!!flag.contact,discarded:!!flag.discard,
-      notes:String(flag.notes||'').slice(0,1000),updated_at:new Date().toISOString()};
+      notes:String(flag.notes||'').slice(0,1000),
+      compare_selected:!!flag.compare,
+      visit_at:flag.visitAt?new Date(flag.visitAt).toISOString():null,
+      visit_status:['non_programmata','programmata','effettuata','annullata'].includes(flag.visitStatus)?flag.visitStatus:'non_programmata',
+      visit_notes:String(flag.visitNotes||'').slice(0,2000),
+      updated_at:new Date().toISOString()};
     var result=await client.from('turinpipps_listing_states')
       .upsert(value,{onConflict:'user_id,listing_url'});
     if(result.error)status('Salvataggio online non riuscito: '+result.error.message,'error');
@@ -131,6 +141,10 @@
       .upsert({user_id:current.id,budget:Number(prefs.budget)||700,
         display_name:String(prefs.fullname||'').slice(0,70),
         introduction:String(prefs.intro||'').slice(0,1200),
+        min_sqm:Math.min(400,Math.max(0,Number(prefs.minSqm)||0)),
+        preferred_zones:Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones.slice(0,10):['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'],
+        property_type:['tutte','monolocale','bilocale','trilocale','quadrilocale'].includes(prefs.propertyType)?prefs.propertyType:'tutte',
+        max_walk_minutes:prefs.maxWalkMinutes?Number(prefs.maxWalkMinutes):null,
         updated_at:new Date().toISOString()}, {onConflict:'user_id'});
     if(result.error)status('Preferenze non sincronizzate: '+result.error.message,'error');
   }
@@ -141,7 +155,10 @@
       var f=copy.flags[url]||{};
       return {user_id:current.id,listing_url:url,saved:!!f.saved,
         contacted:!!f.contact,discarded:!!f.discard,
-        notes:String(f.notes||'').slice(0,1000),updated_at:new Date().toISOString()};
+        notes:String(f.notes||'').slice(0,1000),compare_selected:!!f.compare,
+        visit_at:f.visitAt?new Date(f.visitAt).toISOString():null,
+        visit_status:['non_programmata','programmata','effettuata','annullata'].includes(f.visitStatus)?f.visitStatus:'non_programmata',
+        visit_notes:String(f.visitNotes||'').slice(0,2000),updated_at:new Date().toISOString()};
     });
     var manuals=(copy.manual||[]).filter(function(v){return v&&v.url}).map(function(row){
       return {user_id:current.id,listing_url:row.url,payload:row,updated_at:new Date().toISOString()};
@@ -229,7 +246,11 @@
     b.addEventListener('click',function(){setMode(b.dataset.authMode);});
   });
   window.TurinPippsAuth={isSignedIn:function(){return !!current},
-    saveFlag:saveFlag,saveManual:saveManual,savePreferences:savePreferences,open:open};
+    saveFlag:saveFlag,saveManual:saveManual,savePreferences:savePreferences,open:open,
+    getAccessToken:async function(){if(!current||!client)return null;
+      var r=await client.auth.getSession();
+      return r.error?null:(r.data.session&&r.data.session.access_token)||null;
+    }};
   setButton();
   if(client){
     client.auth.getSession().then(async function(r){
