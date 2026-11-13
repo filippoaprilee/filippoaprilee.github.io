@@ -181,7 +181,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:650px){.tp-costbar{grid-template-columns:1fr}.tp-costbar>div{border-right:0;border-bottom:1px solid #e3e9f2;padding:9px 12px}.tp-costbar>div:last-child{border-bottom:0}}
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
-</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"></head><body>
+</style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -353,7 +353,13 @@ var source=String(item.source||item.portal||'Web');var privateStatus=item.privat
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
 return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0}}
 function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=remote.concat(prefs.manual||[]).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
-function classify(a){var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;if(!chosen.some(function(x){return z.includes(x.toLowerCase())}))return 'excluded';return 'good'}
+function classify(a){
+ // Audience-specific adverts require explicit eligibility verification.
+ var eligibility=(a.title||'')+' '+(a.description||'');
+ if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,65}\b(?:studentesse|studenti|donne|uomini|lavoratrici|lavoratori|ragazze|ragazzi|coppie)\b/i.test(eligibility))return 'review';
+ if(a.availability_state==='potenzialmente_non_disponibile')return 'review';
+ if(listingAgeDays(a)!==null&&listingAgeDays(a)>75)return 'review';
+ var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;if(!chosen.some(function(x){return z.includes(x.toLowerCase())}))return 'excluded';return 'good'}
 
 function recurringCost(a){
  var t=String(a.expenses||''),known=0,recognized=false;
@@ -858,6 +864,7 @@ function drawGuide(){
  el('tp-guide-progress').style.width=((tpGuideStep+1)/tpGuideSlides.length*100)+'%';
  el('tp-guide-next').innerHTML=tpGuideStep===tpGuideSlides.length-1?'Inizia a cercare <i class="fa-solid fa-arrow-right"></i>':'Continua <i class="fa-solid fa-arrow-right"></i>';
  el('tp-guide-skip').textContent=tpGuideStep===0?'Salta guida':'Indietro';
+ if(typeof window.TurinPippsEnhanceGuide==='function')window.TurinPippsEnhanceGuide(tpGuideStep);
 }
 function openGuide(){
  tpGuideStep=0;drawGuide();
@@ -970,7 +977,24 @@ window.TurinPippsBridge={
 (function(){
  var started=Date.now(),gotData=false,gotAuth=false,finished=false;
  var splashLabel=document.getElementById('tp-loading-label');
- function finish(){
+ window.TurinPippsUXV3={
+ navigate:function(view){nav(view)},
+ getPrefs:function(){return prefs},
+ getDiagnostics:function(){return diagnostics},
+ guideSlides:function(slides){tpGuideSlides=slides},
+ setBudget:function(value){
+   prefs.budget=Math.max(150,Math.min(5000,Number(value)||700));
+   el('budget').value=prefs.budget;
+   persist();memoListings=null;
+   stats();renderHome();renderResults();
+ },
+ setZones:function(z){
+   prefs.preferredZones=Array.isArray(z)&&z.length?z:zones;
+   fillPersonalSettings();persist();memoListings=null;
+   stats();renderHome();renderResults();
+ }
+};
+function finish(){
    if(finished||!gotData||!gotAuth)return;
    finished=true;var delay=Math.max(0,2500-(Date.now()-started));
    setTimeout(function(){
@@ -997,4 +1021,5 @@ window.TurinPippsBridge={
 <script defer src="./report-config.js?v=1.0.0"></script>
 <script defer src="./auth-config.js?v=1.4.0"></script>
 <script defer src="./auth-loader.js?v=1.6.0"></script>
+<script defer src="./experience-v3.js?v=3.0.0"></script>
 </body></html>
