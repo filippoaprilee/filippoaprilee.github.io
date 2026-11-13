@@ -1,7 +1,14 @@
 {
-  "last_sent_date": null,
-  "last_sent_at": null,
-  "recipient_count": 0,
-  "status": "non_configurato",
-  "message": "Nessun report SMTP confermato. Configurare i GitHub Actions Secrets e sbloccare il runner."
+  "last_sent_date": "2026-11-13",
+  "last_sent_at": "2026-11-13T12:50:52.418Z",
+  "recipient_count": 1,
+  "status": "inviato",
+  "provider": "Google Apps Script / Gmail",
+  "mode": "manuale",
+  "total": 23,
+  "matching": 12,
+  "new": 7,
+  "price_drops": 0,
+  "price_changes": 0,
+  "message": "Email inviata. Destinatari mantenuti privati."
 }
