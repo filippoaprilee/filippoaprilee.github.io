@@ -111,3 +111,9 @@ body{background:#f5f7fa;color:var(--tp-ink)}
 .tp-radar-manual{display:flex;justify-content:flex-end;padding-top:12px;margin-top:11px;border-top:1px solid #e8eef1}
 .tp-radar-manual #add{font-size:12px;color:#225b70;background:#eef7f6;border-color:#d2e7e4}
 .tp-radar-manual #add:hover{background:#dcf0ec;border-color:#a6d5cd}
+
+.tp-radar-live-status{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:13px 0 0;padding:12px 14px;border-radius:10px;background:#f5fafb;border:1px solid #deebef;color:#345d6b;font-size:11px;font-weight:650}
+.tp-radar-live-status i{color:#278d7b}
+.tp-radar-live-status small{color:#7a8c99;font-size:10px;font-weight:500}
+.tp-mobile-brand{position:relative;z-index:51}
+@media(max-width:800px){.tp-mobile-brand{display:flex}}
