@@ -632,18 +632,18 @@ function renderSources(){
  var last=Date.parse(lastUpdate||''),recent=Number.isFinite(last)&&(Date.now()-last)<12*3600000;
  var caption=Number.isFinite(last)?new Date(last).toLocaleString('it-IT'):'Mai verificato';
  var msg=d&&d.message||'';
- var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed\s*\(errori\s*(\d+)\),\s*link\s*(\d+)/i);
+ var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed/i),bing=msg.match(/Bing RSS:\s*(\d+)\s*ricerche/i),linkCount=msg.match(/link\s+(\d+)/i),rssErrors=msg.match(/errori\s+(\d+)/i),searched=(rss?Number(rss[1]):0)+(bing?Number(bing[1]):0);
  var click=msg.match(/(\d+)\s+schede ClickCase/i);
  var count=d&&Number.isFinite(Number(d.new))?d.new:0;
  el('tp-activity-summary').innerHTML='<div class="tp-scan-state"><span class="tp-status-light '+(recent&&d&&d.status==='ok'?'good':'warning')+'"></span><div><strong>'+
  (recent&&d&&d.status==='ok'?'Rilevazione recente riuscita':'Ultimo aggiornamento da controllare')+
  '</strong><small>'+esc(caption)+'</small></div></div>'+
- '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(rss?esc(rss[0].match(/link\s*(\d+)/i)[1])+' link dalle ricerche monitorate. ':'')+
+ '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(linkCount?esc(linkCount[1])+' link dalle ricerche monitorate. ':'')+
  'La raccolta cambia quando vengono rilevate nuove informazioni.</p>'+
- '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(rss?rss[1]:0)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
+ '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(searched)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
  var rows=[
   {icon:'fa-solid fa-rotate',title:'Controllo immobili',text:'Ultimo aggiornamento '+caption},
-  {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:rss?rss[1]+' ricerche, '+rss[3]+' link trovati, '+rss[2]+' errori':'Nessun dato disponibile'},
+  {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:searched?searched+' ricerche, '+(linkCount?linkCount[1]:'0')+' link trovati, '+(rssErrors?rssErrors[1]:'0')+' errori':'Nessun dato disponibile'},
   {icon:'fa-solid fa-house',title:'Annunci elaborati',text:(click?click[1]:'0')+' schede ClickCase esaminate · '+count+' nuove'},
   {icon:'fa-regular fa-envelope',title:'Riepilogo email',text:reportState&&reportState.last_sent_at?'Ultimo invio '+new Date(reportState.last_sent_at).toLocaleString('it-IT'):'Nessun invio confermato'}
  ];
