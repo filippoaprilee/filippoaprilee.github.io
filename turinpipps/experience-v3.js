@@ -178,6 +178,7 @@ function initialView(){
  if(screen==='saved')window.TurinPippsUXV3.navigate('saved');
  if(screen==='visits')window.TurinPippsUXV3.navigate('visits');
  if(screen==='compare')window.TurinPippsUXV3.navigate('compare');
+ if(['profile','notifications','admin'].includes(screen))window.TurinPippsUXV3.navigate(screen);
 }
 function badges(){
  if(!('setAppBadge'in navigator))return;
