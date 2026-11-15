@@ -17,7 +17,7 @@ async function rest(path,opts){
  var r=await fetch(base()+'/rest/v1/'+path,{
   method:opts&&opts.method||'GET',
   headers:{'apikey':cfg().publishableKey,'Authorization':'Bearer '+t,'Content-Type':'application/json',
-   'Accept':'application/json','Prefer':'return=representation'},
+   'Accept':'application/json','Prefer':opts&&opts.prefer||'return=representation'},
   body:opts&&opts.body?JSON.stringify(opts.body):undefined,cache:'no-store'
  });
  if(!r.ok){var txt=await r.text();throw Error('Sincronizzazione non riuscita ('+r.status+')'+(txt&&r.status<500?': '+txt.slice(0,140):''))}
@@ -189,7 +189,7 @@ async function enablePush(){
   }
   var j=subscription.toJSON(),u=session();
   var rows=await rest('turinpipps_push_subscriptions?on_conflict=endpoint',{method:'POST',
-   body:{user_id:u.id,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth_key:j.keys.auth,enabled:true}});
+   body:{user_id:u.id,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth_key:j.keys.auth,enabled:true},prefer:'resolution=merge-duplicates,return=representation'});
   if(!rows.length)throw Error('Il server non ha confermato la registrazione del dispositivo');
   state.push=true;note('tp-v5-push-message','Dispositivo registrato. Riceverai gli avvisi consentiti dalle tue preferenze.','ok');
  }catch(e){note('tp-v5-push-message',e.message,'error')}
