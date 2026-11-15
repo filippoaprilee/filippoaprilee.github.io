@@ -285,6 +285,12 @@ function init(){
  });
  var ready=function(){checkStaff();loadProfile();fetchAlerts(true)};
  window.addEventListener('turinpipps:account-ready',ready);
+ window.addEventListener('turinpipps:account-signed-out',function(){
+  state.profile=null;state.alerts=[];state.staff=false;state.loadedAt=0;
+  $('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove();
+  renderProfile();renderAlerts();
+  if(!$('#view-admin').classList.contains('hidden'))window.TurinPippsUXV3.navigate('home');
+ });
  window.addEventListener('turinpipps:ready',ready,{once:true});
  setTimeout(ready,1500);
  setInterval(function(){if(document.visibilityState==='visible')fetchAlerts(false)},120000);
