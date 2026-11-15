@@ -377,14 +377,12 @@ function classification(a){
  if(!a.price)reasons.push('Canone non dichiarato');
  if(!a.zone)reasons.push('Quartiere non verificato');
  if(a.private_status==='unverified')reasons.push('Inserzionista non verificato');
- if(a.private_status==='source')reasons.push('Privato dichiarato dalla fonte, non confermato');
  if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,70}\b(?:studentesse|studenti|lavoratrici|lavoratori|ragazze|ragazzi|coppie|referenziati)\b/i.test(text+' '+desc.slice(0,250)))
    reasons.push('Requisiti del locatario da confermare');
  if(a.availability_state==='potenzialmente_non_disponibile')
    reasons.push('Disponibilità incerta');
  var age=listingAgeDays(a);
  if(age!==null&&age>75)reasons.push('Annuncio rilevato da oltre 75 giorni');
- if(!a.source_updated)reasons.push('Data di pubblicazione non attestata');
  // L'età del collegamento non equivale alla disponibilità dell'immobile.
  return {status:reasons.length?'review':'good',reasons:reasons};
 }
@@ -514,6 +512,7 @@ function card(a){
  '<h3>'+esc(a.title)+'</h3>'+
  '<div class="tags"><span class="tag '+(decision.status==='good'?'green':'orange')+'">'+(decision.status==='good'?'Potenzialmente compatibile':decision.status==='excluded'?'Fuori criteri':'Da verificare')+'</span>'+(isNew?'<span class="tag green">Scoperto da poco</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
+ (!a.source_updated?'<span class="tag orange">Data originale non verificata</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
  '<span><i class="fa-solid fa-person-walking"></i> '+walk+'</span></div>'+
