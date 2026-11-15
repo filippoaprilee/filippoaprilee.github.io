@@ -118,3 +118,9 @@
 .tp-data-quality b{font-size:11px;color:#2d586b}
 .tp-data-quality span{font-size:10px;color:#668392;line-height:1.55}
 .tp-data-quality small{font-size:10px;color:#8298a4;line-height:1.6}
+
+.tp-v5-device{display:flex;gap:15px;align-items:center;justify-content:space-between;border-bottom:1px solid #e7eef1;padding:14px 0}
+.tp-v5-device:last-child{border-bottom:0}
+.tp-v5-device b{display:block;color:#21475a;font-size:12px}
+.tp-v5-device small{display:block;color:#7c94a1;font-size:11px;line-height:1.5;margin-top:5px}
+.tp-v5-devices .tp-v5-secondary{flex:none}
