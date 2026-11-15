@@ -34,12 +34,21 @@ Deno.serve(async req=>{
       getJson("turinpipps_scan_runs?select=id,started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=12"),
       getJson("turinpipps_discovered_listings?select=listing_url&limit=5000")
     ]);
+    let githubRunner:any=null;
+    try{
+      const r=await fetch("https://api.github.com/repos/filippoaprilee/filippoaprilee.github.io/actions/runs?per_page=50",
+       {headers:{"Accept":"application/vnd.github+json","User-Agent":"TurinPipps-Staff-Health"},signal:AbortSignal.timeout(6000)});
+      if(r.ok){const j=await r.json();const run=(j.workflow_runs||[]).find((x:any)=>x.name==="TurinPipps - raccolta annunci");
+        if(run)githubRunner={id:run.id,status:run.status,conclusion:run.conclusion,url:run.html_url,started_at:run.created_at};
+      }
+    }catch(_){}
     return answer({role:staff[0].role,
       counts:{users:profiles.length,verified:profiles.filter((p:any)=>p.email_confirmed).length,
        devices:devices.filter((d:any)=>d.enabled).length,listings:listings.length},
       users:profiles.map((p:any)=>({...p,devices:devices.filter((d:any)=>d.user_id===p.user_id).length})),
       scans,
-      email_provider_configured:!!Deno.env.get("RESEND_API_KEY"),
+      email_provider_configured:!!Deno.env.get("RESEND_API_KEY")&&!!Deno.env.get("TURINPIPPS_MAIL_FROM"),
+      github_runner:githubRunner,
       auto_collector:"Supabase pg_cron (30 minuti)",
       python_runner:"GitHub Actions (verificare job e log)"});
   }
