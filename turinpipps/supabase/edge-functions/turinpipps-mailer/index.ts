@@ -33,7 +33,7 @@ function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|ga
 function candidates(data:any[],p:any){
  const zones=Array.isArray(p.preferred_zones)?p.preferred_zones:[];
  return data.filter((x:any)=>{
-  return x.price>=150&&x.price<=p.budget&&x.zone&&zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x);
+  return x.private_status==="source"&&x.price>=150&&x.price<=p.budget&&x.zone&&zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x);
  }).sort((a:any,b:any)=>String(b.first_seen).localeCompare(String(a.first_seen))).slice(0,9);
 }
 async function email(user:any,kind:"daily"|"weekly"|"manual",localDay:string,rows:any[],settings:any){
@@ -82,7 +82,7 @@ Deno.serve(async req=>{
    current=await getUser(req);if(!current)return reply({error:"Accedi al tuo account"},401);
   }else return reply({error:"Azione non supportata"},400);
   if(!KEY||!FROM)return reply({error:"Invio email non configurato: collega un provider di posta verificato al backend TurinPipps.",provider_ready:false},503);
-  const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type&order=first_seen.desc&limit=2500");
+  const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type,private_status&order=first_seen.desc&limit=2500");
   let people:any[];
   if(current)people=await query("turinpipps_profiles?user_id=eq."+current.id+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=1");
   else people=await query("turinpipps_profiles?email_confirmed=eq.true&digest_enabled=eq.true&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=250");
