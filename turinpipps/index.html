@@ -697,9 +697,9 @@ function renderSources(){
  }).join('');
 }
 function nav(next){
- if(!['home','results','compare','saved','visits','sources','settings','more'].includes(next))next='home';
+ if(!['home','results','compare','saved','visits','sources','settings','profile','notifications','admin','more'].includes(next))next='home';
  tab=next;
- ['home','results','compare','saved','visits','sources','settings','more'].forEach(function(x){
+ ['home','results','compare','saved','visits','sources','settings','profile','notifications','admin','more'].forEach(function(x){
    var node=el('view-'+x);if(node)node.classList.toggle('hidden',x!==next);
  });
  document.querySelectorAll('[data-nav]').forEach(function(x){
@@ -714,6 +714,7 @@ function nav(next){
  if(next==='visits')renderVisits();
  if(next==='compare')renderComparison();
  if(next==='settings')fillPersonalSettings();
+ if(window.TurinPippsV5&&typeof window.TurinPippsV5.onNavigate==='function')window.TurinPippsV5.onNavigate(next);
  if(window.matchMedia('(max-width:700px)').matches)window.scrollTo({top:0,behavior:'instant'});
 }
 function download(data,name){var a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}
@@ -1102,4 +1103,4 @@ function finish(){
 <script defer src="./auth-loader.js?v=1.6.0"></script>
 <script defer src="./experience-v3.js?v=3.0.0"></script>
 <script defer src="./experience-v4.js?v=4.0.0"></script>
-</body></html>
+<link rel="stylesheet" href="./experience-v5.css?v=5.0.0"><script defer src="./experience-v5.js?v=5.0.0"></script></body></html>
