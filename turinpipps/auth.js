@@ -248,6 +248,7 @@
   });
   window.TurinPippsAuth={isSignedIn:function(){return !!current},
     saveFlag:saveFlag,saveManual:saveManual,savePreferences:savePreferences,open:open,
+    getCurrentUser:function(){return current?{id:current.id,email:current.email,confirmed:!!current.email_confirmed_at}:null},
     getAccessToken:async function(){if(!current||!client)return null;
       var r=await client.auth.getSession();
       return r.error?null:(r.data.session&&r.data.session.access_token)||null;
