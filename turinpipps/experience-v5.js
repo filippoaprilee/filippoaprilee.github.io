@@ -251,7 +251,14 @@ async function renderAdmin(){
       '<label><span>Riepilogo</span><select data-field="frequency"><option value="daily">Giornaliero</option><option value="weekly">Settimanale</option><option value="off">Disattivato</option></select></label>'+
       '<label class="tp-v5-check-slim"><input type="checkbox" data-field="enabled" '+(u.digest_enabled?'checked':'')+'> Attivo</label>'+
       '<button class="tp-v5-secondary" data-tp-v5-save-user="'+esc(u.user_id)+'">Salva</button></div>';
-   }).join('')+'</div></section>';
+   }).join('')+'</div></section>'+
+   '<section class="tp-v5-panel"><h2>Postazioni e dispositivi</h2><p>Elenco dei dispositivi autorizzati alle notifiche. Le chiavi di sottoscrizione non vengono mostrate.</p>'+
+   '<div class="tp-v5-devices">'+((data.devices||[]).length?(data.devices||[]).map(function(device){
+     var owner=(data.users||[]).find(function(u){return u.user_id===device.user_id});
+     return '<div class="tp-v5-device"><div><b>'+esc(owner&&owner.email||'Account')+'</b><small>Registrato '+esc(new Date(device.created_at).toLocaleDateString('it-IT'))+
+       ' · '+(device.enabled?'Attivo':'Disattivato')+(device.last_push_at?' · ultimo invio '+esc(new Date(device.last_push_at).toLocaleDateString('it-IT')):'')+'</small></div>'+
+       (device.enabled?'<button class="tp-v5-secondary" data-tp-v5-disable-device="'+esc(device.id)+'">Disattiva</button>':'')+'</div>';
+   }).join(''):'<p class="tp-v5-empty">Nessun dispositivo ha ancora autorizzato le notifiche.</p>')+'</div></section>';
   (data.users||[]).forEach(function(u){
     var e=$('[data-user="'+u.user_id+'"] select');if(e)e.value=u.digest_frequency||'daily';
   });
@@ -282,6 +289,15 @@ function init(){
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
+   var device=e.target.closest('[data-tp-v5-disable-device]');
+   if(device){
+     e.preventDefault();
+     if(!confirm('Disattivare questa postazione per le notifiche?'))return;
+     device.disabled=true;
+     functionCall('turinpipps-admin','disable_device',{device_id:device.dataset.tpV5DisableDevice})
+      .then(function(){note('tp-v5-admin-status','Postazione disattivata.','ok');renderAdmin()})
+      .catch(function(error){note('tp-v5-admin-status',error.message,'error');device.disabled=false});
+   }
  });
  var ready=function(){checkStaff();loadProfile();fetchAlerts(true)};
  window.addEventListener('turinpipps:account-ready',ready);
