@@ -351,7 +351,7 @@ function canonical(url){try{var u=new URL(url);if(!/^https?:$/.test(u.protocol))
 function normalize(item){if(!item||typeof item!=='object')return null;var url=canonical(item.url||item.link);if(!url)return null;var desc=String(item.description||item.summary||'').replace(/<[^>]+>/g,' ').slice(0,1200);var price=Number(item.price||item.rent||0);if(!Number.isFinite(price)||price<0)price=0;var zone=String(item.zone||'').trim();var probe=(zone+' '+String(item.title||'')+' '+desc).toLowerCase();if(!zone){zones.forEach(function(z){if(!zone&&probe.includes(z))zone=z.replace(/\b\w/g,function(m){return m.toUpperCase()})})}
 var source=String(item.source||item.portal||'Web');var privateStatus=item.private_status||item.owner_status||((source.toLowerCase().includes('clickcase')||source.toLowerCase().includes('subito privati'))?'source':'unverified');
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
-return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0}}
+return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',published_at:item.published_at||'',last_verified_at:item.last_verified_at||'',availability_status:item.availability_status||'unknown',verification_level:item.verification_level||'unverified',verification_reason:item.verification_reason||'',price_verified_at:item.price_verified_at||'',expired_at:item.expired_at||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0}}
 function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=(prefs.manual||[]).concat(externalRemote,remote).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
 function classification(a){
  var reasons=[],text=(String(a.title||'')+' '+String(a.property_type||'')).toLowerCase(),
@@ -477,7 +477,7 @@ function intelStats(){
  out.innerHTML='<div class="tp-intelstat"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><b>'+aged+'</b><span>Annunci datati</span></div></div>'+
  '<div class="tp-intelstat"><i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i><div><b>'+changes+'</b><span>Prezzi variati</span></div></div>'+
  '<div class="tp-intelstat"><i class="fa-solid fa-copy" aria-hidden="true"></i><div><b>'+dupes+'</b><span>Possibili doppi</span></div></div>'+
- '<div class="tp-intel-summary">Annunci datati: oltre 60 giorni dalla pubblicazione/aggiornamento dichiarato, non necessariamente scaduti. Duplicati: indizi su via, zona e metratura, da controllare. Distanze soltanto con coordinate geografiche dell’immobile; il percorso pedonale si consulta su Maps.</div>';
+ '<div class="tp-intel-summary">Annunci datati: oltre 60 giorni dall’ultimo aggiornamento dichiarato o dal primo avvistamento. Non sono necessariamente scaduti. Duplicati: indizi su via, zona e metratura, da controllare. Distanze soltanto con coordinate geografiche dell’immobile; il percorso pedonale si consulta su Maps.</div>';
 }
 function priceTrendSVG(history){
  var values=history.filter(function(x){return x&&Number(x.price)>0}).slice(-12).map(function(x){return Number(x.price)});
@@ -490,9 +490,17 @@ function priceTrendSVG(history){
  '<path d="M10 54 H240" fill="none" stroke="#e2e8f3" stroke-width="1.5"/>'+
  '<polyline points="'+pts+'" fill="none" stroke="'+trend+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 }
+function dataQuality(a){
+ var indicators=[
+  !!a.price,!!a.zone,!!a.sqm,!!a.property_type,
+  !!a.published_at||!!a.source_updated,!!a.expenses,
+  !!a.last_verified_at
+ ];
+ return {known:indicators.filter(Boolean).length,total:indicators.length};
+}
 function card(a){
  var f=flag(a.url),cost=recurringCost(a),rank=intelligentScore(a),checks=cautionSignals(a);
- var decision=classification(a);
+ var decision=classification(a),quality=dataQuality(a);
  var privateLabel=a.private_status==='confirmed'?'Privato verificato':a.private_status==='source'?'Fonte privata · da confermare':'Inserzionista da verificare';
  var p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Canone n.d.';
  var history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
@@ -522,6 +530,7 @@ function card(a){
  '<details class="tp-card-details"><summary>Dettagli, spese e verifiche <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded">'+
  '<p class="desc" style="display:block;max-height:none">'+esc(a.description||'Apri la scheda per verificare i dettagli.')+'</p>'+
  '<div class="tp-costbar"><div><span>Canone</span><b>'+(a.price?esc(a.price)+' €':'Da verificare')+'</b></div><div><span>Spese note</span><b>'+(cost.unknown&&!cost.known?'Da chiarire':esc(cost.known)+' €')+'</b></div><div><span>Totale noto</span><b>'+total+'</b></div></div>'+
+ '<div class="tp-data-quality"><b>Completezza dati: '+quality.known+'/'+quality.total+'</b><span>Prima rilevazione: '+esc(dateLabel(a.seen))+' · Ultimo avvistamento: '+esc(dateLabel(a.last_seen))+'</span><span>Pubblicazione originale: '+esc(dateLabel(a.published_at||a.source_updated))+' · Verifica diretta: '+esc(dateLabel(a.last_verified_at))+'</span><small>Queste date indicano operazioni diverse. Un link raggiungibile non garantisce che la casa sia ancora disponibile.</small></div>'+ 
  '<div class="tp-scorebar"><b>Score '+rank.total+'/100</b><div class="tp-score-track"><i style="width:'+rank.total+'%"></i></div><p>'+rank.components.map(function(q){return esc(q[0])+': '+q[1]+'/'+q[2]}).join(' · ')+'</p></div>'+
  route+historyHTML+riskHTML+dupHTML+
  (f.notes?'<div class="tp-note"><i class="fa-regular fa-note-sticky"></i> '+esc(f.notes)+'</div>':'')+
