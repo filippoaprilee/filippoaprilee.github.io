@@ -1071,7 +1071,7 @@ window.TurinPippsBridge={
      return {url:x.listing_url,title:x.title,description:x.description,price:x.price,
        zone:x.zone,source:x.source,private_status:'unverified',
        seen:x.first_seen,last_seen:x.last_seen,source_updated:x.source_updated||'',
-       sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',origin_engine:x.origin_engine};
+       sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',published_at:x.published_at||'',last_verified_at:x.last_verified_at||'',availability_status:x.availability_status||'unknown',verification_level:x.verification_level||'unverified',verification_reason:x.verification_reason||'',price_verified_at:x.price_verified_at||'',expired_at:x.expired_at||'',origin_engine:x.origin_engine};
    }):[];
    liveScan=scan||null;memoListings=null;page=1;
    renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();
