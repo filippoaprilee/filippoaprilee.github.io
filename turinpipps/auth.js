@@ -74,6 +74,7 @@
       current=null;
       if(bridge&&bridge.useGuest)bridge.useGuest();
       setButton();
+      window.dispatchEvent(new Event('turinpipps:account-signed-out'));
       return;
     }
     try{
