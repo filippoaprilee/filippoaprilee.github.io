@@ -195,12 +195,13 @@ async function enablePush(){
   var publicKey=String(window.TURINPIPPS_VAPID_PUBLIC_KEY||'');
   if(!publicKey)throw Error('Servizio push non ancora configurato sul server. Le notifiche interne sono disponibili.');
   if(Notification.permission==='denied')throw Error('Le notifiche sono bloccate nelle impostazioni del dispositivo.');
+  // Safari iOS richiede che il prompt sia invocato direttamente dal gesto dell'utente.
+  var permissionRequest=Notification.permission==='default'?Notification.requestPermission():Promise.resolve(Notification.permission);
+  var permission=await permissionRequest;
+  if(permission!=='granted')throw Error('Non hai autorizzato le notifiche.');
   var registration=await navigator.serviceWorker.ready;
-  // Deve essere chiamata in risposta al click; nessun prompt automatico durante la visita.
   var subscription=await registration.pushManager.getSubscription();
   if(!subscription){
-   var permission=await Notification.requestPermission();
-   if(permission!=='granted')throw Error('Non hai autorizzato le notifiche.');
    subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:encodeKey(publicKey)});
   }
   var j=subscription.toJSON(),u=session();
