@@ -113,3 +113,8 @@
 }
 
 @media(max-width:700px){.mobile-nav{grid-template-columns:repeat(5,minmax(0,1fr));gap:0}.mobile-nav button{font-size:10px;min-width:0;padding:6px 1px}.mobile-nav button span{font-size:17px;line-height:1.4}.mobile-nav button i{font-size:17px}}
+
+.tp-data-quality{margin-top:14px;padding:13px 14px;background:#f5f9fa;border:1px solid #e0e9ec;border-radius:10px;display:grid;gap:7px}
+.tp-data-quality b{font-size:11px;color:#2d586b}
+.tp-data-quality span{font-size:10px;color:#668392;line-height:1.55}
+.tp-data-quality small{font-size:10px;color:#8298a4;line-height:1.6}
