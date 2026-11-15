@@ -50,6 +50,22 @@ function build(){
   });
   nav.insertBefore(fragment,settingsNav);
  }
+ var side=$('.side .nav');
+ if(side){
+  // Flusso coerente: scopri -> salva -> confronta -> visita. Profilo e impostazioni separati.
+  var search=side.querySelector('[data-nav="results"]'),saved=side.querySelector('[data-nav="saved"]');
+  var compare=side.querySelector('[data-nav="compare"]'),visits=side.querySelector('[data-nav="visits"]');
+  if(search&&saved)search.after(saved);
+  if(saved&&compare)saved.after(compare);
+  if(compare&&visits)compare.after(visits);
+ }
+ var mobile=$('.mobile-nav');
+ if(mobile&&!$('#tp-v5-mobile-notifications')){
+  var moreBtn=mobile.querySelector('[data-nav="more"]');
+  var bell=document.createElement('button');bell.id='tp-v5-mobile-notifications';
+  bell.type='button';bell.dataset.nav='notifications';bell.innerHTML='<span><i class="fa-regular fa-bell"></i></span>Notifiche';
+  if(moreBtn)mobile.insertBefore(bell,moreBtn);else mobile.appendChild(bell);
+ }
  var top=$('.topline .top-actions');
  if(top&&!$('#tp-v5-bell')){
   var b=document.createElement('button');b.type='button';b.id='tp-v5-bell';b.className='tp-v5-bell';b.dataset.nav='notifications';
