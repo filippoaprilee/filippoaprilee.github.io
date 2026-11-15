@@ -46,6 +46,8 @@ Deno.serve(async req=>{
       counts:{users:profiles.length,verified:profiles.filter((p:any)=>p.email_confirmed).length,
        devices:devices.filter((d:any)=>d.enabled).length,listings:listings.length},
       users:profiles.map((p:any)=>({...p,devices:devices.filter((d:any)=>d.user_id===p.user_id).length})),
+      devices:devices.map((d:any)=>({id:d.id,user_id:d.user_id,enabled:d.enabled,
+        created_at:d.created_at,last_push_at:d.last_push_at,consecutive_failures:d.consecutive_failures})),
       scans,
       email_provider_configured:!!Deno.env.get("RESEND_API_KEY")&&!!Deno.env.get("TURINPIPPS_MAIL_FROM"),
       github_runner:githubRunner,
