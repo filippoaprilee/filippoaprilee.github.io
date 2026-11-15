@@ -229,7 +229,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <section id="view-results" class="hidden"><div class="tp-page-lead"><div><div class="tp-kicker">ESPLORA</div><h1>Trova la tua prossima casa</h1><p>Cerca nella raccolta, filtra per zona e valuta gli immobili direttamente dalla scheda originale.</p></div><button class="button" id="reload"><i class="fa-solid fa-rotate"></i> Aggiorna</button></div><div class="tp-intelbar" id="tp-intelbar" aria-label="Analisi annunci"></div>
 <div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tp-map-toolbar"><button class="button" type="button" id="tp-toggle-map"><i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili</button><span class="note">Localizzazione solo per gli annunci con coordinate verificabili.</span></div><div id="tp-map" class="tp-app-map" hidden></div>
-<div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="candidate">Per te</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
+<div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
 <section id="view-sources" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">MONITORAGGIO</div><h1>Attività della ricerca</h1><p>Quando abbiamo cercato, che cosa è cambiato e quando ti abbiamo inviato un riepilogo.</p></div>
 <button class="button" id="tp-activity-refresh" type="button"><i class="fa-solid fa-rotate"></i> Ricarica stato</button></div>
@@ -332,7 +332,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </dialog>
 <script>
 (function(){'use strict';
-var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='candidate',tab='home';
+var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='good',tab='home';
 var guestPrefs=JSON.parse(JSON.stringify(prefs)),accountMode=false,memoListings=null,reportState=null,page=1,pageSize=20,externalRemote=[],liveScan=null;
 var zones=['crocetta','cenisia','san paolo','borgo san paolo','cit turin','santa rita','pozzo strada'];
 var links=[
@@ -353,13 +353,42 @@ var source=String(item.source||item.portal||'Web');var privateStatus=item.privat
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
 return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0}}
 function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=remote.concat(externalRemote,prefs.manual||[]).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
-function classify(a){
- // Audience-specific adverts require explicit eligibility verification.
- var eligibility=(a.title||'')+' '+(a.description||'');
- if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,65}\b(?:studentesse|studenti|donne|uomini|lavoratrici|lavoratori|ragazze|ragazzi|coppie)\b/i.test(eligibility))return 'review';
- if(a.availability_state==='potenzialmente_non_disponibile')return 'review';
- if(listingAgeDays(a)!==null&&listingAgeDays(a)>75)return 'review';
- var budget=Number(prefs.budget||700);if(/(?:^|\W)(?:stanza|camera|posto letto|posti letto)(?:\W|$)/i.test((a.title||'')+' '+(a.property_type||'')))return 'review';if(a.private_status==='unverified'||!a.price||!a.zone)return 'review';if(a.price>budget)return 'excluded';var z=a.zone.toLowerCase();var chosen=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;if(!chosen.some(function(x){return z.includes(x.toLowerCase())}))return 'excluded';return 'good'}
+function classification(a){
+ var reasons=[],text=(String(a.title||'')+' '+String(a.property_type||'')).toLowerCase(),
+ desc=(String(a.description||'')).toLowerCase();
+ var budget=Number(prefs.budget)||700;
+ var preferred=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;
+ // Mismatch certo > escluso. Informazione mancante > da verificare.
+ if(/\b(?:stanza|camera singola|posto letto|posti letto|camera doppia|affitto box|garage)\b/i.test(text))
+   return {status:'excluded',reasons:['Non è un appartamento intero']};
+ if(a.price>budget)return {status:'excluded',reasons:['Canone superiore al budget']};
+ if(a.zone&&!preferred.some(function(z){return String(a.zone).toLowerCase().includes(z.toLowerCase())}))
+   return {status:'excluded',reasons:['Quartiere fuori dalle zone scelte']};
+ if(prefs.minSqm&&a.sqm&&a.sqm<Number(prefs.minSqm))
+   return {status:'excluded',reasons:['Superficie inferiore al minimo']};
+ if(prefs.maxWalkMinutes&&a.walking_minutes&&a.walking_minutes>Number(prefs.maxWalkMinutes))
+   return {status:'excluded',reasons:['Percorso più lungo del limite']};
+ if(prefs.propertyType&&prefs.propertyType!=='tutte'){
+   var declared=text.match(/\b(?:mono|bi|tri|quadri)locale\b/);
+   if(declared&&declared[0]!==prefs.propertyType)
+     return {status:'excluded',reasons:['Tipologia diversa da quella scelta']};
+   if(!declared)reasons.push('Tipologia da verificare');
+ }
+ if(!a.price)reasons.push('Canone non dichiarato');
+ if(!a.zone)reasons.push('Quartiere non verificato');
+ if(a.private_status==='unverified')reasons.push('Inserzionista non verificato');
+ if(a.private_status==='source')reasons.push('Privato dichiarato dalla fonte, non confermato');
+ if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,70}\b(?:studentesse|studenti|lavoratrici|lavoratori|ragazze|ragazzi|coppie|referenziati)\b/i.test(text+' '+desc.slice(0,250)))
+   reasons.push('Requisiti del locatario da confermare');
+ if(a.availability_state==='potenzialmente_non_disponibile')
+   reasons.push('Disponibilità incerta');
+ var age=listingAgeDays(a);
+ if(age!==null&&age>75)reasons.push('Annuncio rilevato da oltre 75 giorni');
+ if(!a.source_updated)reasons.push('Data di pubblicazione non attestata');
+ // L'età del collegamento non equivale alla disponibilità dell'immobile.
+ return {status:reasons.length?'review':'good',reasons:reasons};
+}
+function classify(a){return classification(a).status}
 
 function recurringCost(a){
  var t=String(a.expenses||''),known=0,recognized=false;
@@ -465,6 +494,7 @@ function priceTrendSVG(history){
 }
 function card(a){
  var f=flag(a.url),cost=recurringCost(a),rank=intelligentScore(a),checks=cautionSignals(a);
+ var decision=classification(a);
  var privateLabel=a.private_status==='confirmed'?'Privato verificato':a.private_status==='source'?'Fonte privata · da confermare':'Inserzionista da verificare';
  var p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Canone n.d.';
  var history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
@@ -482,13 +512,14 @@ function card(a){
  '<div class="listing-banner"><div class="tile"><i class="fa-solid fa-house"></i></div><div class="price">'+esc(p)+(a.price?'<small> /mese</small>':'')+'</div></div>'+
  '<div class="body"><div class="micro">'+esc(a.source)+' · '+esc(a.zone||'Zona non indicata')+'</div>'+
  '<h3>'+esc(a.title)+'</h3>'+
- '<div class="tags">'+(isNew?'<span class="tag green">Scoperto da poco</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
+ '<div class="tags"><span class="tag '+(decision.status==='good'?'green':'orange')+'">'+(decision.status==='good'?'Potenzialmente compatibile':decision.status==='excluded'?'Fuori criteri':'Da verificare')+'</span>'+(isNew?'<span class="tag green">Scoperto da poco</span>':'')+'<span class="tag '+(a.private_status==='unverified'?'orange':'')+'">'+esc(privateLabel)+'</span>'+
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
  '<span><i class="fa-solid fa-person-walking"></i> '+walk+'</span></div>'+
  (changed?'<div class="tp-listing-meta"><span class="tp-microtag '+(changed.delta<0?'good':'alert')+'"><i class="fa-solid fa-arrow-trend-'+(changed.delta<0?'down':'up')+'"></i> '+(changed.delta<0?'Ribasso':'Aumento')+' '+Math.abs(changed.delta)+' €</span></div>':'')+
  warning+(f.visitStatus&&f.visitStatus!=='non_programmata'?'<div class="tp-note" style="margin-top:10px">Visita '+esc(f.visitStatus)+' · '+esc(visitText(f))+'</div>':'')+
+  (decision.reasons.length?'<div class="tp-classification-reasons"><i class="fa-solid fa-circle-info"></i> '+esc(decision.reasons.slice(0,2).join(' · '))+'</div>':'')+
  '<details class="tp-card-details"><summary>Dettagli, spese e verifiche <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded">'+
  '<p class="desc" style="display:block;max-height:none">'+esc(a.description||'Apri la scheda per verificare i dettagli.')+'</p>'+
  '<div class="tp-costbar"><div><span>Canone</span><b>'+(a.price?esc(a.price)+' €':'Da verificare')+'</b></div><div><span>Spese note</span><b>'+(cost.unknown&&!cost.known?'Da chiarire':esc(cost.known)+' €')+'</b></div><div><span>Totale noto</span><b>'+total+'</b></div></div>'+
@@ -554,23 +585,8 @@ function renderResults(){
  days=Number(el('age-filter').value||0),walking=el('distance-filter').value,stale=el('stale-filter').value;
  arr=arr.filter(function(a){
   if(flag(a.url).discard)return false;
-   if(mode==='candidate'){
-     // I dati mancanti restano visibili come incerti: non scartare case solo perché
-     // la fonte non ha pubblicato metri quadri o percorso fino al Politecnico.
-     if(prefs.minSqm&&a.sqm&&a.sqm<Number(prefs.minSqm))return false;
-     if(prefs.maxWalkMinutes&&a.walking_minutes&&a.walking_minutes>Number(prefs.maxWalkMinutes))return false;
-     if(prefs.propertyType&&prefs.propertyType!=='tutte'){
-       var declaredType=(a.title+' '+a.property_type).toLowerCase();
-       var knownType=declaredType.match(/(?:mono|bi|tri|quadri)locale/);
-       if(knownType&&!knownType[0].includes(prefs.propertyType))return false;
-     }
-   }else if(!matchPersonalCriteria(a))return false;
-  if(mode==='candidate'){
-     var budgetNow=Number(prefs.budget||700);
-     if(a.price&&a.price>budgetNow)return false;
-     var allowedZones=Array.isArray(prefs.preferredZones)&&prefs.preferredZones.length?prefs.preferredZones:zones;
-     if(a.zone&&!allowedZones.some(function(x){return a.zone.toLowerCase().includes(x.toLowerCase())}))return false;
-   } else if(mode!=='all'&&classify(a)!==mode)return false;
+  if(!matchPersonalCriteria(a))return false;
+  if(mode!=='all'&&classify(a)!==mode)return false;
   if(q&&!((a.title+' '+a.description+' '+a.zone+' '+a.source).toLowerCase().includes(q)))return false;
   if(z&&!a.zone.toLowerCase().includes(z))return false;
   if(source&&!a.source.toLowerCase().includes(source))return false;
