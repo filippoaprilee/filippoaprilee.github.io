@@ -126,8 +126,8 @@
       updated_at:new Date().toISOString()};
     var result=await client.from('turinpipps_listing_states')
       .upsert(value,{onConflict:'user_id,listing_url'});
-    if(result.error)status('Salvataggio online non riuscito: '+result.error.message,'error');
-    else status('Annuncio salvato sul tuo account.','ok');
+    if(result.error){status('Salvataggio online non riuscito: '+result.error.message,'error');return false;}
+    status('Annuncio sincronizzato sul tuo account.','ok');return true;
   }
   async function saveManual(row){
     if(!requireUser())return;
@@ -147,7 +147,8 @@
         property_type:['tutte','monolocale','bilocale','trilocale','quadrilocale'].includes(prefs.propertyType)?prefs.propertyType:'tutte',
         max_walk_minutes:prefs.maxWalkMinutes?Number(prefs.maxWalkMinutes):null,
         updated_at:new Date().toISOString()}, {onConflict:'user_id'});
-    if(result.error)status('Preferenze non sincronizzate: '+result.error.message,'error');
+    if(result.error){status('Preferenze non sincronizzate: '+result.error.message,'error');return false;}
+    return true;
   }
   async function importGuest(){
     if(!requireUser()||!bridge||!bridge.guestSnapshot)return;
