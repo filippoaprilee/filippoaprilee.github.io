@@ -746,10 +746,18 @@ async function load(){
  el('updated').textContent=lastUpdate?'Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT'):'Ricerca in attesa di dati';
  renderResults();renderSaved();if(tab==='sources')renderSources();
 }
-document.addEventListener('click',function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
+document.addEventListener('click',async function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);var previousFlag=Object.assign({},f);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
-if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);renderResults();renderSaved();updateCompareUI();
+if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();
+ if(accountMode&&window.TurinPippsAuth){
+   var synced=await window.TurinPippsAuth.saveFlag(a.url,f);
+   if(!synced){
+     prefs.flags[a.url]=previousFlag;persist();
+     showToast('Salvataggio online non confermato. Modifica annullata; riprova.','warn');
+   }else showToast('Modifica salvata sul tuo account.','good');
+ }
+ renderResults();renderSaved();updateCompareUI();
  if(b.dataset.action==='compare'){
    var c=all().filter(function(x){return !!flag(x.url).compare}).length;
    if(c>0)showToast(c+' immobili selezionati. Premi «Confronta ora» per aprire la tabella.','good');
@@ -763,7 +771,7 @@ el('tp-filter-toggle').setAttribute('aria-expanded','false');
 el('tp-filter-toggle').addEventListener('click',function(){
  var filter=el('tp-filterbar');filter.hidden=!filter.hidden;this.setAttribute('aria-expanded',String(!filter.hidden));
 });el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;setupPersonalZones();fillPersonalSettings();
-el('save-settings').addEventListener('click',function(){savePersonalSettings();prefs.budget=Math.max(100,Number(el('budget').value||700));prefs.fullname=el('fullname').value.trim();prefs.intro=el('intro').value.trim();persist();renderResults();if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.savePreferences(prefs);showToast(accountMode?'Preferenze salvate sul tuo account.':'Preferenze salvate sul dispositivo.','good')});
+el('save-settings').addEventListener('click',function(){savePersonalSettings();prefs.budget=Math.max(100,Number(el('budget').value||700));prefs.fullname=el('fullname').value.trim();prefs.intro=el('intro').value.trim();persist();renderResults();if(accountMode&&window.TurinPippsAuth){window.TurinPippsAuth.savePreferences(prefs).then(function(ok){showToast(ok?'Preferenze sincronizzate sul tuo account.':'Salvataggio online non riuscito. Le preferenze sono solo su questo dispositivo.',ok?'good':'warn')});}else showToast('Preferenze salvate sul dispositivo.','good')});
 el('csv-button').addEventListener('click',function(){var rows=[['Titolo','Zona','Canone','Spese','Fonte','Privato','URL','Stato']];all().forEach(function(x){rows.push([x.title,x.zone,x.price||'',x.expenses,x.source,x.private_status,x.url,classify(x)])});var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v==null?'':v).replace(/^([=+@\-\t\r])/,"'$1").replace(/"/g,'""')+'"'}).join(';')}).join('\r\n');var a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=u;a.download='turinpipps-annunci.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},800)});
 el('export').addEventListener('click',function(){download({listings:all(),flags:prefs.flags,settings:{budget:prefs.budget}},'turinpipps-annunci.json')});
 el('import-file').addEventListener('change',async function(e){var f=e.target.files[0];if(!f)return;try{var j=JSON.parse(await f.text());var a=(Array.isArray(j)?j:(j.listings||[])).map(normalize).filter(Boolean);if(!a.length)throw new Error('Nessun annuncio valido nel file');if(a.length>200)throw new Error('Importa al massimo 200 annunci per volta');prefs.manual=prefs.manual.concat(a);memoListings=null;if(accountMode&&window.TurinPippsAuth)a.forEach(function(row){window.TurinPippsAuth.saveManual(row)});if(j.flags&&typeof j.flags==='object'){Object.assign(prefs.flags,j.flags);if(accountMode&&window.TurinPippsAuth)Object.keys(j.flags).slice(0,300).forEach(function(url){window.TurinPippsAuth.saveFlag(url,prefs.flags[url]||{})})}persist();renderResults();showToast(a.length+' annunci importati.','good')}catch(err){showToast('Importazione non riuscita: '+err.message,'warn')}e.target.value=''});
