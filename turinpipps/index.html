@@ -322,6 +322,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
    <div class="tp-auth-tabs"><button type="button" data-auth-mode="signin" class="active">Accedi</button><button type="button" data-auth-mode="register">Registrati</button></div>
    <div class="tp-auth-field"><label for="tp-auth-email">Indirizzo email</label><input type="email" id="tp-auth-email" required autocomplete="username" placeholder="nome@email.it"></div>
    <div class="tp-auth-field"><label for="tp-auth-password">Password</label><div class="tp-auth-password-wrap"><input type="password" id="tp-auth-password" required minlength="8" autocomplete="current-password" placeholder="Almeno 8 caratteri"><button class="tp-auth-toggle" type="button" id="tp-show-password" aria-label="Mostra password"><i class="fa-regular fa-eye" aria-hidden="true"></i></button></div></div>
+   <label id="tp-v6-register-digest-wrap" class="tp-v6-register-consent" hidden><input type="checkbox" id="tp-v6-register-digest"><span><b>Ricevi un riepilogo delle case via email</b><small>Una email al giorno dopo la verifica dell’indirizzo, disattivabile dal Profilo. Facoltativo.</small></span></label>
    <button class="button primary" id="tp-auth-submit" type="submit" style="width:100%">Accedi</button><div class="tp-auth-load" id="tp-auth-load"><i class="fa-solid fa-spinner" aria-hidden="true"></i> Verifica credenziali in corso</div>
    <button class="button" id="tp-auth-reset" type="button" style="width:100%;margin-top:9px">Recupera password</button>
   </form>
@@ -1119,4 +1120,4 @@ function finish(){
 <script defer src="./auth-loader.js?v=1.6.0"></script>
 <script defer src="./experience-v3.js?v=3.0.0"></script>
 <script defer src="./experience-v4.js?v=4.0.0"></script>
-<link rel="stylesheet" href="./experience-v5.css?v=5.0.0"><script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=5.0.0"></script></body></html>
+<link rel="stylesheet" href="./experience-v5.css?v=5.0.0"><script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=5.0.0"></script><style>.tp-v6-register-consent{display:flex;align-items:flex-start;gap:11px;margin:15px 0;background:#f1f8fa;border:1px solid #d7e7ec;padding:13px;border-radius:10px;cursor:pointer}.tp-v6-register-consent[hidden]{display:none!important}.tp-v6-register-consent input{width:18px;height:18px;accent-color:#186b7b;flex:none}.tp-v6-register-consent b{display:block;color:#2a5466;font-size:12px}.tp-v6-register-consent small{display:block;color:#647f8b;line-height:1.5;margin-top:4px;font-size:11px}</style></body></html>
