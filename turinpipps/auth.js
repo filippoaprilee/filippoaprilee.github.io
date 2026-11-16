@@ -137,7 +137,8 @@
     var result=await client.from('turinpipps_manual_listings')
       .upsert({user_id:current.id,listing_url:row.url,payload:row,updated_at:new Date().toISOString()},
            {onConflict:'user_id,listing_url'});
-    if(result.error)status('Annuncio personale non sincronizzato: '+result.error.message,'error');
+    if(result.error){status('Annuncio personale non sincronizzato: '+result.error.message,'error');return false;}
+    return true;
   }
   async function savePreferences(prefs){
     if(!requireUser())return;
