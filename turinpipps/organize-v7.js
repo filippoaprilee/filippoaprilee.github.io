@@ -82,7 +82,9 @@ document.addEventListener("change",async e=>{
   if(window.TurinPippsAuth&&window.TurinPippsAuth.isSignedIn()){
    if(await window.TurinPippsAuth.saveFlag(url,next)!==true)throw Error("Il server non ha confermato il salvataggio");
   }
-  c.flags[url]=next;localStorage.setItem("turinpipps.v1",JSON.stringify(c.prefs));render(el("tp-visits-content"));
+  c.flags[url]=next;try{localStorage.setItem("turinpipps.v1",JSON.stringify(c.prefs))}catch(_){}
+  if(window.TurinPippsUXV3&&window.TurinPippsUXV3.refresh)window.TurinPippsUXV3.refresh();
+  render(el("tp-visits-content"));
  }catch(error){select.value=previous.decisionStatus||"valutazione";alert("Salvataggio non riuscito: "+error.message)}
  finally{select.disabled=false}
 });
