@@ -94,15 +94,17 @@ function build(){
  section('notifications','Le tue notifiche','AGGIORNAMENTI',
   'Nuovi annunci interessanti, variazioni importanti e promemoria. Solo avvisi rilevanti.',
   '<div class="tp-v5-panel tp-v5-notify-controls"><div><h2>Avvisi personalizzati</h2><p>Le notifiche interne sono associate al tuo account. Puoi scegliere se attivare anche gli avvisi sul dispositivo.</p></div>'+
-   '<button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button>'+
+   '<div class="tp-v6-push-actions"><button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button><button id="tp-v6-push-disable" class="tp-v5-secondary" type="button">Disattiva su questo dispositivo</button></div>'+
    '<p id="tp-v5-push-message" class="tp-v5-status" aria-live="polite"></p></div>'+
-  '<div class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Centro notifiche</h2><button id="tp-v5-alert-refresh" class="tp-v5-secondary" type="button">Aggiorna</button></div><div id="tp-v5-alert-list" class="tp-v5-empty">Accedi per visualizzare le notifiche.</div></div>');
+  '<div class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Centro notifiche</h2><div class="tp-v6-alert-actions"><button id="tp-v6-alert-readall" class="tp-v5-secondary" type="button">Segna tutte lette</button><button id="tp-v5-alert-refresh" class="tp-v5-secondary" type="button">Aggiorna</button></div></div><div id="tp-v5-alert-list" class="tp-v5-empty">Accedi per visualizzare le notifiche.</div></div>');
  section('admin','Console sviluppatore','GESTIONE INTERNA',
   'Stato delle acquisizioni, utenti registrati, report e dispositivi collegati.',
   '<div id="tp-v5-admin-status" class="tp-v5-status" aria-live="polite"></div>'+
   '<div id="tp-v5-admin-content" class="tp-v5-empty">Verifica autorizzazione amministrativa…</div>');
  $('#tp-v5-alert-refresh').addEventListener('click',function(){fetchAlerts(true)});
  $('#tp-v5-push-enable').addEventListener('click',enablePush);
+ $('#tp-v6-push-disable').addEventListener('click',disablePush);
+ $('#tp-v6-alert-readall').addEventListener('click',markAllRead);
 }
 function renderProfile(){
  var root=$('#tp-v5-profile-body'),s=session(),p=state.profile;
@@ -182,6 +184,34 @@ async function markRead(id){
   await rest('turinpipps_notification_inbox?id=eq.'+id,{method:'PATCH',body:{read_at:new Date().toISOString()}});
   state.loadedAt=0;await fetchAlerts(true);
  }catch(e){var n=$('#tp-v5-alert-list');if(n)n.prepend(document.createTextNode('Errore: '+e.message+' '))}
+}
+async function markAllRead(){
+ if(!session())return;
+ var b=$('#tp-v6-alert-readall');if(b)b.disabled=true;
+ try{
+   await rest('turinpipps_notification_inbox?read_at=is.null',{method:'PATCH',body:{read_at:new Date().toISOString()}});
+   state.loadedAt=0;await fetchAlerts(true);
+ }catch(e){var n=$('#tp-v5-alert-list');if(n)n.prepend(document.createTextNode('Impossibile aggiornare le notifiche: '+e.message+' '))}
+ finally{if(b)b.disabled=false}
+}
+async function disablePush(){
+ var b=$('#tp-v6-push-disable');if(b)b.disabled=true;
+ try{
+   if(!session())throw Error('Accedi al tuo account per gestire le notifiche.');
+   var registration=await navigator.serviceWorker.ready;
+   var sub=await registration.pushManager.getSubscription();
+   if(!sub){note('tp-v5-push-message','Nessuna notifica attiva su questo dispositivo.','ok');return}
+   var endpoint=sub.endpoint;
+   var t=await token();
+   if(!t)throw Error('Sessione scaduta');
+   var user=session();
+   // Prima revoca lato server (RLS per l'utente), poi annulla l'iscrizione del browser.
+   await rest('turinpipps_push_subscriptions?endpoint=eq.'+encodeURIComponent(endpoint)+'&user_id=eq.'+encodeURIComponent(user.id),
+      {method:'PATCH',body:{enabled:false}});
+   await sub.unsubscribe();
+   state.push=false;note('tp-v5-push-message','Notifiche disattivate su questo dispositivo.','ok');
+ }catch(e){note('tp-v5-push-message',e.message,'error')}
+ finally{if(b)b.disabled=false}
 }
 function encodeKey(base64){
  var padded=base64.replace(/-/g,'+').replace(/_/g,'/');
