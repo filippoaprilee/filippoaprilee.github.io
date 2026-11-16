@@ -30,7 +30,7 @@ Deno.serve(async req=>{
   if(action==="overview"){
     const [profiles,devices,scans,listings,mailLogs,notifications]=await Promise.all([
       getJson("turinpipps_profiles?select=user_id,email,email_confirmed,digest_enabled,digest_frequency,notify_new_listings,last_digest_at,last_digest_status,created_at&order=created_at.desc&limit=200"),
-      getJson("turinpipps_push_subscriptions?select=id,user_id,enabled,created_at,last_push_at,consecutive_failures&limit=200"),
+      getJson("turinpipps_push_subscriptions?select=id,user_id,device_name,platform,enabled,created_at,last_seen_at,last_push_at,consecutive_failures&limit=200"),
       getJson("turinpipps_scan_runs?select=id,started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=12"),
       getJson("turinpipps_discovered_listings?select=listing_url&limit=5000"),
       getJson("turinpipps_email_dispatches?select=id,user_id,kind,status,created_at,completed_at,error_text&order=created_at.desc&limit=30"),
@@ -51,8 +51,9 @@ Deno.serve(async req=>{
       users:profiles.map((p:any)=>({...p,devices:devices.filter((d:any)=>d.user_id===p.user_id).length})),
       mail_logs:mailLogs.map((m:any)=>({id:m.id,user_id:m.user_id,kind:m.kind,status:m.status,
          created_at:m.created_at,completed_at:m.completed_at,error_text:m.status==="failed"?m.error_text:""})),
-      devices:devices.map((d:any)=>({id:d.id,user_id:d.user_id,enabled:d.enabled,
-        created_at:d.created_at,last_push_at:d.last_push_at,consecutive_failures:d.consecutive_failures})),
+      devices:devices.map((d:any)=>({id:d.id,user_id:d.user_id,device_name:d.device_name,platform:d.platform,
+        enabled:d.enabled,created_at:d.created_at,last_seen_at:d.last_seen_at,
+        last_push_at:d.last_push_at,consecutive_failures:d.consecutive_failures})),
       scans,
       email_provider_configured:!!Deno.env.get("RESEND_API_KEY")&&!!Deno.env.get("TURINPIPPS_MAIL_FROM"),
       github_runner:githubRunner,
@@ -69,6 +70,16 @@ Deno.serve(async req=>{
     if(!rows.length)return answer({error:"Utente non trovato"},404);
     await logAction(user.id,uid,"update_digest",{digest_enabled:body.digest_enabled,digest_frequency:freq});
     return answer({success:true,profile:{user_id:uid,digest_enabled:rows[0].digest_enabled,digest_frequency:rows[0].digest_frequency}});
+  }
+  if(action==="rename_device"){
+    const device=String(body.device_id||""),label=String(body.device_name||"").trim();
+    if(!/^[\da-f-]{36}$/i.test(device)||label.length<2||label.length>70)
+      return answer({error:"Nome postazione non valido (2-70 caratteri)"},400);
+    const rows=await patchJson("turinpipps_push_subscriptions?id=eq."+encodeURIComponent(device),
+      {device_name:label,updated_at:new Date().toISOString()});
+    if(rows.length!==1)return answer({error:"Postazione non trovata"},404);
+    await logAction(user.id,rows[0].user_id||null,"rename_device",{id:device,label});
+    return answer({success:true,device_name:rows[0].device_name});
   }
   if(action==="disable_device"){
     const device=String(body.device_id||"");
