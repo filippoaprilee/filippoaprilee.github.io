@@ -65,8 +65,7 @@ Deno.serve(async req=>{
     if(!/^[\da-f-]{36}$/i.test(uid)||!["daily","weekly","off"].includes(freq)||typeof body.digest_enabled!=="boolean")
       return answer({error:"Preferenze non valide"},400);
     const rows=await patchJson("turinpipps_profiles?user_id=eq."+encodeURIComponent(uid),
-     {digest_enabled:body.digest_enabled,digest_frequency:freq,
-      notify_new_listings:body.notify_new_listings!==false,updated_at:new Date().toISOString()});
+     {digest_enabled:body.digest_enabled,digest_frequency:freq,updated_at:new Date().toISOString()});
     if(!rows.length)return answer({error:"Utente non trovato"},404);
     await logAction(user.id,uid,"update_digest",{digest_enabled:body.digest_enabled,digest_frequency:freq});
     return answer({success:true,profile:{user_id:uid,digest_enabled:rows[0].digest_enabled,digest_frequency:rows[0].digest_frequency}});
