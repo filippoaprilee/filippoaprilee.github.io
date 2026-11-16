@@ -60,11 +60,15 @@ function build(){
   if(compare&&visits)compare.after(visits);
  }
  var mobile=$('.mobile-nav');
- if(mobile&&!$('#tp-v5-mobile-notifications')){
-  var moreBtn=mobile.querySelector('[data-nav="more"]');
-  var bell=document.createElement('button');bell.id='tp-v5-mobile-notifications';
-  bell.type='button';bell.dataset.nav='notifications';bell.innerHTML='<span><i class="fa-regular fa-bell"></i></span>Notifiche';
-  if(moreBtn)mobile.insertBefore(bell,moreBtn);else mobile.appendChild(bell);
+ if(mobile){
+  // Le cinque destinazioni essenziali su iPhone, senza sesta icona e senza affollamento.
+  var compareTab=mobile.querySelector('[data-nav="compare"]');
+  if(compareTab){
+   compareTab.dataset.nav='visits';
+   compareTab.innerHTML='<span><i class="fa-regular fa-calendar-check"></i></span>Visite';
+  }
+  var oldBell=mobile.querySelector('#tp-v5-mobile-notifications');
+  if(oldBell)oldBell.remove();
  }
  var top=$('.topline .top-actions');
  if(top&&!$('#tp-v5-bell')){
@@ -77,6 +81,7 @@ function build(){
  if(more&&!$('#tp-v5-more-profile')){
   var two=document.createElement('div');two.className='tp-v5-more-links';
   two.innerHTML='<button class="button" id="tp-v5-more-notify" data-nav="notifications"><i class="fa-regular fa-bell"></i> Le mie notifiche</button>'+
+   '<button class="button" data-nav="compare"><i class="fa-solid fa-scale-balanced"></i> Confronta immobili</button>'+ 
    '<button class="button" id="tp-v5-more-profile" data-nav="profile"><i class="fa-regular fa-user"></i> Profilo e account</button>';
   more.prepend(two);
  }
