@@ -82,7 +82,7 @@
     try{
       var uid=next.id;
       var results=await Promise.all([
-        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes,compare_selected,visit_at,visit_status,visit_notes').eq('user_id',uid),
+        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes,compare_selected,visit_at,visit_status,visit_notes,decision_status,contacted_at').eq('user_id',uid),
         client.from('turinpipps_manual_listings').select('payload').eq('user_id',uid),
         client.from('turinpipps_preferences').select('budget,display_name,introduction,min_sqm,preferred_zones,property_type,max_walk_minutes').eq('user_id',uid).maybeSingle()
       ]);
@@ -95,7 +95,7 @@
            discard:!!row.discarded,notes:row.notes||'',
            compare:!!row.compare_selected,visitAt:row.visit_at||'',
            visitStatus:row.visit_status||'non_programmata',
-           visitNotes:row.visit_notes||''};
+           visitNotes:row.visit_notes||'',decisionStatus:row.decision_status||'valutazione',contactedAt:row.contacted_at||''};
       });
       var manual=(results[1].data||[]).map(function(x){return x.payload}).filter(Boolean);
       var settings=results[2].data||null;
@@ -126,6 +126,8 @@
       visit_at:flag.visitAt?new Date(flag.visitAt).toISOString():null,
       visit_status:['non_programmata','programmata','effettuata','annullata'].includes(flag.visitStatus)?flag.visitStatus:'non_programmata',
       visit_notes:String(flag.visitNotes||'').slice(0,2000),
+      decision_status:['valutazione','trattativa','scelto','scartato'].includes(flag.decisionStatus)?flag.decisionStatus:'valutazione',
+      contacted_at:flag.contactedAt||null,
       updated_at:new Date().toISOString()};
     var result=await client.from('turinpipps_listing_states')
       .upsert(value,{onConflict:'user_id,listing_url'});
@@ -164,7 +166,9 @@
         notes:String(f.notes||'').slice(0,1000),compare_selected:!!f.compare,
         visit_at:f.visitAt?new Date(f.visitAt).toISOString():null,
         visit_status:['non_programmata','programmata','effettuata','annullata'].includes(f.visitStatus)?f.visitStatus:'non_programmata',
-        visit_notes:String(f.visitNotes||'').slice(0,2000),updated_at:new Date().toISOString()};
+        visit_notes:String(f.visitNotes||'').slice(0,2000),
+        decision_status:['valutazione','trattativa','scelto','scartato'].includes(f.decisionStatus)?f.decisionStatus:'valutazione',
+        contacted_at:f.contactedAt||null,updated_at:new Date().toISOString()};
     });
     var manuals=(copy.manual||[]).filter(function(v){return v&&v.url}).map(function(row){
       return {user_id:current.id,listing_url:row.url,payload:row,updated_at:new Date().toISOString()};
