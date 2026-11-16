@@ -803,17 +803,22 @@ function openVisitEditor(a,f){
 function closeVisitEditor(){el('tp-visit-dialog').close()}
 el('tp-visit-close').addEventListener('click',closeVisitEditor);
 el('tp-visit-cancel').addEventListener('click',closeVisitEditor);
-el('tp-visit-form').addEventListener('submit',function(event){
+el('tp-visit-form').addEventListener('submit',async function(event){
  event.preventDefault();
  var a=all().find(function(x){return x.url===tpVisitEditingUrl});if(!a)return;
- var f=flag(a.url),kind=el('tp-visit-status').value,date=el('tp-visit-date').value;
- if(kind!=='non_programmata'&&!date){alert('Indica data e ora della visita.');return}
+ var before=Object.assign({},flag(a.url)),f=Object.assign({},before),kind=el('tp-visit-status').value,date=el('tp-visit-date').value;
+ if(kind!=='non_programmata'&&!date){showToast('Indica data e ora della visita.','warn');return}
  f.visitStatus=kind;
  f.visitAt=kind==='non_programmata'?'':new Date(date).toISOString();
  f.visitNotes=kind==='non_programmata'?'':el('tp-visit-notes').value.slice(0,2000);
- prefs.flags[a.url]=f;persist();
- if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);
- renderResults();renderSaved();closeVisitEditor();showToast('Visita aggiornata.','good');
+ var submit=el('tp-visit-form').querySelector('[type=submit]');if(submit)submit.disabled=true;
+ try{
+   if(accountMode&&window.TurinPippsAuth&&await window.TurinPippsAuth.saveFlag(a.url,f)!==true)
+     throw new Error('Il server non ha confermato il salvataggio');
+   prefs.flags[a.url]=f;persist();renderResults();renderSaved();closeVisitEditor();
+   showToast('Visita salvata'+(accountMode?' sul tuo account':' sul dispositivo')+'.','good');
+ }catch(error){prefs.flags[a.url]=before;showToast('Visita non salvata: '+error.message,'warn')}
+ finally{if(submit)submit.disabled=false}
 });
 var tpMap=null;
 function ensureLeaflet(callback){
@@ -1007,13 +1012,19 @@ function openNoteEditor(a){
 function closeNoteEditor(){el('tp-note-dialog').close()}
 el('tp-note-close').addEventListener('click',closeNoteEditor);
 el('tp-note-cancel').addEventListener('click',closeNoteEditor);
-el('tp-note-form').addEventListener('submit',function(event){
+el('tp-note-form').addEventListener('submit',async function(event){
  event.preventDefault();
  var a=all().find(function(x){return x.url===tpNoteEditingUrl});if(!a)return;
- var f=flag(a.url);f.notes=el('tp-note-text').value.slice(0,1000);
- prefs.flags[a.url]=f;persist();
- if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveFlag(a.url,f);
- renderResults();renderSaved();closeNoteEditor();showToast('Note salvate.','good');
+ var before=Object.assign({},flag(a.url)),f=Object.assign({},before);
+ f.notes=el('tp-note-text').value.slice(0,1000);
+ var submit=el('tp-note-form').querySelector('[type=submit]');if(submit)submit.disabled=true;
+ try{
+   if(accountMode&&window.TurinPippsAuth&&await window.TurinPippsAuth.saveFlag(a.url,f)!==true)
+     throw new Error('Il server non ha confermato il salvataggio');
+   prefs.flags[a.url]=f;persist();renderResults();renderSaved();closeNoteEditor();
+   showToast('Note salvate'+(accountMode?' sul tuo account':' sul dispositivo')+'.','good');
+ }catch(error){prefs.flags[a.url]=before;showToast('Note non salvate: '+error.message,'warn')}
+ finally{if(submit)submit.disabled=false}
 });
 el('add').addEventListener('click',function(){
  el('tp-add-form').reset();el('tp-add-dialog').showModal();
@@ -1021,7 +1032,7 @@ el('add').addEventListener('click',function(){
 function closeAddEditor(){el('tp-add-dialog').close()}
 el('tp-add-close').addEventListener('click',closeAddEditor);
 el('tp-add-cancel').addEventListener('click',closeAddEditor);
-el('tp-add-form').addEventListener('submit',function(event){
+el('tp-add-form').addEventListener('submit',async function(event){
  event.preventDefault();
  var url=canonical(el('tp-add-url').value);
  if(!url){showToast('Inserisci un link valido.','warn');return}
@@ -1031,10 +1042,14 @@ el('tp-add-form').addEventListener('submit',function(event){
   zone:el('tp-add-zone').value,source:'Aggiunto da te',
   private_status:el('tp-add-private').checked?'user':'unverified',
   seen:new Date().toISOString()};
- prefs.manual.push(row);memoListings=null;persist();
- if(accountMode&&window.TurinPippsAuth)window.TurinPippsAuth.saveManual(row);
- renderResults();renderSaved();closeAddEditor();
- showToast('Immobile aggiunto alla tua raccolta.','good');
+ var submit=el('tp-add-form').querySelector('[type=submit]');if(submit)submit.disabled=true;
+ try{
+   if(accountMode&&window.TurinPippsAuth&&await window.TurinPippsAuth.saveManual(row)!==true)
+     throw new Error('Il server non ha confermato il salvataggio');
+   prefs.manual.push(row);memoListings=null;persist();renderResults();renderSaved();closeAddEditor();
+   showToast('Immobile aggiunto'+(accountMode?' al tuo account':' al dispositivo')+'.','good');
+ }catch(error){showToast('Aggiunta non riuscita: '+error.message,'warn')}
+ finally{if(submit)submit.disabled=false}
 });
 
 
