@@ -1,26 +1,34 @@
 import SwiftUI
 import WidgetKit
 
+// La fonte del widget è Supabase, lo stesso archivio autorevole usato dalla web app.
+// L'endpoint restituisce soltanto dati pubblici aggregati: nessun token account.
 private let radarURL = URL(string: "https://filippoaprilee.github.io/turinpipps/?screen=radar")!
-private let feedURL = URL(string: "https://filippoaprilee.github.io/turinpipps/data/listings.json")!
+private let feedURL = URL(string: "https://akgnxjwkrnuckgxscjdz.supabase.co/functions/v1/turinpipps-widget?budget=700")!
 
-private struct ListingFeed: Decodable {
-    let listings: [Listing]
+private struct WidgetFeed: Decodable {
+    let matching_count: Int
+    let to_verify_count: Int
+    let scan_at: String?
+    let latest: [WidgetListing]
 }
-private struct Listing: Decodable {
-    let title: String?
-    let price: Double?
-    let zone: String?
+private struct WidgetListing: Decodable {
+    let title: String
+    let zone: String
+    let price: Int
 }
 private struct RadarEntry: TimelineEntry {
     let date: Date
-    let count: Int
-    let title: String
+    let candidates: Int
+    let uncertain: Int
+    let newestTitle: String
     let loaded: Bool
+    let updated: Date?
 }
 private struct RadarProvider: TimelineProvider {
     func placeholder(in context: Context) -> RadarEntry {
-        RadarEntry(date: .now, count: 5, title: "Annunci da valutare", loaded: false)
+        RadarEntry(date: .now, candidates: 8, uncertain: 12,
+                   newestTitle: "Bilocale vicino al Politecnico", loaded: false, updated: nil)
     }
     func getSnapshot(in context: Context, completion: @escaping (RadarEntry) -> Void) {
         completion(placeholder(in: context))
@@ -34,29 +42,25 @@ private struct RadarProvider: TimelineProvider {
     private func fetch() async -> RadarEntry {
         do {
             var request = URLRequest(url: feedURL)
-            request.timeoutInterval = 10
+            request.timeoutInterval = 12
             request.cachePolicy = .reloadIgnoringLocalCacheData
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
             let (data, response) = try await URLSession.shared.data(for: request)
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 throw URLError(.badServerResponse)
             }
-            let feed = try JSONDecoder().decode(ListingFeed.self, from: data)
-            let areas = ["crocetta", "cenisia", "san paolo", "borgo san paolo",
-                         "cit turin", "santa rita", "pozzo strada"]
-            let candidates = feed.listings.filter { listing in
-                guard let price = listing.price, price > 0, price <= 700 else { return false }
-                let text = (listing.title ?? "").lowercased()
-                if ["stanza", "camera singola", "posto letto", "box", "garage"].contains(where: text.contains) {
-                    return false
-                }
-                let zone = (listing.zone ?? "").lowercased()
-                return areas.contains(where: zone.contains)
-            }
-            return RadarEntry(date: .now, count: candidates.count,
-                              title: "Da valutare · archivio pubblico", loaded: true)
+            let feed = try JSONDecoder().decode(WidgetFeed.self, from: data)
+            let iso = ISO8601DateFormatter()
+            iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let timestamp = feed.scan_at.flatMap { iso.date(from: $0) }
+            return RadarEntry(date: .now, candidates: max(0, feed.matching_count),
+                              uncertain: max(0, feed.to_verify_count),
+                              newestTitle: feed.latest.first?.title ?? "Apri il Radar per esplorare",
+                              loaded: true, updated: timestamp)
         } catch {
-            return RadarEntry(date: .now, count: 0,
-                              title: "Apri TurinPipps per aggiornare", loaded: false)
+            return RadarEntry(date: .now, candidates: 0, uncertain: 0,
+                              newestTitle: "Apri TurinPipps per verificare",
+                              loaded: false, updated: nil)
         }
     }
 }
@@ -65,21 +69,38 @@ private struct RadarWidgetView: View {
     @Environment(\.widgetFamily) private var family
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("TurinPipps", systemImage: "house.fill")
-                .font(.caption.bold())
-                .foregroundStyle(.teal)
-            Spacer(minLength: 2)
-            if entry.loaded {
-                Text("\(entry.count)").font(.system(size: 39, weight: .bold, design: .rounded))
-                Text(entry.title).font(.caption2).foregroundStyle(.secondary)
-            } else {
-                Text("Apri il Radar").font(.headline)
-                Text("Aggiornamento non disponibile").font(.caption2)
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 6) {
+                Image(systemName: "house.fill")
+                    .foregroundStyle(.teal)
+                Text("TurinPipps").font(.caption.bold())
+                    .foregroundStyle(.primary)
+                Spacer()
             }
-            if family == .systemMedium {
-                Text("Torino · appartamenti interi · fino a 700 €")
-                    .font(.caption2).foregroundStyle(.secondary)
+            Spacer(minLength: 3)
+            if entry.loaded {
+                HStack(alignment: .firstTextBaseline, spacing: 7) {
+                    Text("\(entry.candidates)")
+                        .font(.system(size: 43, weight: .bold, design: .rounded))
+                    Text("da valutare").font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Label("\(entry.uncertain) da verificare", systemImage: "checklist")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                if family == .systemMedium {
+                    Text(entry.newestTitle)
+                        .font(.caption)
+                        .lineLimit(2)
+                    Text("Torino · canone fino a 700 €/mese · senza agenzie confermate")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                Text("Apri il Radar")
+                    .font(.headline)
+                Text("Aggiornamento temporaneamente non disponibile")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
         }
@@ -95,7 +116,7 @@ struct TurinPippsWidget: Widget {
             RadarWidgetView(entry: entry)
         }
         .configurationDisplayName("Radar TurinPipps")
-        .description("Annunci pubblici e accesso rapido alla ricerca.")
+        .description("Annunci pubblici da valutare, aggiornati dal database TurinPipps.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
