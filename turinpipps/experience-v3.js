@@ -182,10 +182,10 @@ function improveGuide(){
 function initialView(){
  var params=new URLSearchParams(location.search);
  var screen=params.get('screen');
- if(screen==='radar')window.TurinPippsUXV3.navigate('results');
- if(screen==='saved')window.TurinPippsUXV3.navigate('saved');
- if(screen==='visits')window.TurinPippsUXV3.navigate('visits');
- if(screen==='compare')window.TurinPippsUXV3.navigate('compare');
+ var known={radar:'results',results:'results',saved:'saved',visits:'visits',compare:'compare',
+            notifications:'notifications',profile:'profile',settings:'settings',sources:'sources',home:'home'};
+ if(Object.prototype.hasOwnProperty.call(known,screen))
+    window.TurinPippsUXV3.navigate(known[screen]);
  if(['profile','notifications','admin'].includes(screen))window.TurinPippsUXV3.navigate(screen);
 }
 function badges(){
