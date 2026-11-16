@@ -36,14 +36,6 @@ Deno.serve(async req=>{
       getJson("turinpipps_email_dispatches?select=id,user_id,kind,status,created_at,completed_at,error_text&order=created_at.desc&limit=30"),
       getJson("turinpipps_notification_inbox?select=id,read_at&limit=1000")
     ]);
-    let githubRunner:any=null;
-    try{
-      const r=await fetch("https://api.github.com/repos/filippoaprilee/filippoaprilee.github.io/actions/runs?per_page=50",
-       {headers:{"Accept":"application/vnd.github+json","User-Agent":"TurinPipps-Staff-Health"},signal:AbortSignal.timeout(6000)});
-      if(r.ok){const j=await r.json();const run=(j.workflow_runs||[]).find((x:any)=>x.name==="TurinPipps - raccolta annunci");
-        if(run)githubRunner={id:run.id,status:run.status,conclusion:run.conclusion,url:run.html_url,started_at:run.created_at};
-      }
-    }catch(_){}
     return answer({role:staff[0].role,
       counts:{users:profiles.length,verified:profiles.filter((p:any)=>p.email_confirmed).length,
        devices:devices.filter((d:any)=>d.enabled).length,listings:listings.length,
@@ -56,9 +48,7 @@ Deno.serve(async req=>{
         last_push_at:d.last_push_at,consecutive_failures:d.consecutive_failures})),
       scans,
       email_provider_configured:!!Deno.env.get("RESEND_API_KEY")&&!!Deno.env.get("TURINPIPPS_MAIL_FROM"),
-      github_runner:githubRunner,
-      auto_collector:"Supabase pg_cron (30 minuti)",
-      python_runner:"GitHub Actions (verificare job e log)"});
+      auto_collector:"Supabase pg_cron (30 minuti) · senza runner GitHub"});
   }
   if(action==="update_digest"){
     const uid=String(body.user_id||""),freq=String(body.digest_frequency||"");
