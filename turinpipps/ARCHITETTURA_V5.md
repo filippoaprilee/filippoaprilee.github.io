@@ -30,7 +30,7 @@ La classificazione è tripartita: potenzialmente compatibili, da verificare, esc
 1. Supabase pg_cron: turinpipps-v3-collector ogni 30 minuti, in funzione.
 2. Supabase pg_cron: turinpipps-v5-web-push ogni 10 minuti; consegna solo ai dispositivi iscritti, zero sottoscrizioni al momento dei test.
 3. Supabase pg_cron: turinpipps-v5-user-mail ogni ora; invia nella finestra 08:00–10:59 ora di Roma a tutti gli utenti con email verificata e digest attivo, rispettando frequenza giornaliera/settimanale e deduplicazione dei periodi.
-4. GitHub Actions turinpipps-collect.yml: Python BeautifulSoup4/Playwright ogni 2 ore **PREVISTO MA NON OPERATIVO**. Le ultime esecuzioni risultano failure senza step avviati. Controllare le impostazioni Actions e la fatturazione runner del repository. Il codice Python non elude login, CAPTCHA o robots.txt.
+4. I due workflow programmati GitHub Actions sono stati eliminati il 16 novembre 2026 per il blocco di fatturazione dei runner. La ricerca autonoma rimane su Supabase Cron + Edge Functions. Playwright richiede un host esterno e non è eseguito da Supabase Edge Functions.
 
 ### Abilitare i riepiloghi email reali
 
@@ -65,3 +65,10 @@ Sorgenti SwiftUI + WidgetKit in ios/TurinPipps. **Non ancora compilati, firmati 
 - RLS policy e cron verificati sul database.
 - Mancano test Safari iPhone, flusso email con provider reale, una consegna push con dispositivo iscritto, compilazione Xcode WidgetKit e un run GitHub Python riuscito.
 - Nessun lavoro di questa applicazione viene programmato tramite ChatGPT Automations.
+
+## Modifiche v7 · 16 novembre 2026
+- Organizza: pipeline salvati/contatti/visite/decisioni, sincronizzazione `decision_status` e calendario `.ics`.
+- Test Web Push: funzione `turinpipps-push-test` autenticata, rate limit 60 secondi, invio reale al dispositivo scelto.
+- Widget iPhone senza Xcode: `ios/scriptable/TurinPipps-Radar.js`, collegato all'endpoint pubblico Supabase.
+- Autorizzazione sviluppatore: unico account con ruolo `owner`, verificato lato backend.
+- GitHub Actions scheduled rimossi; la pubblicazione GitHub Pages continua a essere un servizio distinto dai due job eliminati.
