@@ -264,7 +264,7 @@ async function checkStaff(){
  var user=session();if(!user){state.staff=false;return}
  try{
   var d=await rest('turinpipps_staff?select=role&user_id=eq.'+encodeURIComponent(user.id));
-  state.staff=!!(d.length&&['owner','admin'].includes(d[0].role));
+  state.staff=!!(d.length&&d[0].role==='owner');
   if(state.staff)adminButton();
  }catch(_){state.staff=false}
 }
