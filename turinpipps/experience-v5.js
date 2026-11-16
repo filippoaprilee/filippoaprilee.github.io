@@ -289,7 +289,7 @@ async function renderAdmin(){
       '<label><span>Riepilogo</span><select data-field="frequency"><option value="daily">Giornaliero</option><option value="weekly">Settimanale</option><option value="off">Disattivato</option></select></label>'+
       '<label class="tp-v5-check-slim"><input type="checkbox" data-field="enabled" '+(u.digest_enabled?'checked':'')+'> Attivo</label>'+
       '<button class="tp-v5-secondary" data-tp-v5-save-user="'+esc(u.user_id)+'">Salva</button>'+
-      '<button class="tp-v5-secondary" data-tp-v6-mail-user="'+esc(u.user_id)+'" '+(!data.email_provider_configured||!u.email_confirmed?'disabled title="Richiede provider e indirizzo verificato"':'')+'>Invia report</button></div>';
+      '<button class="tp-v5-secondary" data-tp-v6-mail-user="'+esc(u.user_id)+'" '+(!data.email_provider_configured||!u.email_confirmed||!u.digest_enabled||u.digest_frequency==='off'?'disabled title="Provider, email verificata e consenso ai riepiloghi richiesti"':'')+'>Invia report</button></div>';
    }).join('')+'</div></section>'+
    '<section class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Report email</h2><span class="tp-v5-status-inline '+(data.email_provider_configured?'':'warning')+'">'+(data.email_provider_configured?'Mittente configurato':'Provider non configurato')+'</span></div>'+
    '<p>Stato reale dei riepiloghi degli utenti. Il sistema pianifica gli invii da Supabase, non da ChatGPT.</p>'+
