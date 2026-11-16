@@ -78,13 +78,21 @@ Deno.serve(async req=>{
   if(action==="cron"){
    const candidate=req.headers.get("x-tp-mail-job-secret")||"";
    if(!same(await hash(candidate),HASH))return reply({error:"Non autorizzato"},401);
-  } else if(action==="manual"){
+  } else if(action==="manual"||action==="admin_manual"){
    current=await getUser(req);if(!current)return reply({error:"Accedi al tuo account"},401);
+   if(action==="admin_manual"){
+     const staff=await query("turinpipps_staff?select=role&user_id=eq."+encodeURIComponent(current.id)+"&limit=1");
+     if(!staff.length||!["owner","admin"].includes(staff[0].role))
+       return reply({error:"Solo l'amministratore può inviare report ad altri utenti"},403);
+     const target=String(body.user_id||"");
+     if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target))
+       return reply({error:"Utente non valido"},400);
+   }
   }else return reply({error:"Azione non supportata"},400);
   if(!KEY||!FROM)return reply({error:"Invio email non configurato: collega un provider di posta verificato al backend TurinPipps.",provider_ready:false},503);
   const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type,private_status&order=first_seen.desc&limit=2500");
   let people:any[];
-  if(current)people=await query("turinpipps_profiles?user_id=eq."+current.id+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=1");
+  if(current)people=await query("turinpipps_profiles?user_id=eq."+encodeURIComponent(action==="admin_manual"?String(body.user_id):current.id)+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=1");
   else people=await query("turinpipps_profiles?email_confirmed=eq.true&digest_enabled=eq.true&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=250");
   if(current&&!people.length)return reply({error:"Profilo non inizializzato"},404);
   const now=new Date(),local=now.toLocaleString("sv-SE",{timeZone:"Europe/Rome"}).slice(0,10);
@@ -94,13 +102,17 @@ Deno.serve(async req=>{
   const outcomes:any[]=[];
   for(const person of people){
    if(action==="cron"&&(!person.digest_enabled||person.digest_frequency==="off"||(person.digest_frequency==="weekly"&&dow!=="Mon")))continue;
-   const k=action==="manual"?"manual":person.digest_frequency==="weekly"?"weekly":"daily";
+   const k=action==="manual"||action==="admin_manual"?"manual":person.digest_frequency==="weekly"?"weekly":"daily";
    const p=await query("turinpipps_preferences?user_id=eq."+person.user_id+"&select=budget,preferred_zones&limit=1");
    const outcome=await email(person,k,local,all,p[0]||{budget:700,preferred_zones:["Crocetta","Cenisia","San Paolo","Borgo San Paolo","Cit Turin","Santa Rita","Pozzo Strada"]});
    outcomes.push(outcome);
   }
   if(current){
    const o=outcomes[0]||{sent:false};
+   if(o.sent&&action==="admin_manual"){
+     await insert("turinpipps_admin_actions",{actor_id:current.id,target_user_id:String(body.user_id),
+       action:"admin_manual_report",details:{sent:true,count:o.count}}, "return=minimal");
+   }
    return o.sent?reply(o):reply({error:o.error||"Riepilogo già richiesto in questa fascia oraria",sent:false},o.error?502:429);
   }
   return reply({checked:outcomes.length,sent:outcomes.filter(x=>x.sent).length,failed:outcomes.filter(x=>x.error).length});
