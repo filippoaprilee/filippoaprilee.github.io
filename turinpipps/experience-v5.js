@@ -302,9 +302,10 @@ async function renderAdmin(){
    '<section class="tp-v5-panel"><h2>Postazioni e dispositivi</h2><p>Elenco dei dispositivi autorizzati alle notifiche. Le chiavi di sottoscrizione non vengono mostrate.</p>'+
    '<div class="tp-v5-devices">'+((data.devices||[]).length?(data.devices||[]).map(function(device){
      var owner=(data.users||[]).find(function(u){return u.user_id===device.user_id});
-     return '<div class="tp-v5-device"><div><b>'+esc(owner&&owner.email||'Account')+'</b><small>Registrato '+esc(new Date(device.created_at).toLocaleDateString('it-IT'))+
+     return '<div class="tp-v5-device"><div><b>'+esc(device.device_name||device.platform||'Dispositivo')+'</b><small>'+esc(owner&&owner.email||'Account')+' · Registrato '+esc(new Date(device.created_at).toLocaleDateString('it-IT'))+
        ' · '+(device.enabled?'Attivo':'Disattivato')+(device.last_push_at?' · ultimo invio '+esc(new Date(device.last_push_at).toLocaleDateString('it-IT')):'')+'</small></div>'+
-       (device.enabled?'<button class="tp-v5-secondary" data-tp-v5-disable-device="'+esc(device.id)+'">Disattiva</button>':'')+'</div>';
+       '<div class="tp-v6-device-actions"><button class="tp-v5-secondary" data-tp-v6-rename-device="'+esc(device.id)+'" data-device-label="'+esc(device.device_name||device.platform||'Dispositivo')+'">Rinomina</button>'+
+       (device.enabled?'<button class="tp-v5-secondary" data-tp-v5-disable-device="'+esc(device.id)+'">Disattiva</button>':'')+'</div></div>';
    }).join(''):'<p class="tp-v5-empty">Nessun dispositivo ha ancora autorizzato le notifiche.</p>')+'</div></section>';
   (data.users||[]).forEach(function(u){
     var e=$('[data-user="'+u.user_id+'"] select');if(e)e.value=u.digest_frequency||'daily';
@@ -351,6 +352,16 @@ function init(){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
    var mail=e.target.closest('[data-tp-v6-mail-user]');if(mail){e.preventDefault();adminManualMail(mail.dataset.tpV6MailUser)}
+   var ren=e.target.closest('[data-tp-v6-rename-device]');
+   if(ren){
+     e.preventDefault();
+     var label=prompt('Nome della postazione (es. iPhone lavoro, MacBook)',ren.dataset.deviceLabel||'');
+     if(!label||!label.trim())return;
+     ren.disabled=true;
+     functionCall('turinpipps-admin','rename_device',{device_id:ren.dataset.tpV6RenameDevice,device_name:label.trim().slice(0,70)})
+      .then(function(){note('tp-v5-admin-status','Postazione rinominata.','ok');renderAdmin()})
+      .catch(function(error){note('tp-v5-admin-status',error.message,'error');ren.disabled=false});
+   }
    var device=e.target.closest('[data-tp-v5-disable-device]');
    if(device){
      e.preventDefault();
