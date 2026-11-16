@@ -77,3 +77,15 @@
  .tp-v6-alert-actions{gap:6px}
  .tp-v6-alert-actions button{min-height:38px;font-size:10px;padding:8px 10px}
 }
+
+/* Console: leggibile anche con più utenti e diversi dispositivi. */
+.tp-v6-mail-logs{display:grid;gap:0}
+.tp-v6-mail-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 17px;padding:13px 0;border-bottom:1px solid #e8eff2}
+.tp-v6-mail-row:last-child{border-bottom:0}
+.tp-v6-mail-row b{font-size:12px;color:#275469;display:block;overflow-wrap:anywhere}
+.tp-v6-mail-row small{font-size:10px;color:#7a929c;line-height:1.5}
+.tp-v6-mail-row>small{grid-column:1/-1;color:#a65b52}
+.tp-v5-user{grid-template-columns:minmax(0,2fr) minmax(125px,.8fr) auto auto auto}
+.tp-v5-user button{white-space:nowrap}
+@media(max-width:1200px){.tp-v5-user{grid-template-columns:1fr 150px 1fr 1fr}.tp-v5-user>div:first-child{grid-column:1/-1}}
+@media(max-width:700px){.tp-v5-user{grid-template-columns:1fr 1fr}.tp-v5-user>label:nth-of-type(1){grid-column:1/-1}.tp-v5-user>button{width:100%}.tp-v6-mail-row{gap:5px 10px}}
