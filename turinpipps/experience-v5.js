@@ -285,8 +285,17 @@ async function renderAdmin(){
       return '<div class="tp-v5-user" data-user="'+esc(u.user_id)+'"><div><b>'+esc(u.email)+'</b><small>'+(u.email_confirmed?'Email verificata':'Da verificare')+' · '+Number(u.devices)+' dispositivi</small></div>'+
       '<label><span>Riepilogo</span><select data-field="frequency"><option value="daily">Giornaliero</option><option value="weekly">Settimanale</option><option value="off">Disattivato</option></select></label>'+
       '<label class="tp-v5-check-slim"><input type="checkbox" data-field="enabled" '+(u.digest_enabled?'checked':'')+'> Attivo</label>'+
-      '<button class="tp-v5-secondary" data-tp-v5-save-user="'+esc(u.user_id)+'">Salva</button></div>';
+      '<button class="tp-v5-secondary" data-tp-v5-save-user="'+esc(u.user_id)+'">Salva</button>'+
+      '<button class="tp-v5-secondary" data-tp-v6-mail-user="'+esc(u.user_id)+'" '+(!data.email_provider_configured||!u.email_confirmed?'disabled title="Richiede provider e indirizzo verificato"':'')+'>Invia report</button></div>';
    }).join('')+'</div></section>'+
+   '<section class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Report email</h2><span class="tp-v5-status-inline '+(data.email_provider_configured?'':'warning')+'">'+(data.email_provider_configured?'Mittente configurato':'Provider non configurato')+'</span></div>'+
+   '<p>Stato reale dei riepiloghi degli utenti. Il sistema pianifica gli invii da Supabase, non da ChatGPT.</p>'+
+   '<div class="tp-v6-mail-logs">'+((data.mail_logs||[]).length?(data.mail_logs||[]).map(function(m){
+      var u=(data.users||[]).find(function(x){return x.user_id===m.user_id});
+      return '<div class="tp-v6-mail-row"><div><b>'+esc(u&&u.email||'Utente')+'</b><small>'+esc(m.kind)+' · '+esc(new Date(m.created_at).toLocaleString('it-IT'))+'</small></div>'+
+        '<span class="tp-v5-status-inline '+(m.status==='sent'?'':'warning')+'">'+esc(m.status)+'</span>'+
+        (m.status==='failed'&&m.error_text?'<small>'+esc(String(m.error_text).slice(0,110))+'</small>':'')+'</div>';
+   }).join(''):'<p class="tp-v5-empty">Non risultano ancora report elaborati dal backend.</p>')+'</div></section>'+
    '<section class="tp-v5-panel"><h2>Postazioni e dispositivi</h2><p>Elenco dei dispositivi autorizzati alle notifiche. Le chiavi di sottoscrizione non vengono mostrate.</p>'+
    '<div class="tp-v5-devices">'+((data.devices||[]).length?(data.devices||[]).map(function(device){
      var owner=(data.users||[]).find(function(u){return u.user_id===device.user_id});
@@ -312,6 +321,20 @@ async function saveUser(uuid){
  }catch(e){note('tp-v5-admin-status',e.message,'error')}
  finally{b.disabled=false}
 }
+async function adminManualMail(uuid){
+ var btn=$('[data-tp-v6-mail-user="'+uuid+'"]');
+ if(!btn||btn.disabled)return;
+ if(!confirm('Inviare adesso un riepilogo all’indirizzo verificato di questo utente?'))return;
+ btn.disabled=true;
+ note('tp-v5-admin-status','Preparazione del riepilogo per l’utente…');
+ try{
+  var response=await functionCall('turinpipps-mailer','admin_manual',{user_id:uuid});
+  if(!response.sent)throw Error('Invio non confermato dal provider');
+  note('tp-v5-admin-status','Report inviato e registrato nel log.','ok');
+  await renderAdmin();
+ }catch(e){note('tp-v5-admin-status',e.message,'error')}
+ finally{btn.disabled=false}
+}
 function onNavigate(view){
  if(view==='profile')loadProfile();
  if(view==='notifications')fetchAlerts(true);
@@ -324,6 +347,7 @@ function init(){
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
+   var mail=e.target.closest('[data-tp-v6-mail-user]');if(mail){e.preventDefault();adminManualMail(mail.dataset.tpV6MailUser)}
    var device=e.target.closest('[data-tp-v5-disable-device]');
    if(device){
      e.preventDefault();
