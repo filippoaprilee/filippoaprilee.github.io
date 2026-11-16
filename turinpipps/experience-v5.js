@@ -90,11 +90,11 @@ function build(){
   '<div id="tp-v5-profile-body" class="tp-v5-panel"><div class="tp-v5-empty">Accedi per gestire il tuo profilo e i riepiloghi.</div></div>'+
   '<div class="tp-v5-quick-install tp-v5-panel"><h2>TurinPipps sul tuo iPhone</h2><p>In Safari scegli Condividi → Aggiungi alla schermata Home. Le notifiche push richiedono l’app installata e il tuo consenso.</p>'+
   '<div class="tp-v5-row-actions"><a href="./today.html" class="tp-v5-link">Panoramica compatta</a><button data-nav="notifications" class="tp-v5-secondary">Gestisci notifiche</button></div>'+
-  '<p class="tp-v5-hint">Per un vero widget con dati direttamente sulla Home occorre un’estensione iOS WidgetKit; la PWA può essere aperta da un widget Comandi Rapidi.</p></div>');
+  '<p class="tp-v5-hint">Widget iPhone con dati aggiornati: usa lo script Scriptable TurinPipps disponibile nel progetto, senza Xcode. La PWA si installa normalmente da Safari.</p></div>');
  section('notifications','Le tue notifiche','AGGIORNAMENTI',
   'Nuovi annunci interessanti, variazioni importanti e promemoria. Solo avvisi rilevanti.',
   '<div class="tp-v5-panel tp-v5-notify-controls"><div><h2>Avvisi personalizzati</h2><p>Le notifiche interne sono associate al tuo account. Puoi scegliere se attivare anche gli avvisi sul dispositivo.</p></div>'+
-   '<div class="tp-v6-push-actions"><button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button><button id="tp-v6-push-disable" class="tp-v5-secondary" type="button">Disattiva su questo dispositivo</button></div>'+
+   '<div class="tp-v6-push-actions"><button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button><button id="tp-v6-push-disable" class="tp-v5-secondary" type="button">Disattiva su questo dispositivo</button><button id="tp-v7-push-test" class="tp-v5-primary" type="button" hidden><i class="fa-regular fa-paper-plane"></i> Invia notifica di prova</button></div>'+
    '<p id="tp-v5-push-message" class="tp-v5-status" aria-live="polite"></p></div>'+
   '<div class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Centro notifiche</h2><div class="tp-v6-alert-actions"><button id="tp-v6-alert-readall" class="tp-v5-secondary" type="button">Segna tutte lette</button><button id="tp-v5-alert-refresh" class="tp-v5-secondary" type="button">Aggiorna</button></div></div><div id="tp-v5-alert-list" class="tp-v5-empty">Accedi per visualizzare le notifiche.</div></div>');
  section('admin','Console sviluppatore','GESTIONE INTERNA',
@@ -104,6 +104,7 @@ function build(){
  $('#tp-v5-alert-refresh').addEventListener('click',function(){fetchAlerts(true)});
  $('#tp-v5-push-enable').addEventListener('click',enablePush);
  $('#tp-v6-push-disable').addEventListener('click',disablePush);
+ $('#tp-v7-push-test').addEventListener('click',testPush);
  $('#tp-v6-alert-readall').addEventListener('click',markAllRead);
 }
 function renderProfile(){
@@ -210,6 +211,7 @@ async function disablePush(){
       {method:'PATCH',body:{enabled:false}});
    await sub.unsubscribe();
    state.push=false;note('tp-v5-push-message','Notifiche disattivate su questo dispositivo.','ok');
+   await refreshPushTestButton();
  }catch(e){note('tp-v5-push-message',e.message,'error')}
  finally{if(b)b.disabled=false}
 }
@@ -217,6 +219,33 @@ function encodeKey(base64){
  var padded=base64.replace(/-/g,'+').replace(/_/g,'/');
  var raw=atob(padded+'='.repeat((4-padded.length%4)%4));
  return Uint8Array.from(raw,function(c){return c.charCodeAt(0)});
+}
+async function refreshPushTestButton(){
+ var button=$('#tp-v7-push-test');if(!button)return;
+ button.hidden=true;
+ if(!session()||!('serviceWorker' in navigator)||!('PushManager' in window))return;
+ try{
+  var reg=await navigator.serviceWorker.getRegistration('./');
+  var sub=reg&&await reg.pushManager.getSubscription();
+  if(!sub)return;
+  var rows=await rest('turinpipps_push_subscriptions?endpoint=eq.'+
+    encodeURIComponent(sub.endpoint)+'&enabled=eq.true&select=id&limit=1');
+  button.hidden=!Array.isArray(rows)||rows.length===0;
+ }catch(error){button.hidden=true}
+}
+async function testPush(){
+ var button=$('#tp-v7-push-test');if(button)button.disabled=true;
+ note('tp-v5-push-message','Invio una notifica push reale a questo dispositivo…');
+ try{
+  if(!session())throw Error('Accedi al tuo account');
+  var reg=await navigator.serviceWorker.getRegistration('./');
+  var sub=reg&&await reg.pushManager.getSubscription();
+  if(!sub)throw Error('Notifiche non attive sul dispositivo. Attivale prima.');
+  var result=await functionCall('turinpipps-push-test','test',{endpoint:sub.endpoint});
+  if(!result.ok)throw Error(result.error||'Il servizio push ha rifiutato l’invio.');
+  note('tp-v5-push-message','Invio accettato dal servizio push (HTTP '+result.provider_status+'). Controlla le notifiche di sistema. Per testare la comparsa, metti l’app in background.','ok');
+ }catch(error){note('tp-v5-push-message','Prova non riuscita: '+error.message,'error')}
+ finally{if(button)button.disabled=false;refreshPushTestButton()}
 }
 async function enablePush(){
  var button=$('#tp-v5-push-enable');button.disabled=true;note('tp-v5-push-message','Controllo requisiti…');
@@ -247,6 +276,7 @@ async function enablePush(){
      last_seen_at:new Date().toISOString()},prefer:'resolution=merge-duplicates,return=representation'});
   if(!rows.length)throw Error('Il server non ha confermato la registrazione del dispositivo');
   state.push=true;note('tp-v5-push-message','Dispositivo registrato. Riceverai gli avvisi consentiti dalle tue preferenze.','ok');
+  await refreshPushTestButton();
  }catch(e){note('tp-v5-push-message',e.message,'error')}
  finally{button.disabled=false}
 }
@@ -372,7 +402,7 @@ function init(){
       .catch(function(error){note('tp-v5-admin-status',error.message,'error');device.disabled=false});
    }
  });
- var ready=function(){checkStaff();loadProfile();fetchAlerts(true)};
+ var ready=function(){checkStaff();loadProfile();fetchAlerts(true);refreshPushTestButton()};
  window.addEventListener('turinpipps:account-ready',ready);
  window.addEventListener('turinpipps:account-signed-out',function(){
   state.profile=null;state.alerts=[];state.staff=false;state.loadedAt=0;
