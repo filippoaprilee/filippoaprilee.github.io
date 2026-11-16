@@ -182,7 +182,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
 </style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"><link rel="stylesheet" href="./experience-v4.css?v=4.0.0"><link rel="stylesheet" href="./experience-v5.css?v=5.0.0">
-<link rel="stylesheet" href="./experience-v6.css?v=6.0.0"></head><body>
+<link rel="stylesheet" href="./experience-v6.css?v=6.0.0"><link rel="stylesheet" href="./organize-v7.css?v=7.0.0"></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -249,7 +249,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="tp-page-lead"><div><div class="tp-kicker">CONFRONTI</div><h1>Scegli con più sicurezza</h1><p>Seleziona fino a quattro immobili dagli annunci: confronta costi, metratura, vicinanza al campus e punteggi.</p></div><button class="button" data-nav="results"><i class="fa-solid fa-plus"></i> Scegli immobili</button></div>
 <div id="tp-compare-content" class="panel"><div class="tp-empty-big"><i class="fa-solid fa-scale-balanced"></i><h3>Nessun immobile selezionato</h3><p>Vai in Cerca casa e premi Confronta sulle schede che ti interessano.</p><button class="button primary" data-nav="results">Esplora immobili</button></div></div></section>
 <section id="view-visits" class="hidden">
-<div class="tp-page-lead"><div><div class="tp-kicker">APPUNTAMENTI</div><h1>Le tue visite</h1><p>Organizza gli appuntamenti, registra l'esito e conserva i tuoi appunti sulle abitazioni.</p></div><button class="button" data-nav="saved"><i class="fa-regular fa-heart"></i> I miei preferiti</button></div>
+<div class="tp-page-lead"><div><div class="tp-kicker">APPUNTAMENTI</div><h1>Organizza la ricerca</h1><p>Salvati, contatti, visite e decisioni: gestisci ogni casa in un unico percorso.</p></div><button class="button" data-nav="saved"><i class="fa-regular fa-heart"></i> I miei preferiti</button></div>
 <div class="panel"><div id="tp-visits-content"><p class="note">Nessuna visita programmata.</p></div></div></section>
 <section id="view-saved" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">LA TUA RACCOLTA</div><h1>Case da non perdere</h1><p>Gli immobili che hai salvato, con note e stato dei contatti. Puoi confrontarli o programmare una visita.</p></div>
@@ -634,6 +634,7 @@ function renderComparison(){
 }
 function renderVisits(){
  var node=el('tp-visits-content');if(!node)return;
+ if(window.TurinPippsOrganize){window.TurinPippsOrganize.render(node);return;}
  var visits=all().filter(function(a){var f=flag(a.url);return f.visitStatus&&f.visitStatus!=='non_programmata';});
  visits.sort(function(a,b){return String(flag(a.url).visitAt||'').localeCompare(String(flag(b.url).visitAt||''))});
  node.innerHTML=visits.length?visits.map(function(a){
@@ -759,7 +760,7 @@ async function load(){
 document.addEventListener('click',async function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);var previousFlag=Object.assign({},f);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
-if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact')f.contact=!f.contact;if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();
+if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact'){f.contact=!f.contact;f.contactedAt=f.contact?new Date().toISOString():'';}if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();
  if(accountMode&&window.TurinPippsAuth){
    var synced=await window.TurinPippsAuth.saveFlag(a.url,f);
    if(!synced){
@@ -1136,4 +1137,5 @@ function finish(){
 <script defer src="./auth-loader.js?v=1.6.0"></script>
 <script defer src="./experience-v3.js?v=3.0.0"></script>
 <script defer src="./experience-v4.js?v=4.0.0"></script>
-<script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=5.0.0"></script></body></html>
+<script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=5.0.0"></script>
+<script defer src="./organize-v7.js?v=7.0.0"></script></body></html>
