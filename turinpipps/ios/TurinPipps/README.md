@@ -1,16 +1,28 @@
-# TurinPipps iOS · app e widget nativo
+# TurinPipps iOS · app nativa e widget
 
-Questa cartella contiene i **sorgenti** dell'app iOS SwiftUI e di una estensione WidgetKit che mostra il numero di annunci pubblici potenzialmente compatibili e apre il Radar.
+## Stato al 16 novembre 2026
 
-**Stato:** il widget non è installato su alcun iPhone e non è stato compilato o firmato. Una PWA non può installare autonomamente un'estensione WidgetKit.
+I sorgenti SwiftUI e WidgetKit sono nel repository. Il widget **non è ancora compilato, firmato o installato**. Il progetto Xcode viene generato con XcodeGen.
 
-## Compilazione
+Il widget legge i dati di mercato da **Supabase in produzione**, non dal vecchio archivio JSON statico:
 
-1. Installa Xcode e XcodeGen sul Mac (Homebrew: brew install xcodegen).
-2. Apri la cartella ios/TurinPipps ed esegui xcodegen generate.
-3. Apri TurinPipps.xcodeproj, verifica Bundle Identifier e Signing & Capabilities con il tuo team Apple.
-4. Compila e distribuisci l'app sul tuo iPhone. Aggiungi il widget Radar TurinPipps dalla galleria widget di iOS.
+- `https://akgnxjwkrnuckgxscjdz.supabase.co/functions/v1/turinpipps-widget?budget=700`
+- Endpoint verificato con HTTP 200 il 16 novembre 2026.
+- Espone soltanto aggregati pubblici, senza dati personali: numero di immobili potenzialmente compatibili, numero da verificare, ultime tre schede e data dell'ultima scansione.
+- Budget predefinito 700 €, tutte le zone principali di Torino. Non legge ancora preferenze, preferiti o credenziali del singolo account.
+- Gli annunci sono solo opportunità da verificare: il collegamento indicizzato non garantisce disponibilità, costo definitivo o proprietà del locatore.
 
-Questo prototipo WidgetKit legge **solo l'archivio pubblico GitHub Pages** e applica un budget predefinito di 700 €. Non usa preferiti, token o impostazioni private dell'utente. Per dati davvero personalizzati servono autenticazione nativa, persistenza sicura condivisa e API dedicate. Il timer di aggiornamento WidgetKit è indicativo, non garantito da iOS.
+## Come ottenere il widget installabile
 
-Le notifiche web push dell'app PWA (iOS 16.4+) sono una funzione distinta: richiedono aggiunta alla schermata Home e consenso esplicito. La companion app nativa qui inclusa non implementa APNs.
+1. Sul Mac installa **Xcode** e **XcodeGen** (ad esempio `brew install xcodegen`).
+2. Apri `turinpipps/ios/TurinPipps` e avvia `xcodegen generate`.
+3. Apri `TurinPipps.xcodeproj`, imposta **Signing & Capabilities** con il tuo Apple Team e controlla i due bundle identifier `it.maben.turinpipps` e `it.maben.turinpipps.widget`.
+4. Compila e installa la companion app su un iPhone reale; dalla galleria widget iOS aggiungi **Radar TurinPipps**.
+
+Il widget usa WidgetKit e dunque serve un'app iOS nativa installata; una PWA da Safari non può installare un widget WidgetKit. WidgetKit determina i momenti di aggiornamento e non garantisce un refresh ogni 30 minuti.
+
+## PWA e notifiche
+
+La PWA `https://filippoaprilee.github.io/turinpipps/` è separata dalla companion iOS. Su iOS 16.4+ le notifiche Web Push sono possibili dopo l'aggiunta alla schermata Home, l'accesso all'account e l'autorizzazione dell'utente. Il relativo Service Worker e la sottoscrizione Supabase sono già nel progetto, ma non è stato certificato un test completo su iPhone reale.
+
+La companion SwiftUI contiene un wrapper WebKit e non implementa direttamente APNs. Il login WebKit e quello della PWA Safari possono avere cookie separati.
