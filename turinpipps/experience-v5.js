@@ -89,7 +89,7 @@ function build(){
   'Il tuo account, i riepiloghi automatici e le impostazioni per restare aggiornato.',
   '<div id="tp-v5-profile-body" class="tp-v5-panel"><div class="tp-v5-empty">Accedi per gestire il tuo profilo e i riepiloghi.</div></div>'+
   '<div class="tp-v5-quick-install tp-v5-panel"><h2>TurinPipps sul tuo iPhone</h2><p>In Safari scegli Condividi → Aggiungi alla schermata Home. Le notifiche push richiedono l’app installata e il tuo consenso.</p>'+
-  '<div class="tp-v5-row-actions"><a href="./today.html" class="tp-v5-link">Panoramica compatta</a><button data-nav="notifications" class="tp-v5-secondary">Gestisci notifiche</button></div>'+
+  '<div class="tp-v5-row-actions"><a href="./today.html" class="tp-v5-link">Panoramica compatta</a><a href="./widget-iphone.html" class="tp-v5-link">Widget iPhone senza Xcode</a><button data-nav="notifications" class="tp-v5-secondary">Gestisci notifiche</button></div>'+
   '<p class="tp-v5-hint">Widget iPhone con dati aggiornati: usa lo script Scriptable TurinPipps disponibile nel progetto, senza Xcode. La PWA si installa normalmente da Safari.</p></div>');
  section('notifications','Le tue notifiche','AGGIORNAMENTI',
   'Nuovi annunci interessanti, variazioni importanti e promemoria. Solo avvisi rilevanti.',
