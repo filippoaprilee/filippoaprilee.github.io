@@ -242,9 +242,27 @@
   el('tp-auth-reset').addEventListener('click',resetPassword);
   el('tp-auth-update-password').addEventListener('click',saveNewPassword);
   el('tp-auth-logout').addEventListener('click',async function(){
-    if(client)await client.auth.signOut();current=null;
-    if(bridge&&bridge.useGuest)bridge.useGuest();
-    setButton();close();
+    var signOut=el('tp-auth-logout');signOut.disabled=true;
+    try{
+      // Protezione account condivisi: non mantenere una sottoscrizione push personale
+      // attiva sul browser dopo l'uscita.
+      if(client&&current&&'serviceWorker' in navigator&&'PushManager' in window){
+        try{
+          var reg=await navigator.serviceWorker.getRegistration('./');
+          var subscription=reg?await reg.pushManager.getSubscription():null;
+          if(subscription){
+            await client.from('turinpipps_push_subscriptions').update({enabled:false})
+              .eq('user_id',current.id).eq('endpoint',subscription.endpoint);
+            await subscription.unsubscribe();
+          }
+        }catch(pushError){console.warn('TurinPipps: disattivazione push al logout',pushError)}
+      }
+      if(client){var result=await client.auth.signOut();if(result.error)throw result.error;}
+      current=null;
+      if(bridge&&bridge.useGuest)bridge.useGuest();
+      setButton();close();
+    }catch(error){status('Uscita non completata: '+String(error.message||error),'error')}
+    finally{signOut.disabled=false}
   });
   el('tp-auth-import').addEventListener('click',async function(){
     try{await importGuest();}catch(err){status(err.message||'Importazione non riuscita.','error');}
