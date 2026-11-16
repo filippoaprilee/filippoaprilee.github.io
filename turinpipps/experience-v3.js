@@ -34,7 +34,16 @@ function createRadar(){
  '<a data-tp-engine="duck" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-compass"></i> DuckDuckGo <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
  '<a data-tp-engine="facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook"></i> Gruppi Facebook pubblici <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
  '</div><div class="tp-radar-foot"><span id="tp-radar-query-preview"></span><span>Queste ricerche aprono risultati esterni: la disponibilità non è garantita.</span></div>';
- anchor.parentNode.insertBefore(panel,anchor);
+ // I risultati sono il contenuto primario. La ricerca su altri siti è un pannello separato.
+ var outer=node('details','tp-v6-external-search');outer.id='tp-v6-external-search';
+ var summary=node('summary','tp-v6-external-title');
+ summary.innerHTML='<span><i class="fa-solid fa-globe"></i> Ricerca su altri portali</span><small>Google, Bing, Facebook pubblico e siti immobiliari</small><i class="fa-solid fa-chevron-down"></i>';
+ outer.appendChild(summary);outer.appendChild(panel);host.appendChild(outer);
+ var externalOpen=node('button','button tp-v6-external-button');
+ externalOpen.type='button';
+ externalOpen.innerHTML='<i class="fa-solid fa-globe"></i> Altri siti';
+ anchor.appendChild(externalOpen);
+ externalOpen.addEventListener('click',function(){outer.open=true;outer.scrollIntoView({behavior:'smooth',block:'start'});});
  var live=node('div','tp-radar-live-status','Controllo gli annunci aggiuntivi…');
  live.id='tp-radar-live-status';panel.appendChild(live);
 
@@ -66,9 +75,8 @@ function createRadar(){
  // L'aggiunta di un annuncio deve rimanere sempre raggiungibile, senza aprire i filtri.
  var add=$('#add');if(add){
    add.innerHTML='<i class="fa-solid fa-link"></i> Aggiungi annuncio';
-   var quick=node('div','tp-radar-manual');
-   quick.appendChild(add);
-   panel.appendChild(quick);
+   add.classList.add('tp-v6-add-button');
+   anchor.appendChild(add);
  }
 
  var select=$('#tp-radar-zone');
