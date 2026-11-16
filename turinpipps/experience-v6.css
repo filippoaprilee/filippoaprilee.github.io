@@ -67,3 +67,13 @@
  #view-profile .tp-v5-panel,#view-notifications .tp-v5-panel{padding:17px 15px}
  #view-settings .formgrid{grid-template-columns:minmax(0,1fr)}
 }
+
+.tp-v6-push-actions,.tp-v6-alert-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.tp-v6-push-actions>.tp-v5-primary,.tp-v6-push-actions>.tp-v5-secondary{min-width:180px}
+#tp-v6-external-search .tp-radar-v3{max-width:none}
+@media(max-width:700px){
+ .tp-v6-push-actions{width:100%}
+ .tp-v6-push-actions>*{width:100%;flex:1}
+ .tp-v6-alert-actions{gap:6px}
+ .tp-v6-alert-actions button{min-height:38px;font-size:10px;padding:8px 10px}
+}
