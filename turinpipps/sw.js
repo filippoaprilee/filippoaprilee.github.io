@@ -1,6 +1,6 @@
 /* TurinPipps PWA offline cache. No private account data is cached here. */
-const CACHE='turinpipps-shell-v6.0.0';
-const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png','./ui-v2.css?v=2.0.0','./experience-v3.css?v=3.0.0','./experience-v3.js?v=3.0.0','./experience-v4.css?v=4.0.0','./experience-v4.js?v=4.0.0','./experience-v5.css?v=5.0.0','./experience-v5.js?v=5.0.0','./experience-v6.css?v=6.0.0','./push-config.js?v=5.0.0','./today.html'];
+const CACHE='turinpipps-shell-v7.0.0';
+const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png','./ui-v2.css?v=2.0.0','./experience-v3.css?v=3.0.0','./experience-v3.js?v=3.0.0','./experience-v4.css?v=4.0.0','./experience-v4.js?v=4.0.0','./experience-v5.css?v=5.0.0','./experience-v5.js?v=5.0.0','./experience-v6.css?v=6.0.0','./organize-v7.css?v=7.0.0','./organize-v7.js?v=7.0.0','./push-config.js?v=5.0.0','./today.html'];
 const DATA=['./data/listings.json','./data/diagnostics.json','./data/report_status.json'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(async cache=>{
