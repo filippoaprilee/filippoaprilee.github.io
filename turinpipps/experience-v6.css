@@ -89,3 +89,5 @@
 .tp-v5-user button{white-space:nowrap}
 @media(max-width:1200px){.tp-v5-user{grid-template-columns:1fr 150px 1fr 1fr}.tp-v5-user>div:first-child{grid-column:1/-1}}
 @media(max-width:700px){.tp-v5-user{grid-template-columns:1fr 1fr}.tp-v5-user>label:nth-of-type(1){grid-column:1/-1}.tp-v5-user>button{width:100%}.tp-v6-mail-row{gap:5px 10px}}
+
+.tp-v6-device-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tp-v6-device-actions>*{min-height:37px}.tp-v5-device>div:first-child{min-width:0}.tp-v5-device b{overflow-wrap:anywhere}@media(max-width:700px){.tp-v6-device-actions{width:100%;justify-content:flex-start}.tp-v5-device{align-items:flex-start;flex-direction:column}}
