@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Test di regressione TurinPipps
+        run: node turinpipps/tests/classification.test.cjs
       - name: Python syntax check
         run: python3 -m py_compile turinpipps/collector.py turinpipps/alerts_ingest.py
       - name: Leggi solo fonti pubbliche consentite
