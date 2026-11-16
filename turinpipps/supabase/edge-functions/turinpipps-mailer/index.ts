@@ -95,6 +95,8 @@ Deno.serve(async req=>{
   if(current)people=await query("turinpipps_profiles?user_id=eq."+encodeURIComponent(action==="admin_manual"?String(body.user_id):current.id)+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=1");
   else people=await query("turinpipps_profiles?email_confirmed=eq.true&digest_enabled=eq.true&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=250");
   if(current&&!people.length)return reply({error:"Profilo non inizializzato"},404);
+  if(action==="admin_manual"&&(!people.length||!people[0].digest_enabled||people[0].digest_frequency==="off"))
+    return reply({error:"L'utente ha disattivato i riepiloghi email"},409);
   const now=new Date(),local=now.toLocaleString("sv-SE",{timeZone:"Europe/Rome"}).slice(0,10);
   const hour=Number(now.toLocaleString("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",hourCycle:"h23"}));
   const dow=new Intl.DateTimeFormat("en-US",{timeZone:"Europe/Rome",weekday:"short"}).format(now);
