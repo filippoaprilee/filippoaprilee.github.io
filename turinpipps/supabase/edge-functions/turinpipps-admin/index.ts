@@ -28,11 +28,13 @@ Deno.serve(async req=>{
   if(!staff.length||!["owner","admin"].includes(staff[0].role))return answer({error:"Accesso sviluppatore riservato"},403);
   const body=await req.json().catch(()=>({})),action=String(body.action||"overview");
   if(action==="overview"){
-    const [profiles,devices,scans,listings]=await Promise.all([
+    const [profiles,devices,scans,listings,mailLogs,notifications]=await Promise.all([
       getJson("turinpipps_profiles?select=user_id,email,email_confirmed,digest_enabled,digest_frequency,notify_new_listings,last_digest_at,last_digest_status,created_at&order=created_at.desc&limit=200"),
       getJson("turinpipps_push_subscriptions?select=id,user_id,enabled,created_at,last_push_at,consecutive_failures&limit=200"),
       getJson("turinpipps_scan_runs?select=id,started_at,finished_at,status,jobs_checked,jobs_ok,discovered&order=started_at.desc&limit=12"),
-      getJson("turinpipps_discovered_listings?select=listing_url&limit=5000")
+      getJson("turinpipps_discovered_listings?select=listing_url&limit=5000"),
+      getJson("turinpipps_email_dispatches?select=id,user_id,kind,status,created_at,completed_at,error_text&order=created_at.desc&limit=30"),
+      getJson("turinpipps_notification_inbox?select=id,read_at&limit=1000")
     ]);
     let githubRunner:any=null;
     try{
@@ -44,8 +46,11 @@ Deno.serve(async req=>{
     }catch(_){}
     return answer({role:staff[0].role,
       counts:{users:profiles.length,verified:profiles.filter((p:any)=>p.email_confirmed).length,
-       devices:devices.filter((d:any)=>d.enabled).length,listings:listings.length},
+       devices:devices.filter((d:any)=>d.enabled).length,listings:listings.length,
+       alerts:notifications.length,emails_sent:mailLogs.filter((x:any)=>x.status==="sent").length},
       users:profiles.map((p:any)=>({...p,devices:devices.filter((d:any)=>d.user_id===p.user_id).length})),
+      mail_logs:mailLogs.map((m:any)=>({id:m.id,user_id:m.user_id,kind:m.kind,status:m.status,
+         created_at:m.created_at,completed_at:m.completed_at,error_text:m.status==="failed"?m.error_text:""})),
       devices:devices.map((d:any)=>({id:d.id,user_id:d.user_id,enabled:d.enabled,
         created_at:d.created_at,last_push_at:d.last_push_at,consecutive_failures:d.consecutive_failures})),
       scans,
