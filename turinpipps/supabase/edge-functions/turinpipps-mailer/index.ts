@@ -82,7 +82,7 @@ Deno.serve(async req=>{
    current=await getUser(req);if(!current)return reply({error:"Accedi al tuo account"},401);
    if(action==="admin_manual"){
      const staff=await query("turinpipps_staff?select=role&user_id=eq."+encodeURIComponent(current.id)+"&limit=1");
-     if(!staff.length||!["owner","admin"].includes(staff[0].role))
+     if(!staff.length||staff[0].role!=="owner")
        return reply({error:"Solo l'amministratore può inviare report ad altri utenti"},403);
      const target=String(body.user_id||"");
      if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(target))
