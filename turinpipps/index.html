@@ -1081,6 +1081,7 @@ window.TurinPippsBridge={
  var splashLabel=document.getElementById('tp-loading-label');
  window.TurinPippsUXV3={
  navigate:function(view){nav(view)},
+ refresh:function(){renderResults();renderSaved();if(tab==='home')renderHome();},
  getPrefs:function(){return prefs},
  getDiagnostics:function(){return diagnostics},
  getListings:function(){return all().map(function(x){return Object.assign({},x)})},
