@@ -241,7 +241,10 @@ async function enablePush(){
   }
   var j=subscription.toJSON(),u=session();
   var rows=await rest('turinpipps_push_subscriptions?on_conflict=endpoint',{method:'POST',
-   body:{user_id:u.id,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth_key:j.keys.auth,enabled:true},prefer:'resolution=merge-duplicates,return=representation'});
+   body:{user_id:u.id,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth_key:j.keys.auth,enabled:true,
+     device_name:/iPhone/i.test(navigator.userAgent)?'iPhone':/iPad/i.test(navigator.userAgent)?'iPad':/Android/i.test(navigator.userAgent)?'Android':/Macintosh/i.test(navigator.userAgent)?'Mac':/Windows/i.test(navigator.userAgent)?'PC Windows':'Browser',
+     platform:/iPhone|iPad/i.test(navigator.userAgent)?'iOS':/Android/i.test(navigator.userAgent)?'Android':/Macintosh/i.test(navigator.userAgent)?'macOS':/Windows/i.test(navigator.userAgent)?'Windows':'Web',
+     last_seen_at:new Date().toISOString()},prefer:'resolution=merge-duplicates,return=representation'});
   if(!rows.length)throw Error('Il server non ha confermato la registrazione del dispositivo');
   state.push=true;note('tp-v5-push-message','Dispositivo registrato. Riceverai gli avvisi consentiti dalle tue preferenze.','ok');
  }catch(e){note('tp-v5-push-message',e.message,'error')}
