@@ -65,7 +65,7 @@ function build(){
   var compareTab=mobile.querySelector('[data-nav="compare"]');
   if(compareTab){
    compareTab.dataset.nav='visits';
-   compareTab.innerHTML='<span><i class="fa-regular fa-calendar-check"></i></span>Visite';
+   compareTab.innerHTML='<span><i class="fa-regular fa-calendar-check"></i></span>Organizza';
   }
   var oldBell=mobile.querySelector('#tp-v5-mobile-notifications');
   if(oldBell)oldBell.remove();
