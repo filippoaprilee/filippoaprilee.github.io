@@ -29,6 +29,8 @@
       b.classList.toggle('active',b.dataset.authMode===next);
     });
     el('tp-auth-submit').textContent=next==='register'?'Crea account':'Accedi';
+    var consent=el('tp-v6-register-digest-wrap');
+    if(consent)consent.hidden=next!=='register';
     el('tp-auth-password').autocomplete=next==='register'?'new-password':'current-password';
     status('');
   }
@@ -192,7 +194,8 @@
       var result;
       if(mode==='register'){
         result=await client.auth.signUp({email:user,password:pass,
-          options:{emailRedirectTo:location.origin+location.pathname}});
+          options:{emailRedirectTo:location.origin+location.pathname,
+          data:{turinpipps_digest_opt_in:!!(el('tp-v6-register-digest')&&el('tp-v6-register-digest').checked)}}});
       }else{
         result=await client.auth.signInWithPassword({email:user,password:pass});
       }
