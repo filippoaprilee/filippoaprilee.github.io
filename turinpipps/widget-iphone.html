@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#12384b">
+<title>Widget iPhone · TurinPipps</title><meta name="description" content="Installa il widget TurinPipps senza Xcode con Scriptable.">
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#193d4f;background:#f3f8fa}*{box-sizing:border-box}body{margin:0}main{max-width:1020px;margin:0 auto;padding:27px 23px 65px}a{color:inherit}button{font:inherit;cursor:pointer}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:0 0 52px}.brand{font-size:17px;letter-spacing:-.7px;font-weight:850}.back{font-size:12px;text-decoration:none;background:white;border:1px solid #d8e7eb;border-radius:9px;padding:11px 14px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;align-items:center;gap:35px}.kicker{color:#438c95;font-size:11px;letter-spacing:1.5px;font-weight:800}.hero h1{font-size:clamp(30px,5vw,49px);line-height:1.08;letter-spacing:-1.8px;margin:13px 0}.hero p{color:#647f8b;line-height:1.75;font-size:14px;max-width:610px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0}.button{display:inline-flex;gap:8px;align-items:center;justify-content:center;background:#185670;color:#fff;border:1px solid #185670;border-radius:10px;padding:13px 17px;text-decoration:none;font-weight:760;font-size:13px}.button.alt{background:white;color:#205568;border-color:#cfdfe6}
+.device{border-radius:32px;background:#172a39;padding:15px;box-shadow:0 25px 80px #11354a32;max-width:280px}.screen{border-radius:22px;background:#eef5f6;padding:50px 12px;min-height:375px;display:flex;align-items:center;justify-content:center}.widget{background:linear-gradient(120deg,#12384b,#1f6174);border-radius:22px;color:#fff;width:220px;min-height:204px;padding:20px;display:flex;flex-direction:column;gap:12px}.widget small{color:#c4e7ed;font-size:10px}.widget strong{font-size:42px;line-height:1}.widget span{color:#c9e4ea;font-size:12px}
+.steps{margin-top:65px}.steps h2{font-size:25px;letter-spacing:-.8px}.steps-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:21px}.step{border:1px solid #d8e6eb;background:white;padding:23px;border-radius:14px}.number{color:#24899a;font-size:13px;font-weight:900}.step h3{font-size:16px;margin:12px 0}.step p{font-size:12px;line-height:1.7;color:#637d89}.hint{background:#e7f2f4;border-radius:12px;padding:18px 20px;margin-top:19px;font-size:12px;color:#456e7e;line-height:1.7}.status{font-size:12px;color:#235d73;min-height:18px}.status.error{color:#a33a45}
+@media(max-width:720px){main{padding:20px 16px 40px}.top{margin-bottom:27px}.hero{grid-template-columns:1fr;gap:15px}.hero h1{font-size:34px}.device{margin:4px auto 0;width:250px}.screen{min-height:290px;padding:36px 10px}.widget{width:205px;min-height:190px}.steps{margin-top:45px}.steps-grid{grid-template-columns:1fr;gap:10px}.step{padding:18px}.actions>*{flex:1 1 45%}}
+</style></head><body><main>
+<div class="top"><div class="brand">TurinPipps</div><a href="./" class="back">Torna alla ricerca</a></div>
+<section class="hero"><div><div class="kicker">IOS · WIDGET IN TEMPO REALE</div><h1>Le tue opportunità di casa, direttamente sull’iPhone.</h1>
+<p>Un vero widget nella schermata Home, con annunci da valutare, verifiche e ultime occasioni. Non richiede Xcode né un account sviluppatore Apple: utilizza Scriptable.</p>
+<div class="actions"><a class="button" href="https://apps.apple.com/it/app/scriptable/id1405459188" target="_blank" rel="noopener">1. Installa Scriptable</a><button id="copy" class="button alt" type="button">2. Copia codice widget</button></div><p id="status" class="status" role="status" aria-live="polite"></p></div>
+<div class="device"><div class="screen"><div class="widget"><small>⌂ &nbsp; TURINPIPPS</small><div><strong id="matching">—</strong><span> &nbsp; da valutare</span></div><span id="review">Dati in caricamento…</span><small>TORINO · ENTRO 700 €/MESE</small></div></div></div>
+</section>
+<section class="steps"><h2>Come aggiungere il widget</h2><div class="steps-grid">
+<div class="step"><div class="number">01</div><h3>Apri Scriptable</h3><p>Installa l’app gratuita con acquisti in-app, poi aprila e crea un nuovo script premendo il simbolo +.</p></div>
+<div class="step"><div class="number">02</div><h3>Incolla il codice TurinPipps</h3><p>Premi «Copia codice widget» qui sopra. Incolla nel nuovo script, assegnagli il nome <b>TurinPipps Radar</b>, salva ed eseguilo una volta per vedere l’anteprima.</p></div>
+<div class="step"><div class="number">03</div><h3>Aggiungi alla Home</h3><p>Tieni premuto sulla schermata Home, aggiungi un widget di <b>Scriptable</b>, poi modifica il widget e scegli lo script «TurinPipps Radar». Disponibili dimensioni piccola e media.</p></div>
+</div><div class="hint">Il widget usa dati pubblici Supabase. Non conosce i tuoi preferiti o le credenziali dell’account. Puoi impostare un budget personalizzato nei parametri del widget, per esempio <b>700</b> o <b>700|Cenisia,San Paolo</b>. Gli aggiornamenti sono gestiti da iOS e non sono garantiti ogni 30 minuti. Le notifiche push di TurinPipps sono una funzione separata.</div></section>
+</main><script>
+const copy=document.getElementById("copy"),status=document.getElementById("status");
+copy.addEventListener("click",async()=>{
+ copy.disabled=true;status.classList.remove("error");status.textContent="Carico il codice del widget…";
+ try{
+ const r=await fetch("./ios/scriptable/TurinPipps-Radar.js",{cache:"no-store"});
+ if(!r.ok)throw Error("Download del codice non disponibile");
+ const code=await r.text();if(code.length<500)throw Error("Codice incompleto");
+ await navigator.clipboard.writeText(code);
+ status.textContent="Codice copiato. Ora apri Scriptable, crea uno script e incollalo.";
+ }catch(e){status.classList.add("error");status.textContent="Non sono riuscito a copiare automaticamente. Apri il file sorgente dal repository e copia il contenuto."}
+ finally{copy.disabled=false}
+});
+fetch("https://akgnxjwkrnuckgxscjdz.supabase.co/functions/v1/turinpipps-widget?budget=700",{cache:"no-store"}).then(r=>r.json()).then(d=>{
+ document.getElementById("matching").textContent=typeof d.matching_count==="number"?d.matching_count:"—";
+ document.getElementById("review").textContent=typeof d.to_verify_count==="number"?d.to_verify_count+" da verificare":"Apri il Radar";
+}).catch(()=>{document.getElementById("review").textContent="Apri il Radar"});
+</script></body></html>
