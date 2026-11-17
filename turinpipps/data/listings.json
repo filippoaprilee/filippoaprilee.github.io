@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-17T11:38:52.510Z",
+  "updated_at": "2026-11-17T17:38:52.395Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-17T11:38:52.510Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-17T11:38:52.510Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-17T11:38:52.510Z",
       "availability_state": "online_alla_verifica",
@@ -422,7 +422,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-17T11:38:52.510Z",
       "availability_state": "online_alla_verifica",
@@ -441,12 +441,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-16T23:38:52.578Z",
+      "availability_checked_at": "2026-11-17T17:38:52.395Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-16T23:38:52.578Z"
+      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -460,12 +460,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-16T23:38:52.578Z",
+      "availability_checked_at": "2026-11-17T17:38:52.395Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-16T23:38:52.578Z"
+      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
     },
     {
       "url": "https://www.clickcase.it/stanza-torino-421979.html",
@@ -479,12 +479,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-16T23:38:52.578Z",
+      "availability_checked_at": "2026-11-17T17:38:52.395Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-16T23:38:52.578Z"
+      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
     },
     {
       "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
@@ -498,12 +498,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-17T11:38:52.510Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-16T23:38:52.578Z",
+      "availability_checked_at": "2026-11-17T17:38:52.395Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-16T23:38:52.578Z"
+      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
     },
     {
       "url": "https://www.clickcase.it/affitto-a-studente-universitario-camera-doppia-in-trilocale-torino-421695.html",
@@ -519,10 +519,10 @@
       "seen": "2026-11-13T11:12:09.571Z",
       "last_seen": "2026-11-17T11:38:52.510Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-16T23:38:52.578Z",
+      "availability_checked_at": "2026-11-17T17:38:52.395Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-16T23:38:52.578Z"
+      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -537,6 +537,21 @@
       "property_type": "",
       "seen": "2026-11-13T17:38:52.383Z",
       "last_seen": "2026-11-14T05:38:52.051Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/alloggio-ristrutturato-zona-pozzo-strada-torino-425573.html",
+      "title": "Alloggio ristrutturato zona Pozzo Strada",
+      "description": "Alloggio ristrutturato zona Pozzo Strada - Affitto Appartamento da Privato a Torino, Pozzo Strada - 425573 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 425573 Alloggio ristrutturato zona Pozzo Strada Appartamento in Affitto da Privato - ",
+      "price": 650,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-17T17:38:52.395Z",
+      "last_seen": "2026-11-17T17:38:52.395Z",
       "origin": "automatic_alert"
     }
   ]
