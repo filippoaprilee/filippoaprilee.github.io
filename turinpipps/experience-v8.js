@@ -147,7 +147,7 @@ function reorderSearch(){
   reset.addEventListener("click",()=>{
     ["query","tp-main-search","zone","source-filter","age-filter","distance-filter","stale-filter"].forEach(id=>{const e=$("#"+id);if(e)e.value=""});
     const sort=$("#sort");if(sort)sort.value="recent";
-    const good=section.querySelector('[data-mode="good"]');if(good)good.click();
+    const first=section.querySelector('[data-mode="candidate"]');if(first)first.click();
     const query=$("#tp-main-search");if(query)query.dispatchEvent(new Event("input",{bubbles:true}));
   });
  }
@@ -157,7 +157,7 @@ function reorderSearch(){
  }
  if(tabs&&tools){
   const guide=document.createElement("div");guide.className="tp8-search-steps";
-  guide.innerHTML='<strong>1. Scegli il livello di affidabilità</strong><span>Compatibili · Da verificare · Tutti</span>';
+  guide.innerHTML='<strong>1. Esplora le opportunità per te</strong><span>Per te · Compatibili verificati · Da verificare · Tutti</span>';
   tabs.before(guide);
   tabs.classList.add("tp8-primary-tabs");
  }
