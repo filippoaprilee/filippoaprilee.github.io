@@ -298,11 +298,12 @@ async function scan(time:string,feeds:string[]){
   outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
   const stats=outputs.map(({engine,ok,count,items,status})=>({engine,ok,count,items:items||0,status}));
-  let saved=0;
+  let saved=0,newLinks=0;
   if(all.length){
     const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen,title,description,price,expenses,source_updated,sqm,address,property_type,origin_engine,evidence_url,private_status&limit=10000",{headers:dbHeaders()});
     if(!existingRes.ok)throw new Error("Database read HTTP "+existingRes.status);
     const existing=new Map((await existingRes.json()).map((v:any)=>[v.listing_url,v]));
+    newLinks=all.filter(x=>!existing.has(x.listing_url)).length;
     const rows=all.map(x=>{
       const old:any=existing.get(x.listing_url)||{};
       // Non cancellare canone, data originale e informazioni verificate quando un feed
@@ -334,13 +335,13 @@ async function scan(time:string,feeds:string[]){
   }
   const entry={started_at:time,finished_at:new Date().toISOString(),
     status:ok===0?"failed":ok===outputs.length?"ok":"partial",
-    jobs_checked:outputs.length,jobs_ok:ok,discovered:saved,
+    jobs_checked:outputs.length,jobs_ok:ok,discovered:newLinks,
     details:{engines:stats,duration_ms:Date.now()-started}};
   const stored=await fetch(DB_ROOT+"/turinpipps_scan_runs",{
     method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(entry)
   });
   if(!stored.ok)throw new Error("Scan status HTTP "+stored.status);
-  return {success:ok>0,discovered:saved,engines_ok:ok,total_engines:outputs.length,elapsed_ms:Date.now()-started};
+  return {success:ok>0,discovered:newLinks,processed:saved,engines_ok:ok,total_engines:outputs.length,elapsed_ms:Date.now()-started};
 }
 Deno.serve(async req=>{
   if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{
