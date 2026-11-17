@@ -1,0 +1,29 @@
+[Unit]
+Description=TurinPipps · raccolta browser Playwright verso Supabase
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=turinpipps
+Group=turinpipps
+WorkingDirectory=/opt/turinpipps
+EnvironmentFile=/etc/turinpipps/worker.env
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/turinpipps/.playwright
+ExecStart=/opt/turinpipps/venv/bin/python /opt/turinpipps/turinpipps/collector_playwright.py --playwright --pages 4 --publish --no-local
+TimeoutStartSec=600
+MemoryMax=1536M
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/turinpipps
+
+[Install]
+WantedBy=multi-user.target
