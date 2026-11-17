@@ -2,12 +2,13 @@
 """TurinPipps optional Python collector: BeautifulSoup4 + Playwright Chromium.
 Public housing indexes only, with robots.txt checks. No CAPTCHA solving,
 credential use, proxy rotation, browser fingerprint spoofing or login bypass.
-This worker is a fallback for GitHub Actions; production cron runs in Supabase.
+This worker runs on a separate Linux systemd timer; Supabase Cron is the independent fallback.
 """
 from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -124,8 +125,8 @@ async def browser_html(url: str) -> str:
     """Only a normal headless browser rendering the same already-permitted public page."""
     try:
         from playwright.async_api import async_playwright
-    except ImportError:
-        return ""
+    except ImportError as exc:
+        raise RuntimeError("Playwright non installato") from exc
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         try:
@@ -153,12 +154,17 @@ async def collect(use_playwright: bool, pages: int) -> dict:
             try:
                 raw = fetch_html(url)
                 rows = extract_cards(url, raw)
-                if use_playwright and not rows:
-                    raw = await browser_html(url)
-                    rows = extract_cards(url, raw)
+                if use_playwright and (page_no == 1 or not rows):
+                    browser_page = await browser_html(url)
+                    rendered = extract_cards(url, browser_page) if browser_page else []
+                    merged = {r["url"]: r for r in rows}
+                    for item in rendered:
+                        merged.setdefault(item["url"], item)
+                    rows = list(merged.values())
                 for r in rows:
                     found.setdefault(r["url"], r)
-                status.append({"source": source, "page": page_no, "status": "ok", "found": len(rows)})
+                status.append({"source": source, "page": page_no, "status": "ok", "found": len(rows),
+                               "playwright": bool(use_playwright and (page_no == 1 or not rows))})
                 if page_no > 1 and not rows:
                     break
             except Exception as e:
@@ -202,9 +208,48 @@ def write_output(result: dict) -> None:
     print(f"Raccolta Python: {len(result['listings'])} link, {newly_found} nuovi, "
           f"{len(result['sources'])} pagine consultate")
 
+def publish_to_supabase(result: dict) -> None:
+    """Authenticated server-to-server upload; NEVER publish credentials to GitHub."""
+    endpoint = os.environ.get(
+        "TURINPIPPS_INGEST_URL",
+        "https://akgnxjwkrnuckgxscjdz.supabase.co/functions/v1/turinpipps-ingest"
+    )
+    token = os.environ.get("TURINPIPPS_WORKER_TOKEN", "")
+    if len(token) < 40 or not endpoint.startswith("https://"):
+        raise RuntimeError("Worker token o endpoint HTTPS non configurato")
+    content = json.dumps({
+        "source": "playwright",
+        "listings": result["listings"]
+    }, ensure_ascii=False).encode("utf-8")
+    if len(content) > 400_000:
+        raise RuntimeError("Upload troppo grande per l'endpoint")
+    request = Request(
+        endpoint, data=content, method="POST", headers={
+            "Content-Type": "application/json",
+            "x-tp-worker-token": token,
+            "User-Agent": "TurinPipps-Playwright-Worker/1.0",
+        }
+    )
+    try:
+        with urlopen(request, timeout=45) as response:
+            payload = json.loads(response.read(20_000).decode("utf-8", "replace"))
+            if response.status != 200 or not payload.get("ok"):
+                raise RuntimeError("Il backend non ha confermato la pubblicazione")
+    except HTTPError as exc:
+        raise RuntimeError(f"Pubblicazione Supabase non riuscita: HTTP {exc.code}") from exc
+    print(f"Pubblicati sul backend {payload.get('saved', 0)} annunci rilevati; "
+          "disponibilità e identità inserzionista non verificate")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--playwright", action="store_true", help="Render Chromium solo per pagine consentite")
     parser.add_argument("--pages", type=int, default=4)
+    parser.add_argument("--publish", action="store_true", help="Invia risultati alla Edge Function Supabase protetta")
+    parser.add_argument("--no-local", action="store_true", help="Non modificare l\u0027archivio JSON locale")
     args = parser.parse_args()
-    write_output(asyncio.run(collect(args.playwright, max(1, min(args.pages, 8)))))
+    output = asyncio.run(collect(args.playwright, max(1, min(args.pages, 8))))
+    if not args.no_local:
+        write_output(output)
+    if args.publish:
+        publish_to_supabase(output)
