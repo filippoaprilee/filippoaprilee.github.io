@@ -280,24 +280,56 @@ async function enablePush(){
  }catch(e){note('tp-v5-push-message',e.message,'error')}
  finally{button.disabled=false}
 }
+function clearAdminButtons(){
+ ['tp-v5-nav-admin','tp-v5-more-admin','tp-v9-admin-top','tp-v9-admin-profile'].forEach(function(id){
+  var e=$('#'+id);if(e)e.remove();
+ });
+}
 function adminButton(){
- var nav=$('.side .nav');if(!nav||$('#tp-v5-nav-admin'))return;
- var b=document.createElement('button');b.type='button';b.id='tp-v5-nav-admin';b.dataset.nav='admin';
- b.innerHTML='<i class="fa-solid fa-screwdriver-wrench"></i><span class="nav-label">Sviluppatore</span>';
- nav.appendChild(b);
- var more=$('.tp-v5-more-links');if(more&&!$('#tp-v5-more-admin')){
-  var extra=document.createElement('button');extra.id='tp-v5-more-admin';extra.className='button';
-  extra.dataset.nav='admin';extra.innerHTML='<i class="fa-solid fa-screwdriver-wrench"></i> Console sviluppatore';more.append(extra);
+ if(!state.staff)return;
+ var nav=$('.side .nav');
+ if(nav&&!$('#tp-v5-nav-admin')){
+  var b=document.createElement('button');b.type='button';b.id='tp-v5-nav-admin';b.dataset.nav='admin';
+  b.innerHTML='<i class="fa-solid fa-code" aria-hidden="true"></i><span class="nav-label">Sviluppatore</span>';
+  var group=$('#tp8-nav-staff');
+  (group||nav).appendChild(b);
+ }
+ var top=$('.topline .top-actions');
+ if(top&&!$('#tp-v9-admin-top')){
+  var button=document.createElement('button');button.type='button';button.id='tp-v9-admin-top';
+  button.dataset.nav='admin';button.className='tp-v5-bell tp-v9-admin-top';
+  button.setAttribute('aria-label','Apri la console sviluppatore');button.title='Sviluppatore';
+  button.innerHTML='<i class="fa-solid fa-code" aria-hidden="true"></i>';
+  top.insertBefore(button,$('#tp-v5-bell')||$('#tp-account-button')||null);
+ }
+ var hub=$('#tp8-account-hub .tp8-account-links');
+ if(hub&&!$('#tp-v9-admin-profile')){
+  var entry=document.createElement('button');entry.type='button';entry.id='tp-v9-admin-profile';
+  entry.dataset.nav='admin';entry.innerHTML='<i class="fa-solid fa-code"></i><span><b>Sviluppatore</b><small>Utenti, invii e stato dei servizi</small></span><i class="fa-solid fa-chevron-right"></i>';
+  hub.appendChild(entry);
  }
 }
 async function checkStaff(){
- var user=session();if(!user){state.staff=false;$('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove();return}
+ var user=session();
+ if(!user){state.staff=false;clearAdminButtons();return}
+ // getCurrentUser() exposes "confirmed", not "email_confirmed_at".
+ if(String(user.email||'').toLowerCase()!=='filippo@maben.it'||user.confirmed!==true){
+  state.staff=false;clearAdminButtons();return;
+ }
  try{
   var d=await rest('turinpipps_staff?select=role&user_id=eq.'+encodeURIComponent(user.id));
-  state.staff=!!(d.length&&d[0].role==='owner'&&String(user.email||'').toLowerCase()==='filippo@maben.it'&&user.email_confirmed_at);
-  if(state.staff)adminButton();
-  else{$('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove()}
- }catch(_){state.staff=false}
+  var now=session();
+  if(!now||now.id!==user.id){state.staff=false;clearAdminButtons();return}
+  state.staff=!!(d.length&&d[0].role==='owner'&&now.confirmed===true);
+  if(state.staff){
+   adminButton();
+   if(new URLSearchParams(location.search).get('screen')==='admin'
+      &&window.TurinPippsUXV3)window.TurinPippsUXV3.navigate('admin');
+  }else clearAdminButtons();
+ }catch(error){
+  state.staff=false;clearAdminButtons();
+  console.warn('TurinPipps: verifica autorizzazione sviluppatore non riuscita');
+ }
 }
 async function renderAdmin(){
  if(!state.staff){$('#tp-v5-admin-content').textContent='Accesso riservato agli amministratori autorizzati.';return}
@@ -377,7 +409,7 @@ function onNavigate(view){
 function init(){
  if(!$('#view-home')||$('#view-profile'))return;
  build();
- window.TurinPippsV5={onNavigate:onNavigate,canAdmin:function(){return state.staff===true&&!!session()&&String(session().email||'').toLowerCase()==='filippo@maben.it'}};
+ window.TurinPippsV5={onNavigate:onNavigate,canAdmin:function(){var s=session();return state.staff===true&&!!s&&s.confirmed===true&&String(s.email||'').toLowerCase()==='filippo@maben.it'}};
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
@@ -406,7 +438,7 @@ function init(){
  window.addEventListener('turinpipps:account-ready',ready);
  window.addEventListener('turinpipps:account-signed-out',function(){
   state.profile=null;state.alerts=[];state.staff=false;state.loadedAt=0;
-  $('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove();
+  clearAdminButtons();
   renderProfile();renderAlerts();
   if(!$('#view-admin').classList.contains('hidden'))window.TurinPippsUXV3.navigate('home');
  });
