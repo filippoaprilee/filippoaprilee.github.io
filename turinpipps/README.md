@@ -6,7 +6,7 @@
 
 Ricerca affitti a Torino vicino al Politecnico, appartamenti interi con preferenza inserzionisti privati, budget iniziale 700 €/mese **più spese**, zone Cenisia, Crocetta, San Paolo, Borgo San Paolo, Cit Turin, Santa Rita e Pozzo Strada.
 
-## Stato al 16 novembre 2026
+## Stato aggiornato al 17 novembre 2026
 
 | Componente | Architettura | Stato |
 | --- | --- | --- |
@@ -17,7 +17,7 @@ Ricerca affitti a Torino vicino al Politecnico, appartamenti interi con preferen
 | Riepiloghi email | Supabase `turinpipps-mailer` + pg_cron | Richiede RESEND_API_KEY e mittente verificato |
 | Console sviluppatore | `turinpipps-admin`, controllo server `role=owner` | Riservata al solo utente owner |
 | Organizza | `organize-v7.js`, database `turinpipps_listing_states` | Salvati, contatti, visite, decisioni, calendario ICS |
-| Widget iPhone senza Xcode | Scriptable + Supabase `turinpipps-widget` | Script disponibile e guida installazione |
+| Installazione iPhone senza altre app | PWA GitHub Pages | Aggiungi a Home da Safari; un widget nativo richiede WidgetKit |
 | GitHub Actions programmati | Nessuno | Entrambi i workflow legacy **eliminati** |
 | Playwright | Codice facoltativo in `collector_playwright.py` | Non in esecuzione sul backend; non serve per le scansioni Supabase |
 
@@ -51,3 +51,28 @@ L'invio delle email ai proprietari rimane manuale. Le email automatiche agli ute
 ## Test
 
 Controlli statici e regressione: `node turinpipps/tests/classification.test.cjs`. I test non sono più lanciati su GitHub Actions, perché l'account GitHub impedisce l'esecuzione dei workflow personalizzati.
+
+## Interfaccia v8
+
+- Home: budget, conteggi separati, ultima scoperta, monitoraggio e scorciatoie.
+- Cerca: modalità Per te come impostazione iniziale, categorie verificati/da verificare/tutti, qualità dati e ultimo avvistamento visibili.
+- Mappa: sezione autonoma con soli pin da coordinate disponibili e menu dedicato.
+- Organizza: salvati, contatti, visite e decisioni senza pulsanti duplicati.
+- Navigazione: 5 azioni su iPhone, 3 sezioni gerarchiche su PC, niente Altro sovraccarico.
+- Sviluppatore: esclusivo per account verificato filippo@maben.it e ruolo owner, anche lato backend.
+
+## Playwright senza GitHub Actions
+
+Il repository contiene un worker Chromium Playwright per Ubuntu, timer systemd e la Edge Function turinpipps-ingest distribuita.
+**Non è ancora attivo sul VPS**: occorre configurare il token segreto condiviso e installare il servizio Ubuntu.
+Guida dettagliata: [Playwright Ubuntu](vps/README.md). Il collector Supabase Cron esistente continua separatamente.
+
+## Email da maben.it
+
+Mittente desiderato: TurinPipps <filippo@maben.it>. Verifica maben.it su Resend, mantieni intatti gli MX aziendali e configura le due variabili segrete di Supabase.
+Guida: [Setup email](SETUP_EMAIL.md).
+
+## iPhone senza app esterne
+
+La PWA si aggiunge alla schermata Home direttamente con Safari. La pagina [installazione iPhone](widget-iphone.html) spiega i passaggi.
+Un widget iOS nativo con aggiornamento autonomo non può essere distribuito da una sola pagina GitHub Pages.
