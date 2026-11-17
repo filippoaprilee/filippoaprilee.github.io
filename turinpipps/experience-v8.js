@@ -157,7 +157,7 @@ function reorderSearch(){
  }
  if(tabs&&tools){
   const guide=document.createElement("div");guide.className="tp8-search-steps";
-  guide.innerHTML='<strong>1. Esplora le opportunità per te</strong><span>Per te · Compatibili verificati · Da verificare · Tutti</span>';
+  guide.innerHTML='<strong>1. Esplora le opportunità per te</strong><span>Per te · Compatibili · Da verificare · Tutti</span>';
   tabs.before(guide);
   tabs.classList.add("tp8-primary-tabs");
  }
