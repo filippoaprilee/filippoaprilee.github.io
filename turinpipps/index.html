@@ -182,7 +182,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
 </style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"><link rel="stylesheet" href="./experience-v4.css?v=4.0.0"><link rel="stylesheet" href="./experience-v5.css?v=5.0.0">
-<link rel="stylesheet" href="./experience-v6.css?v=6.0.0"><link rel="stylesheet" href="./organize-v7.css?v=7.0.0"></head><body>
+<link rel="stylesheet" href="./experience-v6.css?v=6.0.0"><link rel="stylesheet" href="./organize-v7.css?v=7.0.0">
+<link rel="stylesheet" href="./experience-v8.css?v=8.0.0"></head><body>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -231,6 +232,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tp-map-toolbar"><button class="button" type="button" id="tp-toggle-map"><i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili</button><span class="note">Localizzazione solo per gli annunci con coordinate verificabili.</span></div><div id="tp-map" class="tp-app-map" hidden></div>
 <div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
+<section id="view-map" class="hidden tp8-map-view">
+ <div class="tp8-page-intro"><div><span class="tp8-eyebrow">ESPLORA TORINO</span><h1>Mappa immobili</h1><p>Consulta le posizioni effettivamente geolocalizzate. Le case senza coordinate non vengono rappresentate con pin inventati.</p></div><button class="button" data-nav="results"><i class="fa-solid fa-list"></i> Elenco annunci</button></div>
+ <div class="tp8-map-bar"><label for="tp8-map-filter">Mostra sulla mappa<select id="tp8-map-filter"><option value="good">Potenzialmente compatibili</option><option value="review">Da verificare</option><option value="all">Tutti i collegamenti geolocalizzati</option></select></label><div><strong id="tp8-map-count">—</strong><span>immobili con coordinate</span></div></div>
+ <div id="tp8-map-host"></div>
+ <div class="tp8-map-foot"><div><h2>Immobili localizzati</h2><p>I pin non certificano disponibilità, proprietà né indirizzo esatto. Apri sempre la fonte originale.</p></div><div id="tp8-map-list"></div></div>
+</section>
 <section id="view-sources" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">MONITORAGGIO</div><h1>Attività della ricerca</h1><p>Quando abbiamo cercato, che cosa è cambiato e quando ti abbiamo inviato un riepilogo.</p></div>
 <button class="button" id="tp-activity-refresh" type="button"><i class="fa-solid fa-rotate"></i> Ricarica stato</button></div>
@@ -249,7 +256,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="tp-page-lead"><div><div class="tp-kicker">CONFRONTI</div><h1>Scegli con più sicurezza</h1><p>Seleziona fino a quattro immobili dagli annunci: confronta costi, metratura, vicinanza al campus e punteggi.</p></div><button class="button" data-nav="results"><i class="fa-solid fa-plus"></i> Scegli immobili</button></div>
 <div id="tp-compare-content" class="panel"><div class="tp-empty-big"><i class="fa-solid fa-scale-balanced"></i><h3>Nessun immobile selezionato</h3><p>Vai in Cerca casa e premi Confronta sulle schede che ti interessano.</p><button class="button primary" data-nav="results">Esplora immobili</button></div></div></section>
 <section id="view-visits" class="hidden">
-<div class="tp-page-lead"><div><div class="tp-kicker">APPUNTAMENTI</div><h1>Organizza la ricerca</h1><p>Salvati, contatti, visite e decisioni: gestisci ogni casa in un unico percorso.</p></div><button class="button" data-nav="saved"><i class="fa-regular fa-heart"></i> I miei preferiti</button></div>
+<div class="tp-page-lead"><div><div class="tp-kicker">APPUNTAMENTI</div><h1>Organizza la ricerca</h1><p>Salvati, contatti, visite e decisioni: gestisci ogni casa in un unico percorso.</p></div></div>
 <div class="panel"><div id="tp-visits-content"><p class="note">Nessuna visita programmata.</p></div></div></section>
 <section id="view-saved" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">LA TUA RACCOLTA</div><h1>Case da non perdere</h1><p>Gli immobili che hai salvato, con note e stato dei contatti. Puoi confrontarli o programmare una visita.</p></div>
@@ -708,13 +715,15 @@ function renderSources(){
  }).join('');
 }
 function nav(next){
- if(!['home','results','compare','saved','visits','sources','settings','profile','notifications','admin','more'].includes(next))next='home';
+ if(!['home','results','map','compare','saved','visits','sources','settings','profile','notifications','admin','more'].includes(next))next='home';
+ if(next==='more')next='profile';
+ if(next==='admin'&&!(window.TurinPippsV5&&window.TurinPippsV5.canAdmin&&window.TurinPippsV5.canAdmin()))next='home';
  tab=next;
- ['home','results','compare','saved','visits','sources','settings','profile','notifications','admin','more'].forEach(function(x){
+ ['home','results','map','compare','saved','visits','sources','settings','profile','notifications','admin','more'].forEach(function(x){
    var node=el('view-'+x);if(node)node.classList.toggle('hidden',x!==next);
  });
  document.querySelectorAll('[data-nav]').forEach(function(x){
-   var active=x.dataset.nav===next||(x.dataset.nav==='more'&&['visits','sources','settings'].includes(next));
+   var active=x.dataset.nav===next;
    x.classList.toggle('active',active);
    if(x.tagName==='BUTTON')x.setAttribute('aria-current',active?'page':'false');
  });
@@ -726,6 +735,7 @@ function nav(next){
  if(next==='compare')renderComparison();
  if(next==='settings')fillPersonalSettings();
  if(window.TurinPippsV5&&typeof window.TurinPippsV5.onNavigate==='function')window.TurinPippsV5.onNavigate(next);
+ if(window.TurinPippsV8&&typeof window.TurinPippsV8.onNavigate==='function')window.TurinPippsV8.onNavigate(next);
  if(window.matchMedia('(max-width:700px)').matches)window.scrollTo({top:0,behavior:'instant'});
 }
 function download(data,name){var a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)}
@@ -848,7 +858,7 @@ function drawTurinMap(){
   if(tpMap._tpMarkers)tpMap.removeLayer(tpMap._tpMarkers);
   var markers=L.layerGroup().addTo(tpMap);tpMap._tpMarkers=markers;
   var bounds=[];
-  all().forEach(function(a){
+  all().filter(function(a){var chosen=document.getElementById('tp8-map-filter');var filter=chosen?chosen.value:'all';return filter==='all'||classify(a)===filter;}).forEach(function(a){
     if(!Number.isFinite(a.lat)||!Number.isFinite(a.lng)||a.lat<44.8||a.lat>45.3||a.lng<7.3||a.lng>8)return;
     var pos=[a.lat,a.lng];bounds.push(pos);
     var detail=document.createElement('div');detail.textContent=a.title+' · '+(a.price?a.price+' €/mese':'Canone sconosciuto');
@@ -1083,6 +1093,9 @@ window.TurinPippsBridge={
  navigate:function(view){nav(view)},
  refresh:function(){renderResults();renderSaved();if(tab==='home')renderHome();},
  getPrefs:function(){return prefs},
+ classifyListing:function(a){return classification(a)},
+ getLiveScan:function(){return liveScan},
+ drawMap:function(){var box=el('tp-map');if(box){box.hidden=false;drawTurinMap()}},
  getDiagnostics:function(){return diagnostics},
  getListings:function(){return all().map(function(x){return Object.assign({},x)})},
  addDiscovery:function(rows,scan){
@@ -1139,4 +1152,5 @@ function finish(){
 <script defer src="./experience-v3.js?v=3.0.0"></script>
 <script defer src="./experience-v4.js?v=4.0.0"></script>
 <script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=5.0.0"></script>
-<script defer src="./organize-v7.js?v=7.1.0"></script></body></html>
+<script defer src="./organize-v7.js?v=7.1.0"></script>
+<script defer src="./experience-v8.js?v=8.0.0"></script></body></html>
