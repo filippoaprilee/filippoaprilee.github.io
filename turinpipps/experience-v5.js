@@ -291,11 +291,12 @@ function adminButton(){
  }
 }
 async function checkStaff(){
- var user=session();if(!user){state.staff=false;return}
+ var user=session();if(!user){state.staff=false;$('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove();return}
  try{
   var d=await rest('turinpipps_staff?select=role&user_id=eq.'+encodeURIComponent(user.id));
-  state.staff=!!(d.length&&d[0].role==='owner');
+  state.staff=!!(d.length&&d[0].role==='owner'&&String(user.email||'').toLowerCase()==='filippo@maben.it'&&user.email_confirmed_at);
   if(state.staff)adminButton();
+  else{$('#tp-v5-nav-admin')?.remove();$('#tp-v5-more-admin')?.remove()}
  }catch(_){state.staff=false}
 }
 async function renderAdmin(){
@@ -371,12 +372,12 @@ async function adminManualMail(uuid){
 function onNavigate(view){
  if(view==='profile')loadProfile();
  if(view==='notifications')fetchAlerts(true);
- if(view==='admin')renderAdmin();
+ if(view==='admin'&&state.staff)renderAdmin();
 }
 function init(){
  if(!$('#view-home')||$('#view-profile'))return;
  build();
- window.TurinPippsV5={onNavigate:onNavigate};
+ window.TurinPippsV5={onNavigate:onNavigate,canAdmin:function(){return state.staff===true&&!!session()&&String(session().email||'').toLowerCase()==='filippo@maben.it'}};
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
