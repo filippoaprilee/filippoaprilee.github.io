@@ -1,30 +1,50 @@
-# TurinPipps · configurazione email (senza runner GitHub)
+# TurinPipps · posta dal tuo indirizzo aziendale
 
-## Backend operativo
+## Mittente scelto
 
-- Supabase: progetto `akgnxjwkrnuckgxscjdz`.
-- Edge Function: `turinpipps-mailer`.
-- Orchestrazione: `turinpipps-v5-user-mail` su Supabase pg_cron, eseguita ogni ora.
-- Il backend invia i digest pianificati fra le **08:00 e le 10:59 Europe/Rome**.
-- Dopo la verifica dell'indirizzo, i nuovi account ricevono digest **solo se hanno selezionato il consenso facoltativo** in registrazione. Il profilo può modificare la frequenza.
+**TurinPipps <filippo@maben.it>**.
 
-## Configurazione Resend
+È un indirizzo valido per i riepiloghi se il dominio **maben.it** viene verificato dal provider di invio. Non devi acquistare un dominio nuovo né aprire una nuova casella. L'indirizzo può ricevere nella posta aziendale attuale; il backend invia tramite API Resend.
 
-1. Aprire https://resend.com/ e creare o accedere all'account Resend.
-2. In **Domains**, aggiungere un dominio di invio posseduto. È consigliabile usare un sottodominio dedicato, ad esempio `news.maben.it`, invece di cambiare le impostazioni della posta aziendale principale.
-3. Nel pannello DNS che gestisce il dominio, aggiungere **esattamente** i record DKIM/SPF che Resend fornisce. Non eliminare i record MX attuali della posta aziendale; verificare prima di cambiare SPF su un dominio già usato.
-4. Tornare su Resend, premere **Verify** e verificare che il dominio risulti **Verified**.
-5. Aprire **API Keys**, creare una chiave di invio (idealmente limitata al dominio) e conservarla privatamente. **Non incollarla su GitHub, in ChatGPT, nel browser dell'app né nei file JavaScript pubblici**.
-6. Aprire https://supabase.com/dashboard/project/akgnxjwkrnuckgxscjdz/functions e trovare **Secrets** (sezione Edge Functions / Secrets). Creare:
-   - `RESEND_API_KEY`: il valore segreto della chiave Resend.
-   - `TURINPIPPS_MAIL_FROM`: ad esempio `TurinPipps <avvisi@news.maben.it>` se il sottodominio è stato verificato.
-7. Aprire la PWA, accedere con l'account `owner`, andare su **Sviluppatore**. Lo stato del provider deve risultare configurato. Accertarsi che il destinatario abbia confermato la propria email e abbia attivato i riepiloghi.
-8. Premere **Invia report** sull'account che desidera riceverlo. Il backend usa l'API Resend, registra l'esito e mostra lo storico nel pannello sviluppatore. In caso di errore il registro indica la causa.
+> Attenzione: **maeben.it** è diverso da **maben.it**. Il mittente concordato è `filippo@maben.it`.
 
-## Controlli e limitazioni
+## 1. Autorizza il dominio su Resend
 
-- Un risultato di invio accettato da Resend non certifica che il destinatario abbia letto l'email: per la consegna completa consultare gli eventi nel dashboard Resend.
-- Un invio manuale ripetuto troppo presto viene bloccato per prevenire duplicati.
-- L'opzione `off` / consenso disattivato va rispettata anche dall'amministratore.
-- La ricerca immobili, l'aggiornamento del database e le notifiche non dipendono da Resend.
-- Le email Supabase **Auth** (conferma account e recupero password) sono distinte dai digest TurinPipps e hanno una configurazione SMTP dedicata.
+1. Apri https://resend.com/domains ed esegui l'accesso.
+2. **Add Domain** e inserisci **maben.it** (non serve creare `news.maben.it`).
+3. Scegli una regione disponibile. Leggi e copia i record DNS proposti da Resend: DKIM e i record per il sottodominio di Return-Path/bounce. I nomi e valori **esatti** sono mostrati da Resend e non vanno indovinati.
+
+## 2. Inserisci record DNS senza rompere la posta
+
+1. Accedi al pannello del provider che **gestisce realmente i DNS** di `maben.it`, eventualmente SiteGround se il dominio usa i nameserver SiteGround.
+2. Apri DNS Zone Editor / DNS Management. Prima fai una copia o screenshot dei record esistenti.
+3. Aggiungi **soltanto** i record nuovi indicati da Resend per `maben.it`: esegui la verifica e non sostituire i record MX della posta aziendale già esistenti.
+4. **Non aggiungere due record SPF separati sul medesimo nome DNS.** Se Resend propone SPF su un sottodominio di Return-Path (spesso `send`), applicalo a quel sottodominio, non in automatico alla radice.
+5. Clicca **Verify** nel dashboard Resend e accertati che lo stato del dominio sia **Verified**.
+
+## 3. Crea la credenziale di invio
+
+1. Resend → **API Keys → Create API Key**, nome ad esempio `TurinPipps Production`, permesso solo invio, limitato al dominio verificato se possibile.
+2. **Non pubblicare la chiave**: niente GitHub, chat, screenshot o codice del browser.
+3. In Supabase apri https://supabase.com/dashboard/project/akgnxjwkrnuckgxscjdz/settings/functions (oppure **Edge Functions → Secrets**).
+4. Configura le variabili server:
+   - `RESEND_API_KEY` = chiave privata API Resend
+   - `TURINPIPPS_MAIL_FROM` = `TurinPipps <filippo@maben.it>`
+
+## 4. Prova le email di TurinPipps
+
+1. Apri https://filippoaprilee.github.io/turinpipps/, accedi come `filippo@maben.it` e apri **Sviluppatore** (solo questo account ha ruolo owner).
+2. Controlla l'indicazione **Provider configurato**.
+3. Nell'elenco degli utenti individua un indirizzo **verificato**, che abbia attivato il consenso ai riepiloghi.
+4. Premi **Invia report**. Il backend conferma l'esito della richiesta e registra la spedizione.
+5. Controlla anche la sezione **Emails** nel dashboard Resend per verificare se è stato effettivamente consegnato al destinatario.
+
+**Programmazione:** i riepiloghi automatici TurinPipps sono gestiti da **Supabase Cron**, non da GitHub Actions o ChatGPT. Non è necessario che il Mac o l'iPhone siano accesi.
+
+## Nota distinta: email di registrazione
+
+Le email di conferma e recupero password **Supabase Auth** sono separate dai riepiloghi TurinPipps. Per personalizzarne il mittente e gestire limiti di invio occorre configurare l'SMTP di Supabase Auth in **Authentication → SMTP Settings**. Non confondere questa impostazione con i due Secrets del mailer.
+
+## Verifica della privacy
+
+I report vengono inviati soltanto a utenti con indirizzo verificato e consenso attivo; l'utente può revocarlo dal Profilo. La console sviluppatore non deve bypassare l'opt-out.
