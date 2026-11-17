@@ -532,6 +532,8 @@ function card(a){
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
  (!a.source_updated?'<span class="tag orange">Data originale non verificata</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
+ '<div class="tp8-card-proof"><span><i class="fa-solid fa-list-check"></i> Dati documentati: '+quality.known+'/'+quality.total+'</span>'+
+ '<span><i class="fa-regular fa-clock"></i> Ultimo avvistamento: '+esc(dateLabel(a.last_seen||a.seen))+'</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
  '<span><i class="fa-solid fa-person-walking"></i> '+walk+'</span></div>'+
  (changed?'<div class="tp-listing-meta"><span class="tp-microtag '+(changed.delta<0?'good':'alert')+'"><i class="fa-solid fa-arrow-trend-'+(changed.delta<0?'down':'up')+'"></i> '+(changed.delta<0?'Ribasso':'Aumento')+' '+Math.abs(changed.delta)+' €</span></div>':'')+
