@@ -284,3 +284,22 @@ body{background:#f5f9fa;color:var(--tp8-ink)}
 #tp-filterbar[hidden],#view-map[hidden],#view-results[hidden],#view-home[hidden],#view-visits[hidden]{display:none!important}
 #view-results .tp8-search-refresh{background:white;display:inline-flex;align-items:center;gap:9px;color:#287084;font-weight:800;min-height:39px;white-space:nowrap}
 @media(max-width:700px){#view-results .tp8-card-proof{font-size:9px;gap:6px;margin-bottom:9px;padding-bottom:9px}#view-results .tp8-search-refresh{font-size:10px;min-height:34px;padding:7px 11px}}
+
+/* Console sviluppatore: icona disponibile esclusivamente dopo autorizzazione backend. */
+#tp-v9-admin-top{
+ order:0;display:inline-flex;align-items:center;justify-content:center;flex:none;
+ min-width:42px;width:42px;height:42px;border:1px solid #dbe7eb;
+ border-radius:10px;background:#f1f8f9;color:#1d6b7c;font-size:17px;
+}
+#tp-v9-admin-top:hover,#tp-v9-admin-top.active{border-color:#8ebfca;background:#e3f2f3}
+#tp-v9-admin-profile{border-color:#a9d6d5!important;background:#eff8f7!important}
+#tp-v9-admin-profile>i:first-child{color:#2c7f85!important}
+#tp8-nav-staff:not(:empty){display:grid;gap:5px}
+#tp8-nav-staff:not(:empty):before{
+ content:"AMMINISTRAZIONE";display:block;margin:9px 13px 3px;font-size:9px;
+ font-weight:850;letter-spacing:1.6px;color:#86aeb7;
+}
+@media(max-width:700px){
+ #tp-v9-admin-top{min-width:39px;width:39px;height:39px;font-size:16px}
+ .topline .top-actions{gap:6px!important}
+}
