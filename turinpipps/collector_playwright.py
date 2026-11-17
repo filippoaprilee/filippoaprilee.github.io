@@ -154,7 +154,8 @@ async def collect(use_playwright: bool, pages: int) -> dict:
             try:
                 raw = fetch_html(url)
                 rows = extract_cards(url, raw)
-                if use_playwright and (page_no == 1 or not rows):
+                browser_used = bool(use_playwright and (page_no == 1 or not rows))
+                if browser_used:
                     browser_page = await browser_html(url)
                     rendered = extract_cards(url, browser_page) if browser_page else []
                     merged = {r["url"]: r for r in rows}
@@ -164,7 +165,7 @@ async def collect(use_playwright: bool, pages: int) -> dict:
                 for r in rows:
                     found.setdefault(r["url"], r)
                 status.append({"source": source, "page": page_no, "status": "ok", "found": len(rows),
-                               "playwright": bool(use_playwright and (page_no == 1 or not rows))})
+                               "playwright": browser_used})
                 if page_no > 1 and not rows:
                     break
             except Exception as e:
@@ -219,7 +220,8 @@ def publish_to_supabase(result: dict) -> None:
         raise RuntimeError("Worker token o endpoint HTTPS non configurato")
     content = json.dumps({
         "source": "playwright",
-        "listings": result["listings"]
+        "listings": result["listings"],
+        "sources": result["sources"]
     }, ensure_ascii=False).encode("utf-8")
     if len(content) > 400_000:
         raise RuntimeError("Upload troppo grande per l'endpoint")
