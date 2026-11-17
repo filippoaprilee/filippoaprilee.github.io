@@ -231,7 +231,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <section id="view-results" class="hidden"><div class="tp-page-lead"><div><div class="tp-kicker">ESPLORA</div><h1>Trova la tua prossima casa</h1><p>Cerca nella raccolta, filtra per zona e valuta gli immobili direttamente dalla scheda originale.</p></div><button class="button" id="reload"><i class="fa-solid fa-rotate"></i> Aggiorna</button></div><div class="tp-intelbar" id="tp-intelbar" aria-label="Analisi annunci"></div>
 <div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option><option>Pozzo Strada</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Aggiornati negli ultimi 7 giorni</option><option value="30">Aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tp-map-toolbar"><button class="button" type="button" id="tp-toggle-map"><i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili</button><span class="note">Localizzazione solo per gli annunci con coordinate verificabili.</span></div><div id="tp-map" class="tp-app-map" hidden></div>
-<div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti gli annunci</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
+<div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="candidate">Per te</button><button class="chip" data-mode="good">Compatibili verificati</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
 <section id="view-map" class="hidden tp8-map-view">
  <div class="tp8-page-intro"><div><span class="tp8-eyebrow">ESPLORA TORINO</span><h1>Mappa immobili</h1><p>Consulta le posizioni effettivamente geolocalizzate. Le case senza coordinate non vengono rappresentate con pin inventati.</p></div><button class="button" data-nav="results"><i class="fa-solid fa-list"></i> Elenco annunci</button></div>
  <div class="tp8-map-bar"><label for="tp8-map-filter">Mostra sulla mappa<select id="tp8-map-filter"><option value="good">Potenzialmente compatibili</option><option value="review">Da verificare</option><option value="all">Tutti i collegamenti geolocalizzati</option></select></label><div><strong id="tp8-map-count">—</strong><span>immobili con coordinate</span></div></div>
@@ -341,7 +341,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </dialog>
 <script>
 (function(){'use strict';
-var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='good',tab='home';
+var KEY='turinpipps.v1',prefs=read(KEY,read('casaradar.v3',{budget:700,fullname:'',intro:'',flags:{},manual:[]})),remote=[],diagnostics=[],lastUpdate='',mode='candidate',tab='home';
 var guestPrefs=JSON.parse(JSON.stringify(prefs)),accountMode=false,memoListings=null,reportState=null,page=1,pageSize=20,externalRemote=[],liveScan=null;
 var zones=['crocetta','cenisia','san paolo','borgo san paolo','cit turin','santa rita','pozzo strada'];
 var links=[
@@ -385,7 +385,8 @@ function classification(a){
  }
  if(!a.price)reasons.push('Canone non dichiarato');
  if(!a.zone)reasons.push('Quartiere non verificato');
- if(a.private_status==='unverified')reasons.push('Inserzionista non verificato');
+ if(!a.published_at&&!a.source_updated)reasons.push('Data originale dell’annuncio da verificare');
+ if(a.private_status!=='confirmed')reasons.push('Privato non verificato: controlla chi propone l’immobile');
  if(/\b(?:solo|esclusivamente|riservat[oaie])\b.{0,70}\b(?:studentesse|studenti|lavoratrici|lavoratori|ragazze|ragazzi|coppie|referenziati)\b/i.test(text+' '+desc.slice(0,250)))
    reasons.push('Requisiti del locatario da confermare');
  if(a.availability_state==='potenzialmente_non_disponibile')
@@ -603,7 +604,8 @@ function renderResults(){
  arr=arr.filter(function(a){
   if(flag(a.url).discard)return false;
   if(!matchPersonalCriteria(a))return false;
-  if(mode!=='all'&&classify(a)!==mode)return false;
+  if(mode==='candidate'&&classify(a)==='excluded')return false;
+  if(mode!=='all'&&mode!=='candidate'&&classify(a)!==mode)return false;
   if(q&&!((a.title+' '+a.description+' '+a.zone+' '+a.source).toLowerCase().includes(q)))return false;
   if(z&&!a.zone.toLowerCase().includes(z))return false;
   if(source&&!a.source.toLowerCase().includes(source))return false;
@@ -1095,6 +1097,7 @@ window.TurinPippsBridge={
  getPrefs:function(){return prefs},
  classifyListing:function(a){return classification(a)},
  getLiveScan:function(){return liveScan},
+
  drawMap:function(){var box=el('tp-map');if(box){box.hidden=false;drawTurinMap()}},
  getDiagnostics:function(){return diagnostics},
  getListings:function(){return all().map(function(x){return Object.assign({},x)})},
