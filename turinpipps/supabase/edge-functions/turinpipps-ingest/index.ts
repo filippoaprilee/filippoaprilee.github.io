@@ -61,10 +61,13 @@ Deno.serve(async req=>{
   const stamp=new Date().toISOString(),newRows=new Map<string,any>();
   for(const x of body.listings){const item=normalize(x,stamp);if(item)newRows.set(item.listing_url,item)}
   const candidates=[...newRows.values()];
-  let saved=0;
+  const sourceRows=Array.isArray(body.sources)?body.sources.slice(0,60):[];
+  const checks=sourceRows.length,successful=sourceRows.filter((v:any)=>v&&v.status==='ok').length;
+  let saved=0,newLinks=0;
   if(candidates.length){
     const oldRows=await query("turinpipps_discovered_listings?select=listing_url,title,description,price,expenses,sqm,address,property_type,first_seen,source_updated,published_at,last_verified_at,availability_status,verification_level,verification_reason,price_verified_at,private_status,origin_engine,evidence_url&limit=10000");
     const existing=new Map(oldRows.map((r:any)=>[r.listing_url,r]));
+    newLinks=candidates.filter(row=>!existing.has(row.listing_url)).length;
     const prepared=candidates.map(row=>{
       const old:any=existing.get(row.listing_url)||{};
       const rich=old.origin_engine==="ricerca_web_verificata";
@@ -84,14 +87,19 @@ Deno.serve(async req=>{
     });
     for(let i=0;i<prepared.length;i+=60){await upsert(prepared.slice(i,i+60));saved+=Math.min(60,prepared.length-i)}
   }
-  const log={started_at:stamp,finished_at:new Date().toISOString(),status:"ok",jobs_checked:1,
-   jobs_ok:1,discovered:saved,details:{engines:[{engine:"Playwright · ClickCase pubbliche",ok:true,count:saved,
-    status:"Fonte renderizzata; non implica disponibilità"}],browser_runtime:"vps",publication_type:"ingest"}};
+  const scanStatus=checks?successful===0?"failed":successful<checks?"partial":"ok":"partial";
+  const log={started_at:stamp,finished_at:new Date().toISOString(),status:scanStatus,
+   jobs_checked:checks||1,jobs_ok:successful,discovered:newLinks,
+   details:{engines:sourceRows.map((x:any)=>({engine:String(x.source||"Pagina pubblica").slice(0,100),
+    ok:x.status==="ok",count:Math.max(0,Number(x.found)||0),
+    status:String(x.status||"unknown").slice(0,40)})),browser_runtime:"vps",
+    processed:saved,publication_type:"ingest"}};
   const logged=await fetch(ROOT+"/rest/v1/turinpipps_scan_runs",{method:"POST",
    headers:h({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(log)});
   if(!logged.ok)console.error("Worker scan logging failed",logged.status);
-  return reply({ok:true,received:body.listings.length,accepted:candidates.length,saved,
-   note:"Link trovati, disponibilità e inserzionista non verificati"});
+  return reply({ok:checks?successful>0:true,received:body.listings.length,accepted:candidates.length,
+   saved,discovered:newLinks,source_checks:checks,source_ok:successful,
+   note:"Nuovi link separati da quelli rielaborati; disponibilità e inserzionista non verificati"});
  }catch(err){
   console.error("TurinPipps browser import failed",String(err).slice(0,200));
   return reply({error:"Could not process worker results"},500);
