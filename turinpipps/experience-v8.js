@@ -47,7 +47,7 @@ function restructureNavigation(){
    b.setAttribute("aria-label",item[2]);
    section.appendChild(b);
   });
-  if(i===2){const staff=document.createElement("div");staff.id="tp8-nav-staff";section.appendChild(staff)}
+  if(i===2){const staff=document.createElement("div");staff.id="tp8-nav-staff";section.appendChild(staff);if(buttons.admin)staff.appendChild(buttons.admin)}
   nav.appendChild(section);
  });
  nav.dataset.tp8Ready="1";
@@ -134,8 +134,10 @@ function updateHome(){
 function reorderSearch(){
  const section=$("#view-results");if(!section||section.dataset.tp8Ready)return;
  const head=section.querySelector(".tp-page-lead");
+ const reload=$("#reload");
  if(head){
   head.innerHTML='<div><span class="tp8-eyebrow">RICERCA IMMOBILIARE</span><h1>Trova casa a Torino</h1><p>Prima i risultati rilevanti. Prezzo, zona, inserzionista e aggiornamento sono sempre distinguibili da informazioni non verificate.</p></div>';
+  if(reload){reload.classList.add('tp8-search-refresh');reload.innerHTML='<i class="fa-solid fa-rotate"></i> Aggiorna';head.appendChild(reload)}
  }
  const tools=section.querySelector(".tp-search-tools"),filterbar=$("#tp-filterbar"),tabs=section.querySelector(".tabs"),intelligence=$("#tp-intelbar");
  if(tools){
