@@ -25,7 +25,7 @@ Deno.serve(async req=>{
   const token=(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"");
   const user=await verify(token);if(!user)return answer({error:"Accesso richiesto"},401);
   const staff=await getJson("turinpipps_staff?user_id=eq."+encodeURIComponent(user.id)+"&select=role&limit=1");
-  if(!staff.length||staff[0].role!=="owner")return answer({error:"Accesso sviluppatore riservato"},403);
+  if(!staff.length||staff[0].role!=="owner"||String(user.email||"").toLowerCase()!=="filippo@maben.it"||!user.email_confirmed_at)return answer({error:"Accesso sviluppatore riservato"},403);
   const body=await req.json().catch(()=>({})),action=String(body.action||"overview");
   if(action==="overview"){
     const [profiles,devices,scans,listings,mailLogs,notifications]=await Promise.all([
