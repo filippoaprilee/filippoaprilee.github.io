@@ -31,12 +31,12 @@ async function patch(table:string,filter:string,obj:any){
 function esc(text:unknown){return String(text==null?"":text).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]||ch))}
 function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|garage|camera doppia)\b/i.test(String(row.title||"")+" "+String(row.property_type||""))}
 function candidates(data:any[],p:any){
- const zones=Array.isArray(p.preferred_zones)?p.preferred_zones:[];
+ const zones=Array.isArray(p.preferred_zones)&&p.preferred_zones.length?p.preferred_zones:['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
  return data.filter((x:any)=>{
   return ["source","confirmed"].includes(String(x.private_status))&&x.price>=150&&x.price<=p.budget&&x.zone&&
     zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x)&&
     x.link_status!=="missing"&&x.availability_status!=="unavailable"&&x.availability_status!=="expired"&&!x.expired_at;
- }).sort((a:any,b:any)=>String(b.first_seen).localeCompare(String(a.first_seen))).slice(0,9);
+ }).sort((a:any,b:any)=>String(b.first_seen).localeCompare(String(a.first_seen)));
 }
 function recentlyChanged(listing:any,cutoff:number,user:any){
  const first=Date.parse(listing.first_seen||"")||0;
@@ -55,7 +55,7 @@ async function email(user:any,kind:"daily"|"weekly"|"manual",localDay:string,row
  const windowMs=kind==="weekly"?7*86400000:86400000;
  const last=Date.parse(user.last_digest_at||"")||0;
  const cutoff=Math.max(Date.now()-windowMs,last);
- const data=kind==="manual"?selected:selected.filter((x:any)=>recentlyChanged(x,cutoff,user));
+ const data=(kind==="manual"?selected:selected.filter((x:any)=>recentlyChanged(x,cutoff,user))).slice(0,9);
  if(kind!=="manual"&&!data.length)return {sent:false,skipped:"no_matching_news"};
  const dateKey=kind==="manual"?new Date().toISOString().slice(0,16).replace(/\d$/,"0"):kind==="weekly"?localDay.slice(0,7)+"-week-"+Math.ceil(Number(localDay.slice(8))/7):localDay;
  const previous=await query("turinpipps_email_dispatches?user_id=eq."+user.user_id+"&kind=eq."+kind+"&period_key=eq."+encodeURIComponent(dateKey)+"&select=id,status&limit=1");
