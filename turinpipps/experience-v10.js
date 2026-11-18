@@ -100,6 +100,7 @@ function homeMarkup(){
  '<aside class="tp10-home-next"><span class="tp10-overline">IL PROSSIMO PASSO</span><h2>Da una scoperta a una visita.</h2>'+
  '<div id="tp10-next-step"></div><div class="tp10-next-links"><button data-nav="saved"><i class="fa-regular fa-heart"></i> Salvati</button><button data-nav="visits"><i class="fa-regular fa-calendar-check"></i> Contatti e visite</button><button data-nav="sources"><i class="fa-solid fa-wave-square"></i> Stato ricerca</button></div></aside></div>';
  home.prepend(s);
+ document.body.classList.add('tp10-active');
 }
 function homeUpdate(){
  if(!$("#tp10-home"))return;
