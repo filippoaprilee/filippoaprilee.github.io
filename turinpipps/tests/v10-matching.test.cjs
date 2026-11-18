@@ -37,8 +37,8 @@ test('source verification does not affect the personal match score',()=>{
  assert.equal(owner.score,unknown.score);
 });
 test('client exposes the essential preservation, account and UI modules',()=>{
- assert.ok(html.includes('experience-v10.js?v=11.0.0'));
- assert.ok(html.includes('experience-v10.css?v=11.0.0'));
+ assert.ok(html.includes('experience-v10.js?v=11.1.0'));
+ assert.ok(html.includes('experience-v10.css?v=11.1.0'));
  assert.ok(html.includes('applyPersonalFlag:function(url,next)'));
  assert.ok(html.includes('auth-loader.js'));
  assert.ok(html.includes('trust-v9.js'));
