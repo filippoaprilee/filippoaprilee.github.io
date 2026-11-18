@@ -5,24 +5,16 @@ var $=function(sel,root){return (root||document).querySelector(sel)};
 var $$=function(sel,root){return Array.from((root||document).querySelectorAll(sel))};
 var zones=['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
 var steps=[
- {icon:'fa-solid fa-sparkles',eyebrow:'LA TUA RICERCA COMINCIA QUI',title:'Finalmente una casa che risponde alle tue esigenze.',
-  text:'In pochi passaggi impostiamo il tuo radar: meno annunci irrilevanti, più tempo per le case che meritano davvero.'},
- {icon:'fa-solid fa-wallet',eyebrow:'01 · BUDGET',title:'Quanto vuoi spendere ogni mese?',
-  text:'Imposta il canone massimo, escluse le spese. Il budget non è un obbligo: puoi modificarlo quando vuoi.'},
- {icon:'fa-solid fa-location-dot',eyebrow:'02 · QUARTIERI',title:'In quali zone ti piacerebbe abitare?',
-  text:'Seleziona più quartieri. L’app darà priorità a quelli che scegli e ti segnalerà gli annunci con zona incerta.'},
- {icon:'fa-solid fa-building',eyebrow:'03 · CASA IDEALE',title:'Che tipo di casa stai cercando?',
-  text:'Le tue preferenze affinano il radar, senza nascondere a priori opportunità che potrebbero sorprenderti.'},
- {icon:'fa-solid fa-person-walking',eyebrow:'04 · DISTANZE',title:'Quanto lontano dal Politecnico?',
-  text:'Le distanze a piedi vengono considerate solo quando sono note: non inventiamo tempi di percorrenza.'},
- {icon:'fa-solid fa-shield-halved',eyebrow:'05 · PREFERENZE',title:'Cosa conta di più nella scelta?',
-  text:'Impostiamo le tue priorità e ti mostriamo sempre le informazioni che devono essere controllate.'},
- {icon:'fa-regular fa-message',eyebrow:'06 · PRESENTAZIONE',title:'Prepariamo un messaggio per i proprietari.',
-  text:'Nome e presentazione sono facoltativi. Il testo resta privato e non viene inviato automaticamente.'},
- {icon:'fa-solid fa-route',eyebrow:'07 · COME FUNZIONA',title:'Un percorso semplice, dalla scoperta alla visita.',
-  text:'Ogni casa diventa un piccolo progetto: la trovi, la confronti, chiedi informazioni e organizzi una visita.'},
- {icon:'fa-solid fa-check-circle',eyebrow:'08 · TUTTO PRONTO',title:'Il tuo radar è configurato.',
-  text:'Controlla le impostazioni e inizia a esplorare. Gli annunci pubblici non sono disponibilità confermate.'}
+ {icon:'fa-solid fa-house',eyebrow:'BENVENUTO · 1 DI 5',title:'Trova casa, con meno confusione.',
+  text:'Imposta i tuoi criteri in pochi passaggi. Annunci e fonti saranno sempre distinguibili dalle informazioni che devi ancora verificare.'},
+ {icon:'fa-solid fa-wallet',eyebrow:'BUDGET · 2 DI 5',title:'Quanto vuoi spendere ogni mese?',
+  text:'Scegli il canone massimo, escluse le spese. Se un annuncio non indica il prezzo, non lo consideriamo automaticamente nel budget.'},
+ {icon:'fa-solid fa-location-dot',eyebrow:'ZONE · 3 DI 5',title:'Dove vorresti abitare?',
+  text:'Seleziona i quartieri di Torino che ti interessano. I risultati con zona sconosciuta rimarranno consultabili.'},
+ {icon:'fa-solid fa-building',eyebrow:'TIPOLOGIA · 4 DI 5',title:'Che casa cerchi?',
+  text:'Puoi scegliere una tipologia oppure valutare tutto. Nessun immobile viene presentato come disponibile senza conferma.'},
+ {icon:'fa-solid fa-check-circle',eyebrow:'PRONTO · 5 DI 5',title:'La tua ricerca è pronta.',
+  text:'Trova le opportunità, salva gli annunci e verifica proprietario, spese e disponibilità prima di organizzare una visita.'}
 ];
 var draft=null,active=-1,rendered=false;
 function clamp(n,min,max){return Math.max(min,Math.min(max,Number(n)||0))}
@@ -152,7 +144,7 @@ function draw(step){
  var scroll=$('#tp-ob-scroll');if(scroll)scroll.scrollTop=0;
  if(step===2){var error=document.createElement('p');error.id='tp-ob-zone-error';error.className='tp-ob-error';error.hidden=true;error.textContent='Scegli almeno un quartiere per proseguire.';$('#tp-guide-fields').append(error)}
 }
-function bodyForStep(step){return body(step)}
+function bodyForStep(step){return body([0,1,2,3,8][step]??0)}
 function savePrefs(){
  var api=window.TurinPippsUXV3;
  var bg=$('#budget'),sqm=$('#tp-min-sqm'),type=$('#tp-property-type'),walk=$('#tp-max-walk'),name=$('#fullname'),intro=$('#intro');
@@ -261,7 +253,7 @@ function mobileHome(){
 function init(){
  if(!window.TurinPippsUXV3)return;
  events();
- // Mantenere i 9 passi nella guida originale; visualizzazione completamente sostituita.
+ // Primo accesso snello: cinque passaggi, senza perdere gli input già sincronizzati.
  window.TurinPippsUXV3.guideSlides(steps.map(function(s){return {icon:s.icon,title:s.title,text:s.text}}));
  window.TurinPippsEnhanceGuide=function(step){draw(step)};
  // Il codice dell'app chiama drawGuide() all'apertura e qui la callback crea il nuovo wizard.
