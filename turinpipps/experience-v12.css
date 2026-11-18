@@ -488,3 +488,12 @@ html[data-tp-theme="dark"] #tp-guide-dialog .tp-ob-scroll #tp-guide-description{
  #view-settings .panel,#view-compare .panel,#view-visits .panel,#view-sources .panel{padding:16px!important}
  #tp9-global-footer.tp12-footer nav a{min-height:44px}
 }
+
+/* One clear primary call to action on the first visit. */
+#tp-welcome .tp12-welcome-primary{background:var(--tp12-accent)!important;border-color:var(--tp12-accent)!important;color:#fff!important;
+ font-size:14px!important;font-weight:800!important;box-shadow:0 5px 16px #10485818}
+#tp-welcome #tp-welcome-register:not(.primary){background:var(--tp12-card)!important;color:var(--tp12-text)!important;
+ border:1px solid var(--tp12-border)!important}
+#tp-welcome #tp-welcome-signin{background:transparent!important;color:var(--tp12-accent-text)!important;
+ border:0!important;text-decoration:underline;text-underline-offset:3px}
+#tp-welcome .tp-welcome-footer{font-size:11px;color:var(--tp12-muted);line-height:1.5}
