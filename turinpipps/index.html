@@ -780,7 +780,7 @@ async function load(){
 document.addEventListener('click',async function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);var previousFlag=Object.assign({},f);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
 
-if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact'){f.contact=!f.contact;f.contactedAt=f.contact?new Date().toISOString():'';}if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();
+if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact'){f.contact=!f.contact;f.contactedAt=f.contact?new Date().toISOString():'';if(!f.contact){f.replyReceived=false;f.repliedAt='';}}if(b.dataset.action==='discard')f.discard=!f.discard;if(b.dataset.action==='note'){openNoteEditor(a);return;}prefs.flags[a.url]=f;persist();
  if(accountMode&&window.TurinPippsAuth){
    var synced=await window.TurinPippsAuth.saveFlag(a.url,f);
    if(!synced){
