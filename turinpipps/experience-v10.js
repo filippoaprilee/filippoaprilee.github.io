@@ -152,11 +152,18 @@ function searchEnhance(){
 }
 function scoreBadge(a){
  const m=match(a),r=reliability(a),drop=priceDrop(a);
+ const description=String(a.title||"")+" "+String(a.description||"");
+ const signals=[];
+ if(a.price>0&&a.price<250&&!/stanza|camera|posto letto/i.test(description))signals.push("Canone insolitamente basso: verifica condizioni e autenticità");
+ if(/(?:caparra|anticipo|bonifico|ricarica).{0,100}(?:prima della visita|per bloccare|senza visita)/i.test(description))signals.push("Possibile richiesta di anticipo senza visita: non pagare prima delle verifiche");
+ if(a.link_status==="missing")signals.push("Collegamento non raggiungibile: chiedi conferma all'inserzionista");
+ const warning=signals.length?'<div class="tp10-safety"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>Da verificare: '+safe(signals.slice(0,2).join(" · "))+'</span></div>':
+ '<div class="tp10-safety tp10-safety-neutral"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>Non inviare anticipi senza verificare locatore, immobile e contratto.</span></div>';
  return '<div class="tp10-card-summary"><div class="tp10-card-main-metrics">'+
   '<div><span>MATCH PERSONALE</span><strong>'+m.score+'<small>/100</small></strong><small>'+m.unknown.length+' criteri non documentati</small></div>'+
   '<div><span>AFFIDABILITÀ DATI</span><strong class="tp10-quality-heading">'+safe(r.label)+'</strong><small>'+r.fields+'/6 elementi disponibili'+(r.owner?" · proprietario confermato":" · proprietario non verificato")+'</small></div></div>'+
   (drop?'<div class="tp10-drop"><i class="fa-solid fa-arrow-trend-down"></i> Ribasso rilevato: '+formatEuro(drop)+'</div>':'')+
- '</div>';
+ warning+'</div>';
 }
 function numbers(a,f){
  const c=f.costPlan||{},fields={};
@@ -220,6 +227,7 @@ function enhanceCards(){
   tools.innerHTML='<summary><span><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> La mia valutazione e i costi</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
   '<div class="tp10-tools-content">'+checksForm(a,f)+'<hr>'+costForm(a,f)+'<hr>'+stageTools(a,f)+'<p class="tp10-save-feedback" role="status" aria-live="polite"></p></div>';
   const oldDetails=$(".tp-card-details",article);
+  if(oldDetails){const summary=oldDetails.querySelector("summary");if(summary)summary.innerHTML='Dati originali, spese dichiarate e dettagli <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';}
   if(oldDetails)oldDetails.before(tools);
   else head.append(tools);
   $$(".tag",article).forEach(t=>{if(t.textContent.trim().startsWith("Score "))t.classList.add("tp10-legacy-score")});
