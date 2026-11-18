@@ -42,7 +42,13 @@ function fieldEvidence(a){
  const proof=a.field_provenance&&typeof a.field_provenance==="object"?a.field_provenance:{};
  const entries=Object.keys(names).filter(key=>proof[key]&&proof[key].origin==="public_listing_page");
  const link=a.evidence_url&&/^https:\/\//i.test(a.evidence_url)?a.evidence_url:"";
- if(!entries.length)return '<p class="tp11-proof-limited">Non abbiamo ancora una provenienza per singolo campo. Controlla i dati nella fonte originale; un valore presente non è una verifica indipendente.</p>';
+ if(!entries.length){
+  const manual=a.verification_level==="source_documented"&&link;
+  return '<p class="tp11-proof-limited">'+
+   (manual?'Questa pagina è stata consultata come fonte, ma non disponiamo ancora dello storico per ogni singolo campo. Le informazioni restano dichiarate, non verificate indipendentemente.':
+   'Non abbiamo ancora una provenienza documentata per singolo campo. Controlla l’annuncio originale; un valore presente non è una verifica indipendente.')+
+   (link?' <a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">Apri la fonte</a>':'')+'</p>';
+ }
  return '<details class="tp11-field-proof"><summary>Origine dei dati dichiarati ('+entries.length+')</summary>'+
  '<ul>'+entries.map(key=>{
   const p=proof[key];const when=p.observed_at?date(p.observed_at):"data non disponibile";
