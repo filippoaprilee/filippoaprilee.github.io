@@ -79,14 +79,13 @@ export function extractClickCaseDetails(html,listingUrl,stamp){
     ||(descriptionPart?.[1]||"").match(/\bspese\s+(?:condominiali)\s*(?:di|pari\s+a|:)?\s*(?:€|euro)\s*([\d.,]+)/i);
  const expenses=parseMoney(expenseText?.[1]);
  if(expenses!==null&&expenses>=0&&expenses<=3000)put("expenses",expenses,"Spese mensili esplicitamente indicate");
- const sqm=prefix.match(/\b(\d{2,4})\s*(?:m²|mq|m2)\b/i);
+ const sqm=prefix.match(/\b(\d{2,4})\s*(?:m²|mq|m2)(?=\s|[|·,]|$)/i);
  if(sqm&&+sqm[1]>=12&&+sqm[1]<=650)put("sqm",Number(sqm[1]),"Superficie indicata nella testata");
  const street=explicitStreet(prefix);
  if(street)put("address",street,"Indirizzo con numero civico esplicitato");
  const privato=/\b(?:affitto|locazione)\s+da\s+privato\b/i.test(prefix)
    ||/\b(?:privato\s+affitta|no\s+intermediari)\b/i.test((descriptionPart?.[1]||"").slice(0,250));
  if(privato)put("private_status","source","La fonte si presenta come annuncio da privato, identità non verificata");
- const updated=firstDate(content,/(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/i,now);
  const explicitUpdated=firstDate(content,/\b(?:aggiornato|modificato)\s+il\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/i,now);
  const published=firstDate(content,/\b(?:annuncio\s+del|pubblicato\s+il)\s+(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+(\d{4})/i,now);
  // A generic date could be the availability date, not the publication date: do not use it.
