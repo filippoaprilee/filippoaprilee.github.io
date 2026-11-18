@@ -69,7 +69,7 @@
   }
   function close(){
     if(dialog.close)dialog.close();
-    if(welcome&&!current&&client&&sessionStorage.getItem('turinpipps-guest-session')!=='1')welcome.hidden=false;
+    if(welcome&&!current&&client&&sessionStorage.getItem('turinpipps-guest-session')!=='1'&&localStorage.getItem('turinpipps.welcome.seen.v11')!=='1')welcome.hidden=false;
     else dialog.removeAttribute('open');
   }
   async function changeSession(session){
