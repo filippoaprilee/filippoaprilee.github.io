@@ -289,6 +289,70 @@ function footer(){
  if(text)text.textContent="TurinPipps · Ricerca casa indipendente. Annunci, prezzi e disponibilità sempre da verificare con la fonte.";
  const nav=$("nav",node);if(nav)nav.setAttribute("aria-label","Guida, privacy, termini e assistenza");
 }
+/* Fix the reading order: search first, answers second, technical methodology last. */
+function simplifySearch(){
+ const section=$("#view-results");if(!section||section.dataset.tp13Search)return;
+ const quick=$("#tp10-search-tools"),advanced=$("#tp-filterbar");
+ if(quick&&advanced){
+   const controls=$(".tp10-filters-left",quick);
+   if(controls){
+     controls.classList.add("tp13-inline-filters");
+     controls.querySelector("b")?.replaceChildren(document.createTextNode("Filtri rapidi"));
+     advanced.prepend(controls);quick.remove();
+   }
+ }
+ const menu=$(".tp12-search-more-content",section),reload=$("#reload");
+ if(menu&&reload&&!menu.contains(reload)){
+   reload.classList.add("tp13-reload-option");
+   reload.innerHTML='<i class="fa-solid fa-rotate" aria-hidden="true"></i> Ricarica gli annunci';
+   menu.append(reload);
+ }
+ const insight=$(".tp8-insights",section),list=$("#list");
+ if(insight&&list&&!insight.dataset.tp13Moved){
+   insight.classList.add("tp13-methodology");
+   list.after(insight);insight.dataset.tp13Moved="1";
+   const sum=$("summary",insight);
+   if(sum)sum.innerHTML='<i class="fa-solid fa-circle-info" aria-hidden="true"></i> Come valutiamo gli annunci <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+ }
+ const tabs=$(".tp12-result-tabs",section);
+ if(tabs){
+  tabs.setAttribute("role","group");tabs.setAttribute("aria-label","Quali risultati vuoi visualizzare");
+ }
+ const toolbar=$(".tp12-results-header",section);
+ if(toolbar)toolbar.setAttribute("aria-label","Numero risultati e ordinamento");
+ section.dataset.tp13Search="1";
+}
+/** Less noise in secondary journeys: preserve all original actions and data. */
+function simplifyJourney(){
+ const section=$("#view-visits");if(section){
+  const lead=$(".tp-page-lead",section);
+  const eyebrow=$(".tp-kicker",lead||section);if(eyebrow)eyebrow.textContent="IL TUO PERCORSO";
+  const title=$("h1",lead||section);if(title)title.textContent="Contatti e visite";
+  const p=$("p",lead||section);if(p)p.textContent="Segui solo le case che hai contattato, salvato o valutato. Ogni fase resta modificabile.";
+ }
+ const saved=$("#view-saved");
+ if(saved){
+  const h1=$(".tp-page-lead h1",saved);if(h1)h1.textContent="Case salvate";
+  const lead=$(".tp-page-lead p",saved);if(lead)lead.textContent="Gli annunci che hai contrassegnato come salvati. Le case già contattate sono anche in Organizza.";
+  const other=$(".tp-page-lead>button",saved);if(other)other.setAttribute("aria-label","Torna alla ricerca di altri immobili");
+ }
+ const home=$("#view-home");
+ if(home){
+  const title=$(".tp10-home-head h1",home);if(title)title.innerHTML="La tua ricerca casa, <span>in un unico posto.</span>";
+  const summary=$(".tp10-home-head p",home);if(summary)summary.textContent="Confronta le opportunità, verifica i dati mancanti e segui i contatti senza perdere il filo.";
+ }
+}
+/** The old welcome/login modals should never be reopened by the theme switch. */
+function improveThemeDetails(){
+ const privacy=$("#tp9-profile-privacy");
+ if(privacy){
+  privacy.classList.add("tp13-privacy");
+  const h=$("h3",privacy);if(h)h.textContent="I tuoi dati, sotto il tuo controllo";
+  privacy.querySelectorAll("button").forEach(b=>b.setAttribute("type","button"));
+ }
+ const themePanel=$(".tp12-theme-settings",$("#view-profile")||document);
+ if(themePanel)themePanel.classList.add("tp13-preference");
+}
 function events(){
  document.addEventListener("click",event=>{
   const button=event.target.closest("[data-nav]");
@@ -305,13 +369,13 @@ function events(){
      const more=$(".tp12-search-more");if(more)more.open=false;
   }
  });
- window.addEventListener("turinpipps:ready",()=>{results();header();themeControls();cards();footer();});
- window.addEventListener("turinpipps:account-ready",()=>{themeControls();header();cards();footer();});
+ window.addEventListener("turinpipps:ready",()=>{results();simplifySearch();simplifyJourney();header();themeControls();improveThemeDetails();cards();footer();});
+ window.addEventListener("turinpipps:account-ready",()=>{themeControls();header();improveThemeDetails();cards();footer();});
  window.addEventListener("turinpipps:account-signed-out",()=>{themeControls();header();cards();});
 }
 function init(){
  if(!window.TurinPippsUXV3)return;
- installTheme();header();results();onboarding();themeControls();footer();cards();events();observe();
+ installTheme();header();results();simplifySearch();simplifyJourney();onboarding();themeControls();improveThemeDetails();footer();cards();events();observe();
 }
 window.TurinPippsV12={applyTheme,results,cards,themeControls};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
