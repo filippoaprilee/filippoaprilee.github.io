@@ -713,13 +713,24 @@ function renderSources(){
  var msg=d&&d.message||'';
  var rss=msg.match(/Google Alerts RSS:\s*(\d+)\s*feed/i),bing=msg.match(/Bing RSS:\s*(\d+)\s*ricerche/i),linkCount=msg.match(/link\s+(\d+)/i),rssErrors=msg.match(/errori\s+(\d+)/i),searched=(rss?Number(rss[1]):0)+(bing?Number(bing[1]):0);
  var click=msg.match(/(\d+)\s+schede ClickCase/i);
- var count=d&&Number.isFinite(Number(d.new))?d.new:0;
- el('tp-activity-summary').innerHTML='<div class="tp-scan-state"><span class="tp-status-light '+(recent&&d&&d.status==='ok'?'good':'warning')+'"></span><div><strong>'+
- (recent&&d&&d.status==='ok'?'Rilevazione recente riuscita':'Ultimo aggiornamento da controllare')+
+ var liveDate=liveScan?Date.parse(liveScan.finished_at||liveScan.started_at||''):NaN;
+ var hasLive=Number.isFinite(liveDate);
+ if(hasLive){caption=new Date(liveDate).toLocaleString('it-IT');recent=Date.now()-liveDate<3*3600000;}
+ var working=hasLive?['ok','partial'].includes(liveScan.status):!!d&&d.status==='ok';
+ var count=hasLive?Number(liveScan.discovered||0):(d&&Number.isFinite(Number(d.new))?Number(d.new):0);
+ var checked=hasLive?Number(liveScan.jobs_checked||0):searched;
+ var successful=hasLive?Number(liveScan.jobs_ok||0):null;
+ var sourceQuality=hasLive&&liveScan.details&&liveScan.details.source_quality||[];
+ var productive=Array.isArray(sourceQuality)?sourceQuality.filter(function(x){return Number(x.found)>0}).length:0;
+ el('tp-activity-summary').innerHTML='<div class="tp-scan-state"><span class="tp-status-light '+(recent&&working?'good':'warning')+'"></span><div><strong>'+
+ (recent&&working?'Controllo automatico completato':'Ultimo controllo da verificare')+
  '</strong><small>'+esc(caption)+'</small></div></div>'+
- '<p class="note">Ultimo controllo: '+esc(count)+' nuovi collegamenti. '+(linkCount?esc(linkCount[1])+' link dalle ricerche monitorate. ':'')+
- 'La raccolta cambia quando vengono rilevate nuove informazioni.</p>'+
- '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi</span></div><div><b>'+esc(searched)+'</b><span>Ricerche</span></div><div><b>'+esc(click?click[1]:'—')+'</b><span>Schede lette</span></div></div>';
+ '<p class="note">Ultima scansione: '+esc(count)+' nuovi URL unici rilevati, '+esc(checked)+' controlli effettuati'+
+ (successful!==null?' ('+esc(successful)+' con esito tecnico positivo)':'')+
+ '. Un controllo positivo non garantisce nuovi annunci né immobili disponibili.</p>'+
+ '<div class="tp-activity-strip"><div><b>'+esc(count)+'</b><span>Nuovi unici</span></div>'+
+ '<div><b>'+esc(checked)+'</b><span>Fonti/feed controllati</span></div>'+
+ '<div><b>'+esc(sourceQuality.length?productive:'—')+'</b><span>Gruppi produttivi</span></div></div>';
  var rows=[
   {icon:'fa-solid fa-rotate',title:'Controllo immobili',text:'Ultimo aggiornamento '+caption},
   {icon:'fa-solid fa-magnifying-glass',title:'Ricerche consultate',text:searched?searched+' ricerche, '+(linkCount?linkCount[1]:'0')+' link trovati, '+(rssErrors?rssErrors[1]:'0')+' errori':'Nessun dato disponibile'},
