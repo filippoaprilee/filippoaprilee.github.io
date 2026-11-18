@@ -438,13 +438,14 @@ function visitText(f){
  var d=new Date(f.visitAt);
  return isNaN(d.getTime())?'':d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'});
 }
+function typeOfKnown(a){return /\b(?:monolocale|bilocale|trilocale|quadrilocale)\b/i.test(String(a.title||'')+' '+String(a.property_type||''))}
 function matchPersonalCriteria(a){
- if(prefs.minSqm&&(!a.sqm||a.sqm<Number(prefs.minSqm)))return false;
+ if(prefs.minSqm&&a.sqm&&a.sqm<Number(prefs.minSqm))return false;
  if(prefs.propertyType&&prefs.propertyType!=='tutte'){
    var needle=prefs.propertyType,typ=(a.title+' '+a.property_type).toLowerCase();
-   if(!typ.includes(needle))return false;
+   if(typeOfKnown(a)&&!typ.includes(needle))return false;
  }
- if(prefs.maxWalkMinutes&&(!a.walking_minutes||a.walking_minutes>Number(prefs.maxWalkMinutes)))return false;
+ if(prefs.maxWalkMinutes&&a.walking_minutes&&a.route_checked_at&&a.walking_minutes>Number(prefs.maxWalkMinutes))return false;
  return true;
 }
 function score(a){return window.TurinPippsV10&&window.TurinPippsV10.match?window.TurinPippsV10.match(a).score:intelligentScore(a).total}
