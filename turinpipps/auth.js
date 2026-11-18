@@ -134,7 +134,7 @@
       decision_status:['valutazione','trattativa','scelto','scartato'].includes(flag.decisionStatus)?flag.decisionStatus:'valutazione',
       contacted_at:flag.contactedAt||null,
       verification_checks:Object.fromEntries(Object.entries(flag.verificationChecks||{}).filter(function(x){return ['owner','available','charges','contract','photos','visit'].includes(x[0])}).map(function(x){return [x[0],x[1]===true]})),
-      cost_plan:Object.fromEntries(Object.entries(flag.costPlan||{}).filter(function(x){return ['condo','utilities','heating','internet','tari','depositMonths','agency','setup'].includes(x[0])}).map(function(x){return [x[0],x[1]===''?null:Math.max(0,Math.min(10000,Number(x[1])||0))]})),
+      cost_plan:Object.fromEntries(Object.entries(flag.costPlan||{}).filter(function(x){return ['condo','utilities','heating','internet','tari','depositMonths','agency','setup'].includes(x[0])}).map(function(x){return [x[0],x[1]===null||x[1]===''?null:Math.max(0,Math.min(10000,Number(x[1])||0))]})),
       reply_received:!!flag.replyReceived&&!!flag.contact,
       replied_at:flag.replyReceived&&flag.contact?(flag.repliedAt||new Date().toISOString()):null,
       updated_at:new Date().toISOString()};
