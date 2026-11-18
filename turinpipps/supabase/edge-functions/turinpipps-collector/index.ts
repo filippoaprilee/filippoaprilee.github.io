@@ -426,6 +426,8 @@ function mergeSourceDetail(row:any,old:any,detail:any,time:string){
 }
 
 async function scan(time:string,feeds:string[]){
+  // Refresh robots.txt permissions on every scan; cache only within this run.
+  ROBOTS_CACHE.clear();
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
   for(let i=0;i<QUERY_SET.length;i+=3){
