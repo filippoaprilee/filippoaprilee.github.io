@@ -356,12 +356,27 @@ function persist(){if(!accountMode){localStorage.setItem(KEY,JSON.stringify(pref
 function el(id){return document.getElementById(id)}
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function cleanTitle(s){s=String(s||'').trim();if(s.startsWith('{')||s.startsWith('[')){try{var j=JSON.parse(s);s=j.name||j.title||(Array.isArray(j)&&j[0]&&j[0].name)||''}catch(_){s=''}}return s.replace(/<[^>]*>/g,'').trim().slice(0,170)||'Annuncio: verifica titolo alla fonte'}
-function canonical(url){try{var u=new URL(url);if(!/^https?:$/.test(u.protocol))return '';u.hash='';['utm_source','utm_medium','utm_campaign','fbclid','gclid'].forEach(function(k){u.searchParams.delete(k)});return u.toString().replace(/\/$/,'')}catch(_){return ''}}
+function canonical(url){try{var u=new URL(url);if(!/^https?:$/.test(u.protocol))return '';u.hash='';var h=u.hostname.toLowerCase().replace(/^www\./,'');if(['clickcase.it','subito.it','immobiliare.it','idealista.it'].includes(h)){u.protocol='https:';u.hostname='www.'+h;u.search='';}else ['utm_source','utm_medium','utm_campaign','fbclid','gclid','utm_content','utm_term'].forEach(function(k){u.searchParams.delete(k)});return u.toString().replace(/\/$/,'')}catch(_){return ''}}
+function sourceId(url){try{var u=new URL(url),h=u.hostname.toLowerCase().replace(/^www\./,''),p=u.pathname.toLowerCase(),m=null;if(h==='clickcase.it')m=p.match(/-(\d+)\.html$/);else if(h==='subito.it')m=p.match(/-(\d+)\.htm$/);else if(h==='immobiliare.it')m=p.match(/^\/annunci\/(\d+)\/?$/);else if(h==='idealista.it')m=p.match(/^\/immobile\/(\d+)\/?$/);else if(h.endsWith('.bakeca.it'))m=p.match(/-([a-z0-9]{8,})\/?$/);return m?h.replace(/^[^.]+\.bakeca\.it$/,'bakeca.it')+':'+m[1]:url}catch(_){return url}}
+
 function normalize(item){if(!item||typeof item!=='object')return null;var url=canonical(item.url||item.link);if(!url)return null;var desc=String(item.description||item.summary||'').replace(/<[^>]+>/g,' ').slice(0,1200);var price=Number(item.price||item.rent||0);if(!Number.isFinite(price)||price<0)price=0;var zone=String(item.zone||'').trim();var probe=(zone+' '+String(item.title||'')+' '+desc).toLowerCase();if(!zone){zones.forEach(function(z){if(!zone&&probe.includes(z))zone=z.replace(/\b\w/g,function(m){return m.toUpperCase()})})}
 var source=String(item.source||item.portal||'Web');var privateStatus=item.private_status||item.owner_status||((source.toLowerCase().includes('clickcase')||source.toLowerCase().includes('subito privati'))?'source':'unverified');
 if(privateStatus===true)privateStatus='source';if(!['source','confirmed','user','unverified'].includes(privateStatus))privateStatus='unverified';
-return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',published_at:item.published_at||'',last_verified_at:item.last_verified_at||'',availability_status:item.availability_status||'unknown',verification_level:item.verification_level||'unverified',verification_reason:item.verification_reason||'',price_verified_at:item.price_verified_at||'',expired_at:item.expired_at||'',price_history:Array.isArray(item.price_history)?item.price_history:[],address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0,link_status:item.link_status||'unchecked',link_checked_at:item.link_checked_at||'',link_http_status:item.link_http_status||null,link_failure_count:Number(item.link_failure_count||0)||0}}
-function all(){if(memoListings)return memoListings;var seen=new Set();memoListings=(prefs.manual||[]).concat(externalRemote,remote).map(normalize).filter(function(a){if(!a||seen.has(a.url))return false;seen.add(a.url);return true});return memoListings}
+return {url:url,title:cleanTitle(item.title||item.name),description:desc,price:price,zone:zone,source:source,sqm:Number(item.sqm||item.area||0)||0,private_status:privateStatus,seen:item.seen||item.first_seen||item.discovered||'',last_seen:item.last_seen||'',expenses:item.expenses||'',property_type:item.property_type||'',source_updated:item.source_updated||'',published_at:item.published_at||'',last_verified_at:item.last_verified_at||'',availability_status:item.availability_status||'unknown',verification_level:item.verification_level||'unverified',verification_reason:item.verification_reason||'',price_verified_at:item.price_verified_at||'',expired_at:item.expired_at||'',price_history:Array.isArray(item.price_history)?item.price_history:[],field_provenance:item.field_provenance&&typeof item.field_provenance==='object'&&!Array.isArray(item.field_provenance)?item.field_provenance:{},detail_status:item.detail_status||'unchecked',detail_checked_at:item.detail_checked_at||'',address:String(item.address||'').slice(0,250),lat:Number(item.lat||item.latitude)||0,lng:Number(item.lng||item.longitude)||0,walking_km:Number(item.walking_km)||0,walking_minutes:Number(item.walking_minutes)||0,route_checked_at:item.route_checked_at||'',score:Number(item.score||0)||0,availability_state:String(item.availability_state||''),availability_checked_at:item.availability_checked_at||'',availability_consecutive_missing:Number(item.availability_consecutive_missing||0)||0,link_status:item.link_status||'unchecked',link_checked_at:item.link_checked_at||'',link_http_status:item.link_http_status||null,link_failure_count:Number(item.link_failure_count||0)||0}}
+function all(){if(memoListings)return memoListings;
+ var found=new Map();
+ (prefs.manual||[]).concat(externalRemote,remote).map(normalize).forEach(function(a){
+  if(!a)return;var key=sourceId(a.url),prior=found.get(key);
+  if(!prior){found.set(key,a);return}
+  // Same portal and same listing identifier: retain the first URL and the user's notes.
+  // Never merge two different providers automatically.
+  ['price','sqm','expenses','address','property_type','published_at','source_updated','last_verified_at','price_verified_at','evidence_url','description','link_checked_at'].forEach(function(field){
+   if((prior[field]===0||prior[field]===null||prior[field]===undefined||prior[field]==='')&&a[field])prior[field]=a[field];
+  });
+  prior.field_provenance=Object.assign({},a.field_provenance||{},prior.field_provenance||{});
+ });
+ memoListings=Array.from(found.values());return memoListings
+}
 function classification(a){
  var reasons=[],text=(String(a.title||'')+' '+String(a.property_type||'')).toLowerCase(),
  desc=(String(a.description||'')).toLowerCase();
@@ -983,7 +998,7 @@ function openGuide(){
  var dialog=el('tp-guide-dialog');if(!dialog.open)dialog.showModal();
 }
 function closeGuide(){
- try{localStorage.setItem('turinpipps.onboard.v2','1')}catch(_){}
+ try{localStorage.setItem('turinpipps.onboard.v2','1');localStorage.setItem('turinpipps.onboard.v4','1')}catch(_){}
  el('tp-guide-dialog').close();
 }
 function maybeOpenGuide(){
@@ -1119,7 +1134,7 @@ window.TurinPippsBridge={
      return {url:x.listing_url,title:x.title,description:x.description,price:x.price,
        zone:x.zone,source:x.source,private_status:x.private_status||'unverified',
        seen:x.first_seen,last_seen:x.last_seen,source_updated:x.source_updated||'',
-       sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',published_at:x.published_at||'',last_verified_at:x.last_verified_at||'',availability_status:x.availability_status||'unknown',verification_level:x.verification_level||'unverified',verification_reason:x.verification_reason||'',price_verified_at:x.price_verified_at||'',expired_at:x.expired_at||'',origin_engine:x.origin_engine,link_status:x.link_status||'unchecked',link_checked_at:x.link_checked_at||'',link_http_status:x.link_http_status||null,link_failure_count:x.link_failure_count||0,price_history:Array.isArray(x.price_history)?x.price_history:[]};
+       sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',published_at:x.published_at||'',last_verified_at:x.last_verified_at||'',availability_status:x.availability_status||'unknown',verification_level:x.verification_level||'unverified',verification_reason:x.verification_reason||'',price_verified_at:x.price_verified_at||'',expired_at:x.expired_at||'',origin_engine:x.origin_engine,link_status:x.link_status||'unchecked',link_checked_at:x.link_checked_at||'',link_http_status:x.link_http_status||null,link_failure_count:x.link_failure_count||0,price_history:Array.isArray(x.price_history)?x.price_history:[],field_provenance:x.field_provenance&&typeof x.field_provenance==='object'?x.field_provenance:{},detail_checked_at:x.detail_checked_at||'',detail_status:x.detail_status||'unchecked'};
    }):[];
    liveScan=scan||null;memoListings=null;page=1;
    renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();
