@@ -84,7 +84,7 @@
     try{
       var uid=next.id;
       var results=await Promise.all([
-        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes,compare_selected,visit_at,visit_status,visit_notes,decision_status,contacted_at').eq('user_id',uid),
+        client.from('turinpipps_listing_states').select('listing_url,saved,contacted,discarded,notes,compare_selected,visit_at,visit_status,visit_notes,decision_status,contacted_at,verification_checks,cost_plan,reply_received,replied_at').eq('user_id',uid),
         client.from('turinpipps_manual_listings').select('payload').eq('user_id',uid),
         client.from('turinpipps_preferences').select('budget,display_name,introduction,min_sqm,preferred_zones,property_type,max_walk_minutes').eq('user_id',uid).maybeSingle()
       ]);
@@ -97,7 +97,10 @@
            discard:!!row.discarded,notes:row.notes||'',
            compare:!!row.compare_selected,visitAt:row.visit_at||'',
            visitStatus:row.visit_status||'non_programmata',
-           visitNotes:row.visit_notes||'',decisionStatus:row.decision_status||'valutazione',contactedAt:row.contacted_at||''};
+           visitNotes:row.visit_notes||'',decisionStatus:row.decision_status||'valutazione',contactedAt:row.contacted_at||'',
+           verificationChecks:row.verification_checks&&typeof row.verification_checks==='object'?row.verification_checks:{},
+           costPlan:row.cost_plan&&typeof row.cost_plan==='object'?row.cost_plan:{},
+           replyReceived:!!row.reply_received,repliedAt:row.replied_at||''};
       });
       var manual=(results[1].data||[]).map(function(x){return x.payload}).filter(Boolean);
       var settings=results[2].data||null;
@@ -130,6 +133,10 @@
       visit_notes:String(flag.visitNotes||'').slice(0,2000),
       decision_status:['valutazione','trattativa','scelto','scartato'].includes(flag.decisionStatus)?flag.decisionStatus:'valutazione',
       contacted_at:flag.contactedAt||null,
+      verification_checks:Object.fromEntries(Object.entries(flag.verificationChecks||{}).filter(function(x){return ['owner','available','charges','contract','photos','visit'].includes(x[0])}).map(function(x){return [x[0],x[1]===true]})),
+      cost_plan:Object.fromEntries(Object.entries(flag.costPlan||{}).filter(function(x){return ['condo','utilities','heating','internet','tari','depositMonths','agency','setup'].includes(x[0])}).map(function(x){return [x[0],x[1]===''?null:Math.max(0,Math.min(10000,Number(x[1])||0))]})),
+      reply_received:!!flag.replyReceived&&!!flag.contact,
+      replied_at:flag.replyReceived&&flag.contact?(flag.repliedAt||new Date().toISOString()):null,
       updated_at:new Date().toISOString()};
     var result=await client.from('turinpipps_listing_states')
       .upsert(value,{onConflict:'user_id,listing_url'});
