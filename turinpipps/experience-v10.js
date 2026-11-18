@@ -120,9 +120,12 @@ function homeUpdate(){
  const last=seen(scan?.finished_at||scan?.started_at);
  $("#tp10-home-scan").textContent=last&&Date.now()-last<3*3600000?
   'Ricerca aggiornata · '+date(last):"Ultimo controllo da verificare";
- const good=items.filter(a=>!flags[a.url]?.discard&&Number(a.price)>0&&Number(a.price)<=budget)
+ const good=items.filter(a=>!flags[a.url]?.discard&&Number(a.price)>0&&Number(a.price)<=budget&&
+   api()?.classifyListing?.(a)?.status!=="excluded")
    .sort((a,b)=>match(b,p).score-match(a,p).score||seen(b.seen)-seen(a.seen)).slice(0,3);
- const other=items.filter(a=>!flags[a.url]?.discard).sort((a,b)=>seen(b.seen)-seen(a.seen)).slice(0,3);
+ // Never recommend an explicitly incompatible home as a promising match.
+ const other=items.filter(a=>!flags[a.url]?.discard&&api()?.classifyListing?.(a)?.status!=="excluded")
+   .sort((a,b)=>match(b,p).score-match(a,p).score||seen(b.seen)-seen(a.seen)).slice(0,3);
  $("#tp10-home-options").innerHTML=(good.length?good:other).map(a=>{
   const m=match(a,p),r=reliability(a),f=flags[a.url]||{};
   return '<article class="tp10-home-option"><div class="tp10-option-symbol"><i class="fa-solid fa-building" aria-hidden="true"></i></div>'+
@@ -131,11 +134,15 @@ function homeUpdate(){
    '<span class="tp10-option-score">Match preliminare '+m.score+'/100 · '+m.unknown.length+' dati mancanti</span></div>'+
    '<div class="tp10-option-actions"><button type="button" class="button" data-action="save" data-url="'+safe(a.url)+'" aria-label="'+(f.saved?"Rimuovi dai salvati":"Salva immobile")+'"><i class="'+(f.saved?"fa-solid":"fa-regular")+' fa-heart" aria-hidden="true"></i></button>'+
    '<a class="tp10-open-source" href="'+safe(a.url)+'" target="_blank" rel="noopener noreferrer">Fonte originale</a></div></article>';
- }).join("")||'<div class="tp10-empty">Nessun immobile nell’archivio. Consulta le fonti e riprova dopo la prossima scansione.</div>';
+ }).join("")||'<div class="tp10-empty"><b>Nessuna proposta suggerita per i criteri attuali.</b><p>Altri annunci possono essere disponibili in Cerca, anche con prezzo o informazioni da verificare.</p><button type="button" class="button" data-nav="results">Esplora tutti i risultati</button></div>';
  const contacted=items.filter(a=>flags[a.url]?.contact&&!flags[a.url]?.replyReceived).length,
  replied=items.filter(a=>flags[a.url]?.replyReceived).length;
+ const nextText=replied?"Hai "+replied+" "+(replied===1?"risposta da valutare.":"risposte da valutare.")+" Apri Organizza per decidere il passo successivo.":
+ contacted?"Hai già "+contacted+" "+(contacted===1?"contatto in attesa.":"contatti in attesa.")+" Puoi seguirli in Organizza, anche se non sono contrassegnati come salvati.":
+ saved?"Hai "+saved+" "+(saved===1?"casa salvata.":"case salvate.")+" Verifica spese, inserzionista e condizioni prima di contattare.":
+ "Trova un annuncio interessante e inizia da Salva. Identità e disponibilità richiedono sempre una conferma.";
  $("#tp10-next-step").innerHTML='<div class="tp10-journey"><div><b>'+saved+'</b><span>Salvati</span></div><div><b>'+contacted+'</b><span>In attesa di risposta</span></div><div><b>'+replied+'</b><span>Risposte segnate</span></div></div>'+
- '<p>Apri una scheda, salva ciò che ti interessa, verifica costi e proprietario e registra il contatto. *Il solo canone non basta a certificare compatibilità e disponibilità.</p>';
+ '<p>'+safe(nextText)+'</p>';
 }
 function searchEnhance(){
  if($("#tp10-search-tools"))return;
