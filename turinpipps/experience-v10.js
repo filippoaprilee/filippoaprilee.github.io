@@ -423,6 +423,15 @@ function attachEvents(){
   }
  });
  document.addEventListener("click",async ev=>{
+  const reset=ev.target.closest("[data-tp11-reset]");
+  if(reset){
+   ev.preventDefault();
+   filterState.priced=false;filterState.fresh=false;
+   $("[data-tp10-filter]").forEach(input=>{input.checked=false;});
+   $("#tp8-reset")?.click();
+   $("#tp-main-search")?.focus();
+   return;
+  }
   const btn=ev.target.closest("[data-tp10-action]");
   if(!btn)return;
   const url=btn.dataset.url,f=getFlag(url);if(!url)return;
