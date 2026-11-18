@@ -180,6 +180,7 @@ function deleteDialog(){
    const result=await privacyRequest("delete",{email,confirm},token);
    if(!result.deleted)throw Error("Cancellazione non confermata dal server");
    localStorage.removeItem("turinpipps.v1");
+   localStorage.removeItem("casaradar.v3");
    try{await auth().finishErasure()}catch(_){}
    window.location.reload();
   }catch(error){msg.textContent=error.message||"Cancellazione non riuscita";submit.disabled=false}
