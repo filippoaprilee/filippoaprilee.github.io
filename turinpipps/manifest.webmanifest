@@ -1,7 +1,7 @@
 {
   "name": "TurinPipps · Affitti a Torino",
   "short_name": "TurinPipps",
-  "description": "Trova affitti da privati a Torino. Radar annunci, confronti, preferiti e visite.",
+  "description": "Esplora e confronta annunci di affitto a Torino. Prezzi, fonti e disponibilità richiedono conferma.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
