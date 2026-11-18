@@ -2,7 +2,7 @@
 <html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121d32"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="Ricerca casa a Torino: annunci da privati, massimo 700 euro, vicino al Politecnico.">
+<meta name="description" content="Radar di annunci immobiliari a Torino: confronta prezzi, zone e informazioni da verificare presso le fonti originali.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-180.png">
 <title>TurinPipps · Torino</title>
 <style>
@@ -181,6 +181,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:650px){.tp-costbar{grid-template-columns:1fr}.tp-costbar>div{border-right:0;border-bottom:1px solid #e3e9f2;padding:9px 12px}.tp-costbar>div:last-child{border-bottom:0}}
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
+ .tp-provenance{margin:14px 0;padding:13px;border:1px solid #e3e9f3;border-radius:12px;background:#f8faff;font-size:12px}.tp-provenance>strong{display:block;color:#263b5d;margin-bottom:9px}.tp-provenance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tp-provenance-grid>div{background:#fff;padding:8px;border:1px solid #edf0f5;border-radius:8px;min-width:0}.tp-provenance-grid span{display:block;color:#66758f;font-size:11px}.tp-provenance-grid b{display:block;color:#263b5d;overflow-wrap:anywhere;font-size:11px}.tp-provenance small{display:block;margin-top:10px;color:#64748b;line-height:1.6}@media(max-width:380px){.tp-provenance-grid{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"><link rel="stylesheet" href="./experience-v4.css?v=4.0.0"><link rel="stylesheet" href="./experience-v5.css?v=5.0.0">
 <link rel="stylesheet" href="./experience-v6.css?v=6.0.0"><link rel="stylesheet" href="./organize-v7.css?v=7.0.0">
 <link rel="stylesheet" href="./experience-v8.css?v=8.3.0"></head><body>
@@ -511,7 +512,16 @@ function dataQuality(a){
 function card(a){
  var f=flag(a.url),cost=recurringCost(a),rank=intelligentScore(a),checks=cautionSignals(a);
  var decision=classification(a),quality=dataQuality(a);
- var privateLabel=a.private_status==='confirmed'?'Privato verificato':a.private_status==='source'?'Fonte privata · da confermare':'Inserzionista da verificare';
+ var privateLabel=a.private_status==='confirmed'&&a.verification_level==='verified'?'Privato verificato':a.private_status==='source'?'Fonte che indica privato · non verificato':'Inserzionista non verificato';
+ var provenance=(function(){
+   var priceState=a.price?(a.price_verified_at?'Verificato il '+dateLabel(a.price_verified_at):'Dichiarato dalla fonte'):'Sconosciuto';
+   var ownerState=a.private_status==='confirmed'&&a.verification_level==='verified'?'Verificato':a.private_status==='source'?'Dichiarato dalla fonte':'Sconosciuto';
+   var availableState=a.availability_status==='confirmed'&&a.last_verified_at?'Verificata il '+dateLabel(a.last_verified_at):'Da confermare';
+   var expensesState=a.expenses!==null&&a.expenses!==undefined&&a.expenses!==''?'Dichiarate dalla fonte':'Sconosciute';
+   var distanceState=a.walking_minutes?'Percorso stimato':'Non calcolata';
+   var entries=[['Prezzo',priceState],['Proprietario',ownerState],['Disponibilità',availableState],['Spese',expensesState],['Distanza',distanceState],['Freschezza',a.source_updated?'Data della fonte':'Data originale sconosciuta']];
+   return '<div class="tp-provenance" aria-label="Attendibilità dei dati"><strong>Attendibilità delle informazioni</strong><div class="tp-provenance-grid">'+entries.map(function(x){return '<div><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>'}).join('')+'</div><small>La raccolta automatica non equivale a una verifica dell’immobile. Conferma sempre le informazioni sul portale o con l’inserzionista.</small></div>';
+ })();
  var p=a.price?Math.round(a.price).toLocaleString('it-IT')+' €':'Canone n.d.';
  var history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
  var dupes=duplicateOf(a);
@@ -532,7 +542,8 @@ function card(a){
  (a.sqm?'<span class="tag">'+esc(a.sqm)+' m²</span>':'')+
  (!a.source_updated?'<span class="tag orange">Data originale non verificata</span>':'')+
  '<span class="tag">Score '+esc(rank.total)+'/100</span></div>'+
- '<div class="tp8-card-proof"><span><i class="fa-solid fa-list-check"></i> Dati documentati: '+quality.known+'/'+quality.total+'</span>'+
+ provenance+
+ '<div class="tp8-card-proof"><span><i class="fa-solid fa-list-check"></i> Dati presenti: '+quality.known+'/'+quality.total+'</span>'+
  '<span><i class="fa-regular fa-clock"></i> Ultimo avvistamento: '+esc(dateLabel(a.last_seen||a.seen))+'</span></div>'+
  '<div class="tp-card-essentials"><span><i class="fa-regular fa-credit-card"></i> '+total+'</span>'+
  '<span><i class="fa-solid fa-person-walking"></i> '+walk+'</span></div>'+
