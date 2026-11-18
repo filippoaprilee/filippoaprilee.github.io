@@ -208,7 +208,7 @@ body{background:var(--tp10-bg)!important;color:var(--tp10-text)!important}
 @media(forced-colors:active){.tp10-option-tags span,.tp10-metric,.tp10-checklist label{border:1px solid CanvasText}}
 
 /* v10 release clarity: only one Home; older enhancements stay loaded for functional compatibility. */
-#view-home>:not(#tp10-home){display:none!important}
+body.tp10-active #view-home>:not(#tp10-home){display:none!important}
 .tp10-safety{display:flex;gap:9px;align-items:flex-start;margin-top:9px;padding:10px 12px;border-radius:9px;border:1px solid #f0d7a8;background:#fff8ed;color:#835013;font-size:11px;line-height:1.5;font-weight:630}
 .tp10-safety i{flex:none;margin-top:2px}
 .tp10-safety-neutral{border-color:#e0e8ed;background:#f6f9fa;color:#496878}
