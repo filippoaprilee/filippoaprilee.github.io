@@ -263,11 +263,14 @@ function onboarding(){
  const guest=$("#tp-welcome-guest"),buttons=$(".tp-welcome-actions",welcome);
  if(guest){
   guest.innerHTML='<i class="fa-solid fa-compass" aria-hidden="true"></i> Inizia senza account';
-  guest.classList.add("tp12-welcome-primary");
+  guest.classList.add("tp12-welcome-primary","primary");
   if(buttons&&buttons.firstElementChild!==guest)buttons.prepend(guest);
  }
  const signup=$("#tp-welcome-register");
- if(signup)signup.innerHTML='<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea account gratuito';
+ if(signup){signup.classList.remove("primary");signup.innerHTML='<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea account gratuito';}
+ for(const button of [guest,signup,$("#tp-welcome-signin")]){
+   if(button)button.addEventListener("click",()=>{try{localStorage.setItem("turinpipps.welcome.seen.v11","1")}catch(_){}},{once:true});
+ }
  const login=$("#tp-welcome-signin");
  if(login)login.textContent="Ho già un account";
  const footer=$(".tp-welcome-footer",welcome);
