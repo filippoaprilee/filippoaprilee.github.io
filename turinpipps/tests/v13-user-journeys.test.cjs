@@ -35,7 +35,7 @@ test('a visited appointment has an actual calendar action',()=>{
  assert.match(render({[url]:{contact:true,visitStatus:'programmata',visitAt:at}}),/data-tp7-ics=/);
 });
 test('saved vs tracked state and singular are explicit',()=>{
- assert.match(index,/Non.*annuncio contrassegnato come salvato/);
+ assert.match(index,/Nessun annuncio contrassegnato come salvato/);
  assert.match(index,/tracked===1\?'Apri la casa seguita'/);
  assert.match(index,/data-nav="visits"/);
 });
