@@ -36,7 +36,7 @@ function duplicatesAcrossPortals(a){
  }).slice(0,5);
 }
 function fieldEvidence(a){
- const names={price:"Canone",expenses:"Spese dichiarate",address:"Indirizzo",sqm:"Superficie",
+ const names={price:"Canone",expenses:"Spese dichiarate",address:"Indirizzo",sqm:"Superficie",zone:"Quartiere",property_type:"Tipologia",description:"Descrizione",
   source_updated:"Ultimo aggiornamento fonte",published_at:"Pubblicazione originale",
   private_status:"Indicazione di privato"};
  const proof=a.field_provenance&&typeof a.field_provenance==="object"?a.field_provenance:{};
