@@ -248,6 +248,104 @@ function enhanceBoard(){
   select.closest(".tp7-item")?.querySelector(".tp7-actions")?.append(action);
  });
 }
+function renderSourceQuality(){
+ const root=$("#view-sources");if(!root)return;
+ let host=$("#tp11-source-quality");
+ if(!host){
+  host=document.createElement("section");host.id="tp11-source-quality";host.className="tp11-quality-panel";
+  const grid=root.querySelector(".tp-home-grid");
+  if(grid)grid.after(host);else root.querySelector(".tp-page-lead")?.after(host);
+ }
+ const details=api()?.getLiveScan?.()?.details||{};
+ const source=Array.isArray(details.source_quality)?details.source_quality:[];
+ const dedup=details.dedup||null,enrich=details.detail_enrichment||null;
+ if(!dedup){
+  host.innerHTML='<div class="tp11-source-head"><div><span class="tp10-overline">QUALITÀ DELLA RACCOLTA</span><h2>Nuovi annunci e fonti realmente produttive</h2></div></div>'+
+   '<p>Il dettaglio per fonte sarà disponibile con una scansione del nuovo collector. Nessun dato storico viene ricostruito artificialmente.</p>';
+  return;
+ }
+ const active=source.filter(x=>Number(x.found)>0).length;
+ const blocked=source.reduce((sum,x)=>sum+Number(x.blocked||0),0);
+ host.innerHTML='<div class="tp11-source-head"><div><span class="tp10-overline">ULTIMA SCANSIONE · DATI EFFETTIVI</span><h2>Quante opportunità sono state trovate?</h2></div>'+
+ '<p>Controlli riusciti e nuovi immobili sono numeri diversi.</p></div>'+
+ '<div class="tp11-source-metrics">'+[
+  [dedup.raw??"—","Collegamenti osservati"],[dedup.unique??"—","Annunci distinti nella scansione"],
+  [dedup.new_unique??"—","Nuovi URL unici"],[dedup.duplicate_observations??"—","Rilevazioni duplicate"]
+ ].map(([n,label])=>'<div><strong>'+safe(n)+'</strong><span>'+label+'</span></div>').join("")+'</div>'+
+ '<p class="tp11-source-caption">'+active+' fonti/gruppi con risultati nel controllo · '+
+ blocked+' controlli limitati o bloccati'+(enrich?" · "+Number(enrich.read||0)+" pagine dettaglio lette su "+Number(enrich.checked||0):"")+
+ '. I portali che negano la lettura vengono lasciati alla consultazione manuale.</p>'+
+ '<details class="tp11-source-table"><summary>Qualità e risultati per fonte <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+ '<div class="tp11-source-table-wrap"><table><caption>Ultimo controllo per tipologia di origine, non graduatoria dei portali</caption>'+
+ '<thead><tr><th scope="col">Fonte</th><th scope="col">Controlli riusciti</th><th scope="col">Link osservati</th><th scope="col">Unici</th><th scope="col">Nuovi</th></tr></thead><tbody>'+
+ source.map(x=>'<tr><th scope="row">'+safe(x.source||"Fonte")+'</th><td>'+safe(x.ok||0)+'/'+safe(x.checks||0)+'</td>'+
+  '<td>'+safe(x.found||0)+'</td><td>'+safe(x.unique||0)+'</td><td>'+safe(x.new||0)+'</td></tr>').join("")+
+ '</tbody></table></div><p>Un risultato trovato non garantisce che l’immobile sia affittabile: verifica sempre annuncio e proprietario.</p></details>';
+}
+function organizeMonitor(){
+ const root=$("#view-sources");if(!root||root.dataset.tp11Organized)return;
+ const timeline=$("#tp-activity-timeline"),links=$("#sources");
+ if(!timeline||!links)return;
+ const panel=timeline.closest(".panel"),first=panel?.previousElementSibling;
+ const heading=links.previousElementSibling;
+ const details=document.createElement("details");details.className="tp11-source-more";
+ details.innerHTML='<summary><span><i class="fa-solid fa-book-open" aria-hidden="true"></i> Cronologia dei controlli e portali consultabili</span>'+
+ '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>';
+ const body=document.createElement("div");body.className="tp11-source-more-body";
+ details.append(body);
+ if(first?.classList.contains("section-heading"))first.before(details);
+ else panel.before(details);
+ if(first?.classList.contains("section-heading"))body.append(first);
+ body.append(panel);
+ if(heading?.classList.contains("section-heading"))body.append(heading);
+ body.append(links);
+ root.dataset.tp11Organized="1";
+}
+function accessibility(){
+ // Only the visible layout is enhanced; no duplicate controls or second navigation tree.
+ const search=$("#tp-main-search");if(search)search.setAttribute("aria-describedby","tp11-search-help");
+ const res=$("#view-results");
+ if(res&&!$("#tp11-search-help")){
+  const hint=document.createElement("p");hint.id="tp11-search-help";hint.className="tp11-a11y-hint";
+  hint.textContent="Cerca nell’archivio di annunci. Puoi aprire i filtri avanzati se necessario.";
+  res.querySelector(".tp-search-tools")?.after(hint);
+ }
+ const zone=$("#zone");if(zone)zone.setAttribute("aria-label","Quartiere");
+ const tabs=res?.querySelector(".tabs");if(tabs){tabs.setAttribute("role","group");tabs.setAttribute("aria-label","Tipologia di risultati");}
+ const groups=$("#tp-zones");if(groups){groups.setAttribute("role","group");groups.setAttribute("aria-label","Quartieri preferiti");}
+ $("#tp10-home")?.setAttribute("aria-label","Panoramica della ricerca casa");
+ $("#view-results #list")?.setAttribute("aria-busy","false");
+ $("#tp-guide-dialog")?.addEventListener("close",()=>{
+  try{localStorage.setItem("turinpipps.onboard.v4","1");}catch(_){}
+ });
+ document.addEventListener("click",event=>{
+  const control=event.target.closest("[data-nav]");
+  if(!control)return;
+  const key=control.dataset.nav;
+  requestAnimationFrame(()=>{
+    const view=$("#view-"+key);
+    if(!view||view.classList.contains("hidden"))return;
+    const title=view.querySelector("h1,h2");
+    if(title){
+      title.tabIndex=-1;title.focus({preventScroll:true});
+      // Avoid surprise viewport jumps and animation for reduced-motion users.
+      if(typeof window.matchMedia==="function"&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+        view.scrollIntoView({block:"start",behavior:"instant"});
+      }
+    }
+  });
+ });
+}
+function simplifyListingDetails(){
+ $(".tp10-listing").forEach(article=>{
+  if(article.dataset.tp11Simplified)return;
+  const expanded=$(".tp-card-expanded",article),reasons=$(".tp-classification-reasons",article);
+  if(expanded&&reasons){reasons.remove();expanded.prepend(reasons);}
+  const note=$(".tp8-card-proof",article);
+  if(expanded&&note){note.remove();expanded.prepend(note);}
+  article.dataset.tp11Simplified="1";
+ });
+}
 function enhanceAdmin(){
  const root=$("#tp-v5-admin-content");
  if(!root||!window.TurinPippsV5?.canAdmin?.())return;
@@ -322,12 +420,12 @@ function attachEvents(){
  });
 }
 function refresh(){
- homeUpdate();enhanceCards();enhanceBoard();enhanceAdmin();
+ homeUpdate();enhanceCards();simplifyListingDetails();enhanceBoard();enhanceAdmin();renderSourceQuality();
 }
 function init(){
  if(!api()||!$("#view-home"))return;
- navigation();homeMarkup();searchEnhance();attachEvents();refresh();
- [["#list",()=>{enhanceCards();homeUpdate()}],["#saved-list",enhanceCards],["#tp-home-list",enhanceCards],["#tp-visits-content",enhanceBoard],["#tp-v5-admin-content",enhanceAdmin]]
+ navigation();homeMarkup();searchEnhance();organizeMonitor();accessibility();attachEvents();refresh();
+ [["#list",()=>{enhanceCards();simplifyListingDetails();homeUpdate()}],["#saved-list",()=>{enhanceCards();simplifyListingDetails()}],["#tp-home-list",()=>{enhanceCards();simplifyListingDetails()}],["#tp-activity-summary",renderSourceQuality],["#tp-visits-content",enhanceBoard],["#tp-v5-admin-content",enhanceAdmin]]
  .forEach(([selector,fn])=>{const root=$(selector);if(root){new MutationObserver(()=>{queueMicrotask(fn);}).observe(root,{childList:true});}});
  const slides=[
   {icon:"fa-solid fa-sliders",title:"Scegli un budget realistico",text:"Imposta il canone massimo che puoi sostenere. Le spese restano separate quando non sono conosciute."},
