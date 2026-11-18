@@ -591,7 +591,7 @@ function card(a){
  '<button class="button" data-action="discard" data-url="'+esc(a.url)+'"><i class="fa-solid fa-ban"></i> '+(f.discard?'Ripristina':'Scarta')+'</button>'+
  '</div></details></div></article>';
 }
-function showEmpty(msg,screen){var saved=screen==='saved';return '<div class="empty tp11-empty"><div class="tp11-empty-icon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>'+(saved?'Nessuna casa salvata per ora':'Nessun risultato con questi filtri')+'</b><p>'+esc(msg)+'</p><div class="tp11-empty-actions">'+(saved?'<button class="button primary" data-nav="results">Esplora immobili</button>':'<button class="button primary" type="button" data-tp11-reset>Azzera i filtri</button><button class="button" data-nav="sources">Consulta le fonti</button>')+'</div></div>'}
+function showEmpty(msg,screen,tracked){var saved=screen==='saved';return '<div class="empty tp11-empty"><div class="tp11-empty-icon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>'+(saved?'Nessun annuncio contrassegnato come salvato':'Nessun risultato con questi filtri')+'</b><p>'+esc(msg)+'</p><div class="tp11-empty-actions">'+(saved?'<button class="button primary" data-nav="results">Esplora immobili</button>'+(tracked?'<button class="button" data-nav="visits">Vedi le '+tracked+' case seguite</button>':''):'<button class="button primary" type="button" data-tp11-reset>Azzera i filtri</button><button class="button" data-nav="sources">Consulta le fonti</button>')+'</div></div>'}
 function showToast(message,kind){
  var n=el('tp-toast');if(!n)return;
  n.textContent=message;n.className='tp-toast '+(kind||'');n.hidden=false;
@@ -707,7 +707,7 @@ function savePersonalSettings(){
  prefs.preferredZones=Array.from(el('tp-zones').querySelectorAll('input:checked')).map(function(x){return x.value});
  if(!prefs.preferredZones.length){prefs.preferredZones=['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];}
 }
-function renderSaved(){var a=all().filter(function(x){return flag(x.url).saved});el('saved-list').innerHTML=a.map(card).join('')||showEmpty('Salva un annuncio per ritrovarlo qui, anche dopo aver chiuso la pagina.','saved');stats();renderComparison();renderVisits()}
+function renderSaved(){var rows=all(),a=rows.filter(function(x){return flag(x.url).saved});var tracked=rows.filter(function(x){var f=flag(x.url);return f.contact||f.replyReceived||f.visitStatus&&f.visitStatus!=='non_programmata'||f.decisionStatus&&f.decisionStatus!=='valutazione'}).length;el('saved-list').innerHTML=a.map(card).join('')||showEmpty(tracked?'Hai già immobili nel percorso Contatti e visite, ma non sono contrassegnati come salvati. Puoi ritrovarli in Organizza.':'Quando trovi una casa interessante, premi Salva per ritrovarla qui.','saved',tracked);stats();renderComparison();renderVisits()}
 function renderReport(){
  var box=el('tp-report-status');if(!box)return;
  if(!reportState||!reportState.last_sent_at){
