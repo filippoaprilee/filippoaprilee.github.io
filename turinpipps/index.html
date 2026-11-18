@@ -400,12 +400,15 @@ function classify(a){return classification(a).status}
 
 function recurringCost(a){
  var t=String(a.expenses||''),known=0,recognized=false;
+ if(/^\d{1,5}(?:[.,]\d{1,2})?$/.test(t)&&Number(t.replace(',','.'))>0){
+   known=Number(t.replace(',','.'));recognized=true;
+ }
  var m=t.match(/(?:Condominio|Spese condominiali)\s*:?\s*(\d{1,4})(?:[,.]\d{1,2})?\s*€\s*\/\s*mese/i);
  if(!m)m=t.match(/(\d{1,4})\s*€\s*\/\s*mese\s*(?:a parte|circa a parte|di spese)/i);
  if(m){known=Number(m[1]);recognized=true;}
  var excluded=/utenze|luce|gas|tari|riscaldamento|da verificare|da chiarire|non specificati|altre spese/i.test(t);
  var included=/spese condominiali incluse/i.test(t);
- return {known:known,included:included,unknown:excluded||!recognized&&!included,
+ return {known:known,included:included,unknown:excluded||(!recognized&&!included)||(/^\d/.test(t)&&recognized),
          total:Number(a.price||0)+known};
 }
 function cautionSignals(a){
@@ -448,7 +451,7 @@ function flag(url){return prefs.flags[url]||{}}
 function stats(){var a=all();el('stat-good').textContent=a.filter(function(x){return classify(x)==='good'}).length;el('stat-review').textContent=a.filter(function(x){return classify(x)==='review'}).length;el('stat-saved').textContent=a.filter(function(x){return flag(x.url).saved}).length}
 
 function listingAgeDays(a){
- var d=new Date(a.source_updated||a.seen||'');
+ var d=new Date(a.source_updated||a.published_at||a.seen||'');
  return isFinite(d.getTime())?Math.floor(Math.max(0,Date.now()-d.getTime())/86400000):null;
 }
 function geoKm(a){
