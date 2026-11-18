@@ -83,6 +83,11 @@ export function extractClickCaseDetails(html,listingUrl,stamp){
  if(sqm&&+sqm[1]>=12&&+sqm[1]<=650)put("sqm",Number(sqm[1]),"Superficie indicata nella testata");
  const street=explicitStreet(prefix);
  if(street)put("address",street,"Indirizzo con numero civico esplicitato");
+ const zones=["Borgo San Paolo","Cit Turin","Pozzo Strada","San Paolo","Cenisia","Crocetta","Santa Rita"];
+ const namedZone=zones.find(z=>new RegExp("(^|[^a-zà-ÿ])"+z+"([^a-zà-ÿ]|$)","i").test(heading));
+ if(namedZone)put("zone",namedZone,"Quartiere dichiarato nel titolo dell'immobile");
+ const namedType=heading.toLowerCase().match(/\b(monolocale|bilocale|trilocale|quadrilocale)\b/);
+ if(namedType)put("property_type",namedType[1],"Tipologia indicata nel titolo originale");
  const privato=/\b(?:affitto|locazione)\s+da\s+privato\b/i.test(prefix)
    ||/\b(?:privato\s+affitta|no\s+intermediari)\b/i.test((descriptionPart?.[1]||"").slice(0,250));
  if(privato)put("private_status","source","La fonte si presenta come annuncio da privato, identità non verificata");
