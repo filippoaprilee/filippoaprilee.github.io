@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18T17:38:52.435Z",
+  "updated_at": "2026-11-18T23:38:52.241Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -173,10 +173,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-17T23:38:52.741Z",
+      "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T23:38:52.741Z"
+      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
     },
     {
       "url": "https://www.clickcase.it/disponibile-appartamento-torino-387546.html",
@@ -192,10 +192,10 @@
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-10-27",
       "property_type": "Bilocale · canone da chiedere",
-      "availability_checked_at": "2026-11-18T05:38:52.610Z",
+      "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T05:38:52.610Z"
+      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-415406.html",
@@ -211,10 +211,10 @@
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-07-18",
       "property_type": "Bilocale · transitorio · prezzo incerto",
-      "availability_checked_at": "2026-11-18T05:38:52.610Z",
+      "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T05:38:52.610Z"
+      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
     },
     {
       "url": "https://www.immobiliare.it/annunci/133448718/",
@@ -365,12 +365,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-18T05:38:52.610Z",
+      "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T05:38:52.610Z"
+      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
     },
     {
       "url": "https://www.clickcase.it/camera-spaziosa-con-cucina-e-salotto-in-comune-e-servizi-torino-423888.html",
@@ -384,12 +384,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-18T05:38:52.610Z",
+      "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T05:38:52.610Z"
+      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
     },
     {
       "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T05:38:52.610Z",
       "availability_state": "online_alla_verifica",
@@ -422,7 +422,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -441,7 +441,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -460,7 +460,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -479,7 +479,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -498,7 +498,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -551,7 +551,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-17T17:38:52.395Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
@@ -570,7 +570,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-18T17:38:52.435Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert"
     },
     {
@@ -585,7 +585,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-18T17:38:52.435Z",
-      "last_seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T23:38:52.241Z",
       "origin": "automatic_alert"
     }
   ]
