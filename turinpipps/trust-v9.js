@@ -13,6 +13,28 @@ function dataState(type,value,detail){
  return '<li class="tp9-proof-row"><div><strong>'+esc(type)+'</strong><span>'+esc(value)+'</span></div>'+
   '<span class="tp9-proof-tag '+esc(detail)+'">'+(detail==="verified"?"Verificato":detail==="claimed"?"Dichiarato":"Sconosciuto")+'</span></li>';
 }
+/* Conservative cross-portal duplicate candidates: never merge or hide distinct homes.
+   Require matching explicit street + number, with non-conflicting area/price and zone. */
+function streetAddress(a){
+ const raw=String(a.address||a.title||"").toLocaleLowerCase("it-IT")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ");
+ const match=raw.match(/\b(via|viale|corso|piazza|largo)\s+([a-z'. ]{3,50}?)\s*,?\s*(\d{1,4}[a-z]?)\b/i);
+ if(!match)return "";
+ return match[1]+" "+match[2].replace(/\s+/g," ").trim()+" "+match[3];
+}
+function duplicatesAcrossPortals(a){
+ const address=streetAddress(a),current=Number(a.sqm)||0,price=Number(a.price)||0;
+ if(!address)return [];
+ return (api()?.getListings?.()||[]).filter(b=>{
+  if(a.url===b.url||String(a.source||"").toLowerCase()===String(b.source||"").toLowerCase())return false;
+  if(streetAddress(b)!==address)return false;
+  if(a.zone&&b.zone&&String(a.zone).toLowerCase()!==String(b.zone).toLowerCase())return false;
+  const otherArea=Number(b.sqm)||0,otherPrice=Number(b.price)||0;
+  if(current&&otherArea&&Math.abs(current-otherArea)>5)return false;
+  if(price&&otherPrice&&Math.abs(price-otherPrice)>120)return false;
+  return (current&&otherArea)||(price&&otherPrice);
+ }).slice(0,5);
+}
 function evidence(a){
  const budget=Number(api()?.getPrefs()?.budget)||700;
  const cls=api()?.classifyListing?.(a)||{status:"review"};
@@ -40,6 +62,10 @@ function evidence(a){
  const fresh=a.source_updated||a.published_at;
  const freshness=fresh?["Pubblicazione/aggiornamento fonte: "+date(fresh),"claimed"]:
   ["Data della fonte sconosciuta · rilevato il "+date(a.seen),"unknown"];
+ const duplicates=duplicatesAcrossPortals(a);
+ const duplicateHTML=duplicates.length?'<details class="tp9-history"><summary>'+duplicates.length+' possibile/i ripubblicazione/i su altri portali</summary>'+
+   '<ul>'+duplicates.map(d=>'<li><a href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">'+esc(d.source||"Altro portale")+' · '+esc(d.title)+'</a> — stessa via e numero civico, ricontrolla le foto</li>').join("")+'</ul>'+
+   '<p>Possibile duplicato, non identità accertata. Confronta le foto e i dettagli; gli annunci restano separati.</p></details>':"";
  const check=a.link_status==="reachable"?"Link raggiungibile al controllo del "+date(a.link_checked_at):
   a.link_status==="missing"?"Link non raggiungibile in almeno due controlli":
   a.link_status==="blocked"?"Controllo limitato dalla fonte: non implica rimozione":
@@ -54,6 +80,7 @@ function evidence(a){
   dataState("5. Distanza reale",route[0],route[1])+
   dataState("6. Freschezza",freshness[0],freshness[1])+
   '</ol><div class="tp9-link-health '+(a.link_status==="missing"?"tp9-warning":"")+'"><strong>Controllo link</strong><span>'+esc(check)+'</span></div>'+
+  duplicateHTML+
   '<details class="tp9-history"><summary>Storico modifiche registrate</summary><div class="tp9-history-content" role="status" aria-live="polite">Apri per caricare lo storico.</div></details>'+
   '<p class="tp9-proof-legend">Verificato = evidenza datata; dichiarato = informazione non confermata in modo indipendente; sconosciuto = dato mancante. Un link raggiungibile non prova che la casa sia disponibile.</p></div>';
 }
