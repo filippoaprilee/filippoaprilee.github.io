@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18T11:38:52.895Z",
+  "updated_at": "2026-11-18T17:38:52.435Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -95,10 +95,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-17T23:38:52.741Z",
+      "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T23:38:52.741Z"
+      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -121,10 +121,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-17T23:38:52.741Z",
+      "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T23:38:52.741Z"
+      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-271099.html",
@@ -147,10 +147,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-17T23:38:52.741Z",
+      "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T23:38:52.741Z"
+      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-200568.html",
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T05:38:52.610Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T05:38:52.610Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T05:38:52.610Z",
       "availability_state": "online_alla_verifica",
@@ -422,7 +422,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -441,7 +441,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -460,7 +460,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -479,7 +479,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -498,7 +498,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T11:38:52.895Z",
       "availability_state": "online_alla_verifica",
@@ -519,10 +519,10 @@
       "seen": "2026-11-13T11:12:09.571Z",
       "last_seen": "2026-11-17T11:38:52.510Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-17T17:38:52.395Z",
+      "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T17:38:52.395Z"
+      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -551,12 +551,42 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-17T17:38:52.395Z",
-      "last_seen": "2026-11-18T11:38:52.895Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-17T23:38:52.741Z",
+      "availability_checked_at": "2026-11-18T17:38:52.435Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-17T23:38:52.741Z"
+      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/monolocale-crocetta-contratto-transitorio-torino-668751926.htm",
+      "title": "Monolocale Crocetta contratto transitorio - Appartamenti In affitto a Torino - Subito",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Crocetta",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/crocetta-via-arquata-bilocale-torino-668728920.htm",
+      "title": "CROCETTA VIA ARQUATA BILOCALE - Appartamenti In affitto a Torino - Subito",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Crocetta",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-18T17:38:52.435Z",
+      "last_seen": "2026-11-18T17:38:52.435Z",
+      "origin": "automatic_alert"
     }
   ]
 }
