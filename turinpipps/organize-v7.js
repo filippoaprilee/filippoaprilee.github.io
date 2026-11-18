@@ -45,13 +45,22 @@ function render(node){
  let contactCount=tracked.filter(a=>flag(c,a.url).contact).length;
  let metrics=[[tracked.length,"Case seguite"],[contactCount,"Contatti"],[future.length,"Visite future"],[groups.decisions.length,"Decisioni"]];
  let first=future[0];
+ // Never suggest restarting from zero when the user already has a contact or reply.
+ let step;
+ if(first)step={title:first.title,text:"Prossima visita: "+visitDate(flag(c,first.url).visitAt),label:"Aggiungi al calendario",attr:'data-tp7-ics="'+escapeHtml(first.url)+'"'};
+ else if(groups.replies.length)step={title:"Hai una risposta da gestire",text:groups.replies.length+" "+(groups.replies.length===1?"contatto richiede":"contatti richiedono")+" un seguito. Puoi annotare le condizioni o valutare una visita.",label:"Apri risposte",attr:'data-tp7-jump="replies"'};
+ else if(groups.saved.length)step={title:"Valuta le case salvate",text:groups.saved.length+" "+(groups.saved.length===1?"casa è pronta":"case sono pronte")+" per controllare costi e proprietario prima di contattare.",label:"Vedi case da contattare",attr:'data-tp7-jump="saved"'};
+ else if(groups.contact.length)step={title:"Contatto in attesa di risposta",text:"Hai già contattato "+groups.contact.length+" "+(groups.contact.length===1?"inserzionista.":"inserzionisti.")+" Segna la risposta quando arriva, senza ricominciare dai salvati.",label:"Apri contatti",attr:'data-tp7-jump="contact"'};
+ else if(groups.decisions.length||groups.visits.length)step={title:"Rivedi le tue case",text:"Hai già immobili nel percorso. Consulta appuntamenti ed esiti per decidere il prossimo passo.",label:"Apri il percorso",attr:'data-tp7-jump="'+(groups.visits.length?"visits":"decisions")+'"'};
+ else step={title:"Inizia dalla ricerca",text:"Trova una casa, salvala e poi segui contatto, risposta e visita. Non devi compilare tutto subito.",label:"Esplora immobili",attr:'data-nav="results"'};
  let summary='<div class="tp7-summary"><div class="tp7-metrics">'+metrics.map(m=>'<div><strong>'+m[0]+'</strong><span>'+m[1]+'</span></div>').join("")+'</div>'+
- '<div class="tp7-next"><small>PROSSIMA AZIONE</small>'+
- (first?'<strong>'+escapeHtml(first.title)+'</strong><span>'+escapeHtml(visitDate(flag(c,first.url).visitAt))+'</span><button class="button" data-tp7-ics="'+escapeHtml(first.url)+'">Aggiungi al calendario</button>':
- '<strong>Salva un appartamento</strong><span>Il percorso inizia dai preferiti e prosegue con contatto, visita e decisione.</span><button class="button primary" data-nav="results">Cerca casa</button>')+'</div></div>';
- let cols=stages.map(s=>'<section class="tp7-stage"><header><b>'+s[1]+'</b><span>'+groups[s[0]].length+'</span></header><p>'+s[2]+'</p><div class="tp7-list">'+
- (groups[s[0]].map(a=>card(a,c,s[0])).join("")||'<div class="tp7-empty">Nessuna casa in questa fase. Usa le azioni sulle schede per avanzare.</div>')+'</div></section>').join("");
- node.innerHTML=summary+'<div class="tp7-board">'+cols+'</div><div class="tp7-guide"><b>La tua ricerca, ordinata</b><p>Salva un immobile, registra il contatto, organizza la visita e scegli l’esito. Le modifiche sono sincronizzate con l’account quando effettui l’accesso.</p><button class="button" data-nav="saved">Apri i preferiti</button></div>';
+ '<div class="tp7-next"><small>IL PROSSIMO PASSO</small><strong>'+escapeHtml(step.title)+'</strong><span>'+
+ escapeHtml(step.text)+'</span><button type="button" class="button primary" '+step.attr+'>'+escapeHtml(step.label)+'</button></div></div>';
+ // Active stages first; empty phases remain available, but condensed.
+ const active=stages.filter(x=>groups[x[0]].length),empty=stages.filter(x=>!groups[x[0]].length);
+ let cols=active.map(x=>'<section class="tp7-stage tp13-stage-active" data-tp7-stage="'+x[0]+'"><header><b>'+x[1]+'</b><span>'+groups[x[0]].length+'</span></header><p>'+x[2]+'</p><div class="tp7-list">'+groups[x[0]].map(a=>card(a,c,x[0])).join("")+'</div></section>').join("")+
+ empty.map(x=>'<details class="tp7-stage tp13-stage-empty" data-tp7-stage="'+x[0]+'"><summary><strong>'+x[1]+'</strong><span>0</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary><p>'+x[2]+'</p><div class="tp7-empty">Non ci sono ancora immobili in questa fase.</div></details>').join("");
+ node.innerHTML=summary+'<div class="tp7-board">'+cols+'</div><div class="tp7-guide"><b>Un percorso semplice</b><p>Da contattare → Risposta → Visita → Decisione. Le fasi con zero immobili sono ridotte per lasciare spazio a quelle attive.</p><button class="button" data-nav="results">Cerca altri immobili</button></div>';
 }
 function ics(url){
  const c=context();if(!c)return;
@@ -69,6 +78,12 @@ function ics(url){
  document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(target),1200);
 }
 document.addEventListener("click",e=>{
+ const jump=e.target.closest("[data-tp7-jump]");
+ if(jump){
+  const stage=el("tp-visits-content")?.querySelector('[data-tp7-stage="'+jump.dataset.tp7Jump+'"]');
+  if(stage){if(stage.tagName==="DETAILS")stage.open=true;stage.scrollIntoView({behavior:"auto",block:"start"});stage.querySelector("a,button,summary")?.focus({preventScroll:true});}
+  return;
+ }
  const t=e.target.closest("[data-tp7-ics]");if(t){e.preventDefault();ics(t.dataset.tp7Ics)}
 });
 document.addEventListener("change",async e=>{
