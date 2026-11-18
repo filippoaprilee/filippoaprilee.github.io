@@ -1168,12 +1168,13 @@ function finish(){
       var welcome=document.getElementById('tp-welcome');
       if(!welcome)return;
       if(signedIn||sessionStorage.getItem('turinpipps-guest-session')==='1')return;
+      try{if(localStorage.getItem('turinpipps.welcome.seen.v11')==='1')return}catch(_){}
       if(enabled)window.addEventListener('turinpipps:ready',function(){welcome.hidden=false},{once:true});
    }
  };
  load().catch(function(){if(splashLabel)splashLabel.textContent='Alcune fonti non sono disponibili'}).finally(function(){window.TurinPippsBoot.dataReady()});
  setTimeout(function(){if(!gotAuth)window.TurinPippsBoot.authReady(false,false)},6000);
- document.getElementById('tp-welcome-guest').addEventListener('click',function(){sessionStorage.setItem('turinpipps-guest-session','1');document.getElementById('tp-welcome').hidden=true;setTimeout(maybeOpenGuide,400)});
+ document.getElementById('tp-welcome-guest').addEventListener('click',function(){sessionStorage.setItem('turinpipps-guest-session','1');try{localStorage.setItem('turinpipps.welcome.seen.v11','1')}catch(_){}document.getElementById('tp-welcome').hidden=true;setTimeout(maybeOpenGuide,400)});
 })();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
 })();
 </script>
