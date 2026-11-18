@@ -327,7 +327,7 @@ function refresh(){
 function init(){
  if(!api()||!$("#view-home"))return;
  navigation();homeMarkup();searchEnhance();attachEvents();refresh();
- [["#list",enhanceCards],["#saved-list",enhanceCards],["#tp-home-list",enhanceCards],["#tp-visits-content",enhanceBoard],["#tp-v5-admin-content",enhanceAdmin]]
+ [["#list",()=>{enhanceCards();homeUpdate()}],["#saved-list",enhanceCards],["#tp-home-list",enhanceCards],["#tp-visits-content",enhanceBoard],["#tp-v5-admin-content",enhanceAdmin]]
  .forEach(([selector,fn])=>{const root=$(selector);if(root){new MutationObserver(()=>{queueMicrotask(fn);}).observe(root,{childList:true});}});
  const slides=[
   {icon:"fa-solid fa-sliders",title:"Scegli un budget realistico",text:"Imposta il canone massimo che puoi sostenere. Le spese restano separate quando non sono conosciute."},
