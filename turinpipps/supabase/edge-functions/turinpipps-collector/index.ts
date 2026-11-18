@@ -285,6 +285,54 @@ async function collectOtherPublicPages(time:string){
  return outputs;
 }
 
+
+/** Small, rotating link-health audit. A reachable URL is NOT evidence that the home is available.
+    Check at most four links per scan; respect robots.txt; never work around access controls. */
+async function checkListingLinks(){
+ const result={checked:0,reachable:0,missing:0,blocked:0,errors:0};
+ const url=DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,link_status,link_failure_count,link_checked_at&order=link_checked_at.asc.nullsfirst&limit=4";
+ const response=await fetch(url,{headers:dbHeaders(),signal:AbortSignal.timeout(9000)});
+ if(!response.ok)throw Error("Link audit read "+response.status);
+ const candidates=await response.json();
+ await Promise.all(candidates.map(async (item:any)=>{
+   const normalized=canonical(String(item.listing_url||""));
+   if(!normalized)return;
+   let status="error",code:number|null=null;
+   const previous=Math.max(0,Number(item.link_failure_count)||0);
+   let failures=previous;
+   try{
+     const target=new URL(normalized.url);
+     const permission=await robotsPermits(target.origin,target.pathname);
+     if(!permission.allowed){status="blocked";failures=0;}
+     else{
+       const head=await fetch(normalized.url,{method:"HEAD",redirect:"manual",
+         headers:{"User-Agent":"TurinPipps/3.1 (link check; respects robots.txt)"},
+         signal:AbortSignal.timeout(6500)});
+       code=head.status;
+       if(code>=200&&code<300){status="reachable";failures=0;}
+       else if(code===404||code===410){
+         failures=Math.min(1000,previous+1);
+         status=failures>=2?"missing":"error";
+       }else if([401,403,405,429].includes(code)||code>=300&&code<400){status="blocked";failures=0;}
+       else {status="error";failures=0;}
+     }
+   }catch(_){status="error";failures=0;}
+   const update=await fetch(DB_ROOT+"/turinpipps_discovered_listings?listing_url=eq."+encodeURIComponent(item.listing_url),{
+     method:"PATCH",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),
+     body:JSON.stringify({link_status:status,link_checked_at:new Date().toISOString(),
+       link_http_status:code,link_failure_count:failures}),
+     signal:AbortSignal.timeout(7000)
+   });
+   if(!update.ok){result.errors++;return;}
+   result.checked++;
+   if(status==="reachable")result.reachable++;
+   else if(status==="missing")result.missing++;
+   else if(status==="blocked")result.blocked++;
+   else result.errors++;
+ }));
+ return result;
+}
+
 async function scan(time:string,feeds:string[]){
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
@@ -333,10 +381,11 @@ async function scan(time:string,feeds:string[]){
       saved+=Math.min(100,rows.length-i);
     }
   }
+  const health=await checkListingLinks().catch(e=>{console.warn("Link audit partial",String(e).slice(0,90));return {checked:0,errors:1}});
   const entry={started_at:time,finished_at:new Date().toISOString(),
     status:ok===0?"failed":ok===outputs.length?"ok":"partial",
     jobs_checked:outputs.length,jobs_ok:ok,discovered:newLinks,
-    details:{engines:stats,duration_ms:Date.now()-started}};
+    details:{engines:stats,link_health:health,duration_ms:Date.now()-started}};
   const stored=await fetch(DB_ROOT+"/turinpipps_scan_runs",{
     method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(entry)
   });
