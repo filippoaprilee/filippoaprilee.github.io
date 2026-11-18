@@ -460,7 +460,8 @@ function init(){
   {icon:"fa-solid fa-shield-halved",title:"Controlla l'affidabilità",text:"Match e affidabilità sono diversi: un annuncio può sembrare perfetto, ma senza la conferma del proprietario."},
   {icon:"fa-solid fa-list-check",title:"Salva, contatta e organizza",text:"Usa i salvati, la checklist privata e i costi stimati. Poi segna la risposta e programma la visita."}
  ];
- api().guideSlides?.(slides);
+ // The five-step onboarding module is authoritative; do not overwrite its steps.
+ if(!window.TurinPippsEnhanceGuide)api().guideSlides?.(slides);
  window.addEventListener("turinpipps:ready",()=>{refresh()});
  window.addEventListener("turinpipps:account-ready",()=>{refresh()});
  window.addEventListener("turinpipps:account-signed-out",()=>{refresh()});
