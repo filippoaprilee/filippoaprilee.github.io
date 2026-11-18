@@ -398,6 +398,7 @@ function mergeSourceDetail(row:any,old:any,detail:any,time:string){
    else if(key==="expenses"||key==="sqm")use=!independent&&!external&&(
      !(Number(old[key])>0)||(sameSource&&Number(old[key])!==Number(value)));
    else if(key==="address")use=!independent&&!external&&(!old.address||sameSource);
+   else if(key==="zone"||key==="property_type")use=!independent&&!external&&(!old[key]||sameSource||key==="zone");
    else if(key==="description")use=!independent&&!external&&(!old.description||old.description.length<60||sameSource);
    else if(key==="source_updated")use=!!value&&(!old.source_updated||sameSource&&Date.parse(String(value))>=Date.parse(old.source_updated));
    else if(key==="published_at")use=!!value&&!old.published_at;
