@@ -183,7 +183,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
 </style><link rel="stylesheet" href="./ui-v2.css?v=2.0.0"><link rel="stylesheet" href="./experience-v3.css?v=3.0.0"><link rel="stylesheet" href="./experience-v4.css?v=4.0.0"><link rel="stylesheet" href="./experience-v5.css?v=5.0.0">
 <link rel="stylesheet" href="./experience-v6.css?v=6.0.0"><link rel="stylesheet" href="./organize-v7.css?v=7.0.0">
-<link rel="stylesheet" href="./experience-v8.css?v=8.3.0"><link rel="stylesheet" href="./trust-v9.css?v=9.0.0"></head><body><a class="tp9-skip-link" href="#tp9-main">Salta al contenuto principale</a>
+<link rel="stylesheet" href="./experience-v8.css?v=8.3.0"><link rel="stylesheet" href="./trust-v9.css?v=9.0.0"><link rel="stylesheet" href="./experience-v10.css?v=10.0.0"></head><body><a class="tp9-skip-link" href="#tp9-main">Salta al contenuto principale</a>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
 <div class="tp-welcome" id="tp-welcome" hidden aria-labelledby="tp-welcome-title"><div class="tp-welcome-card"><div class="tp-welcome-icon"><i class="fa-solid fa-house-user" aria-hidden="true"></i></div><div class="eyebrow">BENVENUTO IN TURINPIPPS</div><h2 id="tp-welcome-title">La ricerca inizia qui.</h2><p>Crea un account gratuito per mantenere preferiti, note e immobili contattati su tutti i tuoi dispositivi. Oppure esplora gli annunci come ospite.</p><div class="tp-welcome-actions"><button type="button" class="button primary" id="tp-welcome-register"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Crea un account</button><button type="button" class="button" id="tp-welcome-signin"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi al tuo account</button><button type="button" class="button" id="tp-welcome-guest"><i class="fa-regular fa-compass" aria-hidden="true"></i> Continua come ospite</button></div><div class="tp-welcome-footer">Nessun abbonamento richiesto · Dati privati separati per utente</div></div></div>
 <div class="layout">
@@ -201,7 +201,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 </nav><div class="side-foot"><span class="status-dot"></span> TurinPipps per Torino<br>Ricerca, confronta, organizza</div></aside>
 <main class="content" id="tp9-main" tabindex="-1"><div class="topline"><div class="eyebrow">LA TUA RICERCA CASA</div><div class="top-actions"><button class="tp-guide-trigger" id="tp-guide-open" type="button"><i class="fa-regular fa-circle-question"></i> <span class="tp-guide-label">Come funziona</span></button><span class="sync" id="updated">Caricamento dati…</span><button id="tp-account-button" class="tp-account" type="button"><i class="fa-solid fa-user-circle" aria-hidden="true"></i> <span>Account</span></button></div></div>
 <section id="view-home">
-<section class="hero"><div><small>TORINO · SENZA AGENZIE</small><h1>La casa giusta,<br>senza perdere tempo.</h1>
+<section class="hero"><div><small>TORINO · AFFITTI DA VERIFICARE</small><h1>La casa giusta,<br>senza perdere tempo.</h1>
 <p>Affitti vicini al Politecnico, canone massimo <b id="tp-home-budget">700 €</b> al mese più spese. Ricerca, confronta e organizza le visite.</p></div>
 <button type="button" class="hero-cta" data-nav="results">Esplora gli annunci <i class="fa-solid fa-arrow-right"></i></button></section>
 <div class="stats">
@@ -422,6 +422,7 @@ function cautionSignals(a){
  return risks.slice(0,3);
 }
 function intelligentScore(a){
+ if(window.TurinPippsV10&&window.TurinPippsV10.match){var n=window.TurinPippsV10.match(a);return {total:n.score,components:n.breakdown}}
  var p=Number(a.price||0),cost=recurringCost(a),breakdown=[];
  var price=p>0?Math.max(0,Math.round(30*Math.min(1,(950-p)/400))):0;breakdown.push(['Canone',price,30]);
  var location=a.walking_minutes>0?Math.max(0,Math.round(30*(1-a.walking_minutes/65))):
@@ -446,7 +447,7 @@ function matchPersonalCriteria(a){
  if(prefs.maxWalkMinutes&&(!a.walking_minutes||a.walking_minutes>Number(prefs.maxWalkMinutes)))return false;
  return true;
 }
-function score(a){return intelligentScore(a).total}
+function score(a){return window.TurinPippsV10&&window.TurinPippsV10.match?window.TurinPippsV10.match(a).score:intelligentScore(a).total}
 function flag(url){return prefs.flags[url]||{}}
 function stats(){var a=all();el('stat-good').textContent=a.filter(function(x){return classify(x)==='good'}).length;el('stat-review').textContent=a.filter(function(x){return classify(x)==='review'}).length;el('stat-saved').textContent=a.filter(function(x){return flag(x.url).saved}).length}
 
@@ -608,6 +609,7 @@ function renderResults(){
  days=Number(el('age-filter').value||0),walking=el('distance-filter').value,stale=el('stale-filter').value;
  arr=arr.filter(function(a){
   if(flag(a.url).discard)return false;
+  if(window.TurinPippsV10&&window.TurinPippsV10.getSearchFilters){var extra=window.TurinPippsV10.getSearchFilters();if(extra.priced&&!(Number(a.price)>0))return false;if(extra.fresh&&!(Date.parse(a.seen||a.first_seen||'')>Date.now()-7*86400000))return false;}
   if(!matchPersonalCriteria(a))return false;
   if(mode==='candidate'&&classify(a)==='excluded')return false;
   if(mode!=='all'&&mode!=='candidate'&&classify(a)!==mode)return false;
@@ -1084,6 +1086,11 @@ window.TurinPippsBridge={
   el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;
   fillPersonalSettings();renderResults();renderSaved();
  },
+ applyPersonalFlag:function(url,next){
+  if(!prefs.flags||typeof prefs.flags!=='object')prefs.flags={};
+  prefs.flags[url]=next;persist();
+  renderResults();renderSaved();if(tab==='home')renderHome();
+ },
  useGuest:function(){
   if(!accountMode)return;
   accountMode=false;if(el('tp-saved-context'))el('tp-saved-context').textContent='Salvati sul dispositivo';prefs=JSON.parse(JSON.stringify(guestPrefs));
@@ -1161,4 +1168,4 @@ function finish(){
 <script defer src="./experience-v4.js?v=4.0.0"></script>
 <script defer src="./push-config.js?v=5.0.0"></script><script defer src="./experience-v5.js?v=8.3.0"></script>
 <script defer src="./organize-v7.js?v=7.1.0"></script>
-<script defer src="./experience-v8.js?v=8.2.0"></script><script defer src="./trust-v9.js?v=9.0.0"></script></body></html>
+<script defer src="./experience-v8.js?v=8.2.0"></script><script defer src="./trust-v9.js?v=9.0.0"></script><script defer src="./experience-v10.js?v=10.0.0"></script></body></html>
