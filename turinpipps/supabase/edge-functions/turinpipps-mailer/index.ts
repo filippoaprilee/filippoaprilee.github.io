@@ -33,19 +33,37 @@ function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|ga
 function candidates(data:any[],p:any){
  const zones=Array.isArray(p.preferred_zones)?p.preferred_zones:[];
  return data.filter((x:any)=>{
-  return x.private_status==="source"&&x.price>=150&&x.price<=p.budget&&x.zone&&zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x);
+  return ["source","confirmed"].includes(String(x.private_status))&&x.price>=150&&x.price<=p.budget&&x.zone&&
+    zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x)&&
+    x.link_status!=="missing"&&x.availability_status!=="unavailable"&&x.availability_status!=="expired"&&!x.expired_at;
  }).sort((a:any,b:any)=>String(b.first_seen).localeCompare(String(a.first_seen))).slice(0,9);
+}
+function recentlyChanged(listing:any,cutoff:number,user:any){
+ const first=Date.parse(listing.first_seen||"")||0;
+ if(user.notify_new_listings!==false&&first>=cutoff)return true;
+ const h=Array.isArray(listing.price_history)?listing.price_history.filter((v:any)=>Number(v?.price)>0):[];
+ if(user.notify_price_drops===false||h.length<2)return false;
+ const before=Number(h[h.length-2].price),after=Number(h[h.length-1].price);
+ const at=Date.parse(h[h.length-1].observed_at||"")||0;
+ return after<before&&at>=cutoff;
 }
 async function email(user:any,kind:"daily"|"weekly"|"manual",localDay:string,rows:any[],settings:any){
  if(!user.email_confirmed||!user.email)return {sent:false,skipped:"unverified"};
- const data=candidates(rows,settings);
+ const selected=candidates(rows,settings);
+ // Scheduled digests are event-driven: no email for the same unchanged listing.
+ // Manual reports remain deliberately complete when the user presses Send.
+ const windowMs=kind==="weekly"?7*86400000:86400000;
+ const last=Date.parse(user.last_digest_at||"")||0;
+ const cutoff=Math.max(Date.now()-windowMs,last);
+ const data=kind==="manual"?selected:selected.filter((x:any)=>recentlyChanged(x,cutoff,user));
+ if(kind!=="manual"&&!data.length)return {sent:false,skipped:"no_matching_news"};
  const dateKey=kind==="manual"?new Date().toISOString().slice(0,16).replace(/\d$/,"0"):kind==="weekly"?localDay.slice(0,7)+"-week-"+Math.ceil(Number(localDay.slice(8))/7):localDay;
  const previous=await query("turinpipps_email_dispatches?user_id=eq."+user.user_id+"&kind=eq."+kind+"&period_key=eq."+encodeURIComponent(dateKey)+"&select=id,status&limit=1");
  if(previous.length)return {sent:false,skipped:"already_recorded"};
  const inserted=await insert("turinpipps_email_dispatches",{user_id:user.user_id,kind,period_key:dateKey,status:"sending"},"resolution=ignore-duplicates,return=representation");
  if(!inserted.length)return {sent:false,skipped:"duplicate"};
  const id=inserted[0].id;
- const title="TurinPipps · "+(kind==="manual"?"Il tuo riepilogo":"Nuove opportunità a Torino");
+ const title="TurinPipps · "+(kind==="manual"?"Il tuo riepilogo richiesto":"Nuove opportunità per te");
  const cards=data.map((x:any)=>'<tr><td style="padding:13px 0;border-bottom:1px solid #e5edf0"><a href="'+esc(x.listing_url)+'" style="color:#205a71;font-weight:700">'+esc(x.title)+'</a><br><span style="font-size:12px;color:#627d8c">'+esc(x.zone)+' · '+Number(x.price).toLocaleString("it-IT")+' €/mese · disponibilità da verificare</span></td></tr>').join("");
  const html='<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#193a4c"><div style="background:#12394f;color:white;padding:24px;border-radius:10px"><b style="font-size:25px">TurinPipps</b><p style="color:#d3e4e8">Il tuo radar casa a Torino</p></div><h2 style="margin-top:28px">Le case da valutare</h2><p>Hai '+data.length+' opportunità con prezzo e quartiere pertinenti alle tue preferenze. Le informazioni vanno sempre confermate con la fonte.</p><table style="width:100%;border-collapse:collapse">'+(cards||'<tr><td style="padding:20px 0">Nessuna nuova corrispondenza documentata in questa raccolta.</td></tr>')+'</table><p style="margin-top:24px"><a href="'+baseUrl+'" style="background:#1f6477;padding:13px 18px;color:white;text-decoration:none;border-radius:8px">Apri TurinPipps</a></p><p style="font-size:11px;color:#82949e;margin-top:29px">Ricevi questo riepilogo perché hai un account TurinPipps con email verificata. Puoi disattivarlo in Profilo e Impostazioni.</p></div>';
  try{
@@ -90,10 +108,10 @@ Deno.serve(async req=>{
    }
   }else return reply({error:"Azione non supportata"},400);
   if(!KEY||!FROM)return reply({error:"Invio email non configurato: collega un provider di posta verificato al backend TurinPipps.",provider_ready:false},503);
-  const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type,private_status&order=first_seen.desc&limit=2500");
+  const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type,private_status,link_status,availability_status,expired_at,price_history&order=first_seen.desc&limit=2500");
   let people:any[];
-  if(current)people=await query("turinpipps_profiles?user_id=eq."+encodeURIComponent(action==="admin_manual"?String(body.user_id):current.id)+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=1");
-  else people=await query("turinpipps_profiles?email_confirmed=eq.true&digest_enabled=eq.true&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at&limit=250");
+  if(current)people=await query("turinpipps_profiles?user_id=eq."+encodeURIComponent(action==="admin_manual"?String(body.user_id):current.id)+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at,notify_new_listings,notify_price_drops&limit=1");
+  else people=await query("turinpipps_profiles?email_confirmed=eq.true&digest_enabled=eq.true&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at,notify_new_listings,notify_price_drops&limit=250");
   if(current&&!people.length)return reply({error:"Profilo non inizializzato"},404);
   if(action==="admin_manual"&&(!people.length||!people[0].digest_enabled||people[0].digest_frequency==="off"))
     return reply({error:"L'utente ha disattivato i riepiloghi email"},409);
@@ -115,7 +133,7 @@ Deno.serve(async req=>{
      await insert("turinpipps_admin_actions",{actor_id:current.id,target_user_id:String(body.user_id),
        action:"admin_manual_report",details:{sent:true,count:o.count}}, "return=minimal");
    }
-   return o.sent?reply(o):reply({error:o.error||"Riepilogo già richiesto in questa fascia oraria",sent:false},o.error?502:429);
+   return o.sent?reply(o):reply({error:o.error||"Nessun nuovo invio disponibile in questa fascia oraria",sent:false},o.error?502:429);
   }
   return reply({checked:outcomes.length,sent:outcomes.filter(x=>x.sent).length,failed:outcomes.filter(x=>x.error).length});
  }catch(e){console.error("mail job",String(e));return reply({error:"Errore di elaborazione report"},500)}
