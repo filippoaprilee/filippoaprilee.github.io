@@ -28,7 +28,7 @@ Per tutte e cinque, `private_status=source` e `verification_level=source_documen
 - L'eventuale mancata disponibilità del link va distinta da un blocco tecnico (403, 429, bot challenge o errore di rete).
 
 ## Verifiche necessarie prima di un lancio pubblico promosso
-1. **Supabase Dashboard:** attivare la protezione contro le password compromesse (Security Advisor) e CAPTCHA/antiabuso di Auth dove supportato; queste impostazioni non sono esposte dagli strumenti di connessione al progetto.
+1. **Supabase Dashboard:** attivare la protezione contro le password compromesse (Security Advisor) e CAPTCHA/antiabuso di Auth dove supportato; Supabase documenta la protezione password compromesse soltanto dal piano Pro in poi. Anche la lunghezza minima password va imposta lato Supabase Auth, non solo nel browser. Queste impostazioni non sono esposte dagli strumenti di connessione al progetto.
 2. **Account:** collaudare registrazione, conferma email, login/logout, esportazione e cancellazione su un account **di prova** senza dati reali. Non testare la cancellazione su account di produzione.
 3. **Collector:** verificare che una scansione successiva al rilascio V15 registri `details.link_health`, conservi i dati con riscontro fonte e produca contatori coerenti con nuove URL effettive.
 4. **Usabilità:** test mobile Safari e Chrome, navigazione tastiera, ingrandimento caratteri al 200%, VoiceOver, connettività lenta e PWA installata; verificare insieme ricerca → valutazione → salvataggio → confronto → visita.
