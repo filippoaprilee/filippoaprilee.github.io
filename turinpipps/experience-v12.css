@@ -783,3 +783,14 @@ html[data-tp-theme="dark"] #view-results .tp12-card .tp-card-details :is(.tp-dat
  #view-results .tp12-search-actions>.button,#view-results .tp12-search-more>summary{font-size:11px!important}
  #view-results .tp12-result-tabs .chip{font-size:11px!important}
 }
+
+
+/* Final readability corrections: navigation labels and footer are not microtext. */
+@media(max-width:700px){
+ .mobile-nav button{font-size:12px!important;min-height:52px!important;letter-spacing:0!important}
+ .mobile-nav button i{font-size:20px!important}
+ #tp9-global-footer.tp12-footer>span{font-size:12px!important;line-height:1.55!important}
+ #tp9-global-footer.tp12-footer nav a{font-size:12px!important;line-height:1.3}
+ #tp9-global-footer.tp12-footer nav{column-gap:14px!important}
+ .tp13-stage-active,.tp13-stage-empty{scroll-margin-top:24px;scroll-margin-bottom:110px}
+}
