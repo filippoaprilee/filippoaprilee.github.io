@@ -32,6 +32,8 @@
     var consent=el('tp-v6-register-digest-wrap');
     if(consent)consent.hidden=next!=='register';
     el('tp-auth-password').autocomplete=next==='register'?'new-password':'current-password';
+    el('tp-auth-password').minLength=next==='register'?12:8;
+    el('tp-auth-password').placeholder=next==='register'?'Almeno 12 caratteri':'La tua password';
     status('');
   }
   function setButton(){
@@ -196,6 +198,7 @@
       var user=el('tp-auth-email').value.trim();
       var pass=el('tp-auth-password').value;
       if(!user||pass.length<8)throw new Error('Inserisci email valida e una password di almeno 8 caratteri.');
+      if(mode==='register'&&pass.length<12)throw new Error('Per il nuovo account servono almeno 12 caratteri.');
       var result;
       if(mode==='register'){
         result=await client.auth.signUp({email:user,password:pass,
@@ -277,6 +280,18 @@
   window.TurinPippsAuth={isSignedIn:function(){return !!current},
     saveFlag:saveFlag,saveManual:saveManual,savePreferences:savePreferences,open:open,
     getCurrentUser:function(){return current?{id:current.id,email:current.email,confirmed:!!current.email_confirmed_at}:null},
+    reauthenticate:async function(password){
+      if(!client||!current||!password)throw new Error('Account o password non disponibili');
+      var r=await client.auth.signInWithPassword({email:current.email,password:password});
+      if(r.error||!r.data||!r.data.session)throw new Error('Password non corretta o accesso non riuscito');
+      return r.data.session.access_token;
+    },
+    finishErasure:async function(){
+      if(client)try{await client.auth.signOut({scope:'local'});}catch(_){}
+      current=null;
+      if(bridge&&bridge.useGuest)bridge.useGuest();
+      setButton();
+    },
     getAccessToken:async function(){if(!current||!client)return null;
       var r=await client.auth.getSession();
       return r.error?null:(r.data.session&&r.data.session.access_token)||null;
