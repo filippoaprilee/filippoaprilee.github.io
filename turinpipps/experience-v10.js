@@ -430,6 +430,12 @@ function attachEvents(){
   }
  });
  document.addEventListener("click",async ev=>{
+  // The visible Azzera control must clear *all* filters, including quick filters
+  // moved into the advanced panel. Let the existing click handler reset the rest.
+  if(ev.target.closest("#tp8-reset")){
+   filterState.priced=false;filterState.fresh=false;
+   $("[data-tp10-filter]").forEach(input=>{input.checked=false;});
+  }
   const reset=ev.target.closest("[data-tp11-reset]");
   if(reset){
    ev.preventDefault();
