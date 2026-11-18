@@ -3,7 +3,7 @@
 "use strict";
 const el=id=>document.getElementById(id);
 const escapeHtml=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-const stages=[["saved","Da contattare","Case salvate da valutare"],["contact","In contatto","Proprietari già contattati"],["visits","Visite","Appuntamenti e valutazioni"],["decisions","Decisioni","Trattative e case scelte"]];
+const stages=[["saved","Da contattare","Case salvate da valutare"],["contact","In attesa di risposta","Messaggi inviati, risposta da ricevere"],["replies","Risposta ricevuta","Contatti a cui dare seguito"],["visits","Visite","Appuntamenti e valutazioni"],["decisions","Decisioni","Trattative e case scelte"]];
 const decisions=[["valutazione","In valutazione"],["trattativa","In trattativa"],["scelto","Scelto"],["scartato","Scartato"]];
 function context(){
  let api=window.TurinPippsUXV3;
@@ -13,11 +13,11 @@ function context(){
 function flag(c,url){return c.flags[url]||{}}
 function visitDate(s){let d=new Date(s);return Number.isFinite(d.getTime())?d.toLocaleString("it-IT",{dateStyle:"short",timeStyle:"short"}):"Da definire"}
 function group(c){
- let groups={saved:[],contact:[],visits:[],decisions:[]};
- let tracked=c.rows.filter(a=>{let f=flag(c,a.url);return !!(f.saved||f.contact||f.discard||f.visitStatus&&f.visitStatus!=="non_programmata"||f.decisionStatus&&f.decisionStatus!=="valutazione")});
+ let groups={saved:[],contact:[],replies:[],visits:[],decisions:[]};
+ let tracked=c.rows.filter(a=>{let f=flag(c,a.url);return !!(f.saved||f.contact||f.replyReceived||f.discard||f.visitStatus&&f.visitStatus!=="non_programmata"||f.decisionStatus&&f.decisionStatus!=="valutazione")});
  tracked.forEach(a=>{
   let f=flag(c,a.url);
-  let status=f.discard||f.decisionStatus&&f.decisionStatus!=="valutazione"?"decisions":f.visitStatus&&f.visitStatus!=="non_programmata"?"visits":f.contact?"contact":"saved";
+  let status=f.discard||f.decisionStatus&&f.decisionStatus!=="valutazione"?"decisions":f.visitStatus&&f.visitStatus!=="non_programmata"?"visits":f.replyReceived?"replies":f.contact?"contact":"saved";
   groups[status].push(a);
  });
  return {groups,tracked};
