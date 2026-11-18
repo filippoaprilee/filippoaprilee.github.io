@@ -35,11 +35,26 @@ function duplicatesAcrossPortals(a){
   return (current&&otherArea)||(price&&otherPrice);
  }).slice(0,5);
 }
+function fieldEvidence(a){
+ const names={price:"Canone",expenses:"Spese dichiarate",address:"Indirizzo",sqm:"Superficie",
+  source_updated:"Ultimo aggiornamento fonte",published_at:"Pubblicazione originale",
+  private_status:"Indicazione di privato"};
+ const proof=a.field_provenance&&typeof a.field_provenance==="object"?a.field_provenance:{};
+ const entries=Object.keys(names).filter(key=>proof[key]&&proof[key].origin==="public_listing_page");
+ const link=a.evidence_url&&/^https:\/\//i.test(a.evidence_url)?a.evidence_url:"";
+ if(!entries.length)return '<p class="tp11-proof-limited">Non abbiamo ancora una provenienza per singolo campo. Controlla i dati nella fonte originale; un valore presente non è una verifica indipendente.</p>';
+ return '<details class="tp11-field-proof"><summary>Origine dei dati dichiarati ('+entries.length+')</summary>'+
+ '<ul>'+entries.map(key=>{
+  const p=proof[key];const when=p.observed_at?date(p.observed_at):"data non disponibile";
+  return '<li><b>'+esc(names[key])+'</b><span>Letto nella pagina pubblica · '+esc(when)+'</span></li>';
+ }).join("")+'</ul><p>La lettura automatica della fonte non conferma identità, disponibilità o correttezza dei dati.</p>'+
+ (link?'<a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">Consulta la fonte originale</a>':"")+'</details>';
+}
 function evidence(a){
  const budget=Number(api()?.getPrefs()?.budget)||700;
  const cls=api()?.classifyListing?.(a)||{status:"review"};
  const price=Number(a.price)||0,knownPrice=price>0;
- const verifiedPrice=knownPrice&&!!a.price_verified_at;
+ const verifiedPrice=knownPrice&&!!a.price_verified_at&&a.verification_level==="owner_confirmed"&&!!a.evidence_url;
  const priceStatus=verifiedPrice?"verified":knownPrice?"claimed":"unknown";
  const priceDescription=knownPrice?money(price)+"/mese · "+(cls.status==="excluded"?"fuori criteri":price<=budget?"nel budget indicato":"oltre budget"):"Canone da chiedere";
  const ownerVerified=a.verification_level==="owner_confirmed"&&a.private_status==="confirmed";
@@ -52,7 +67,7 @@ function evidence(a){
   a.availability_status==="source_available"?["Segnalata disponibile dalla fonte","claimed"]:
   a.availability_status==="unavailable"||a.availability_status==="expired"?["Segnalata non disponibile · ricontrolla","claimed"]:
   ["Disponibilità da chiedere","unknown"];
- const n=Number(a.expenses),expense=n>0?[money(n)+"/mese indicati, utenze da chiarire","claimed"]:
+ const n=Number(a.expenses),expense=n>0?[money(n)+"/mese indicati, utenze da chiarire",a.verification_level==="owner_confirmed"&&!!a.evidence_url?"verified":"claimed"]:
   a.expenses&&typeof a.expenses==="string"&&a.expenses.trim()?[a.expenses.slice(0,110),"claimed"]:
   ["Condominio, utenze e altri costi non verificati","unknown"];
  const hasRoute=Number(a.walking_minutes)>0;
@@ -79,10 +94,13 @@ function evidence(a){
   dataState("4. Spese",expense[0],expense[1])+
   dataState("5. Distanza reale",route[0],route[1])+
   dataState("6. Freschezza",freshness[0],freshness[1])+
+  dataState("7. Indirizzo",a.address||"Indirizzo esatto sconosciuto",a.address?"claimed":"unknown")+
+  dataState("8. Superficie",Number(a.sqm)>0?String(a.sqm)+" m² dichiarati":"Superficie non comunicata",Number(a.sqm)>0?"claimed":"unknown")+
   '</ol><div class="tp9-link-health '+(a.link_status==="missing"?"tp9-warning":"")+'"><strong>Controllo link</strong><span>'+esc(check)+'</span></div>'+
   duplicateHTML+
   '<details class="tp9-history"><summary>Storico modifiche registrate</summary><div class="tp9-history-content" role="status" aria-live="polite">Apri per caricare lo storico.</div></details>'+
-  '<p class="tp9-proof-legend">Verificato = evidenza datata; dichiarato = informazione non confermata in modo indipendente; sconosciuto = dato mancante. Un link raggiungibile non prova che la casa sia disponibile.</p></div>';
+  fieldEvidence(a)+
+  '<p class="tp9-proof-legend">Verificato = conferma indipendente documentata; dichiarato = informazione della fonte non confermata indipendentemente; sconosciuto = dato mancante. Link raggiungibile e data di scansione non dimostrano che la casa sia disponibile.</p></div>';
 }
 async function loadHistory(a,details){
  const node=$(".tp9-history-content",details);
