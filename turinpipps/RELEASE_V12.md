@@ -1,4 +1,4 @@
-# TurinPipps 12.1 — revisione mobile, onboarding e temi
+# TurinPipps 12.2 — revisione mobile, onboarding e temi
 
 Data: 18 novembre 2026 · Repository: `filippoaprilee/filippoaprilee.github.io` · Directory: `turinpipps/`
 
@@ -54,7 +54,7 @@ Il nome TurinPipps compare una volta sola nel topbar mobile; il marchio e il log
 
 ### PWA
 
-Service Worker `turinpipps-shell-v12.1.0` e versioni querystring `experience-v12.js?v=12.1.0` / `experience-v12.css?v=12.1.0`, in modo che l'app Home Screen non resti bloccata sulle vecchie risorse.
+Service Worker `turinpipps-shell-v12.2.0` e versioni querystring `experience-v12.js?v=12.1.0` / `experience-v12.css?v=12.2.0`, in modo che l'app Home Screen non resti bloccata sulle vecchie risorse.
 
 ## Cosa non è stato toccato
 
@@ -66,6 +66,6 @@ Service Worker `turinpipps-shell-v12.1.0` e versioni querystring `experience-v12
 
 Test automatici ripetibili: `node --test turinpipps/tests/v12-ui.test.cjs`.
 
-Controlli effettuati in chat: parsing JS e script inline, corrispondenza asset HTML/service worker, comportamento Auto/Chiaro/Scuro con simulazione di `matchMedia`. Build GitHub Pages da confermare sulla revisione finale.
+Controlli effettuati in chat: parsing JS e script inline, corrispondenza asset HTML/service worker, comportamento Auto/Chiaro/Scuro con simulazione di `matchMedia`. Build GitHub Pages verificata tramite GitHub Actions separatamente dalla prova grafica reale su Safari.
 
 **Collaudo manuale tuttora necessario:** Safari iPhone/PWA 320–430px, screenshot light/dark, modifica tema di sistema con l'app aperta, VoiceOver, navigazione da tastiera, modalità offline, login/logout e salvataggio completo. I test logici non costituiscono un test end-to-end su dispositivo.
