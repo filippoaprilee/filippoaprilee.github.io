@@ -120,7 +120,7 @@ function updateHome(){
   '<div class="tp8-latest-content"><div class="tp8-latest-price">'+(Number(latest.price)>0?Number(latest.price).toLocaleString("it-IT")+" €":"Prezzo non indicato")+
   '<small> /mese</small></div><h3>'+esc(latest.title)+'</h3><p><i class="fa-solid fa-location-dot"></i> '+esc(latest.zone||"Zona da verificare")+' · Rilevato '+esc(fmt(latest.seen||latest.first_seen))+'</p>'+
   '<div class="tp8-latest-badges"><span>'+esc(classify(latest).status==="good"?"Potenzialmente compatibile":"Informazioni da verificare")+'</span>'+
-  '<span>'+esc(latest.private_status==="confirmed"?"Privato dichiarato dalla fonte":"Inserzionista da controllare")+'</span></div>'+
+  '<span>'+esc(latest.private_status==="confirmed"&&latest.verification_level==="owner_confirmed"?"Privato verificato":"Inserzionista da controllare")+'</span></div>'+
   '<div class="tp8-latest-actions"><a class="tp8-primary" href="'+esc(latest.url)+'" target="_blank" rel="noopener noreferrer">Apri annuncio <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'+
   '<button type="button" class="tp8-link-button" data-nav="results">Vai alla ricerca</button></div></div>'
  :'<div class="tp8-empty">Non ci sono ancora annunci nell’archivio. Controlla la sezione Cerca.</div>';
