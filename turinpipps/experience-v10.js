@@ -330,7 +330,7 @@ function accessibility(){
       title.tabIndex=-1;title.focus({preventScroll:true});
       // Avoid surprise viewport jumps and animation for reduced-motion users.
       if(typeof window.matchMedia==="function"&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-        view.scrollIntoView({block:"start",behavior:"instant"});
+        view.scrollIntoView({block:"start",behavior:"auto"});
       }
     }
   });
@@ -366,6 +366,10 @@ function enhanceAdmin(){
 }
 async function persistFlag(url,next,origin){
  if(pending.has(url))return false;
+ const oldCard=origin?.closest(".listing");
+ const openState=oldCard?{tools:!!$(".tp10-property-tools",oldCard)?.open,proof:!!$(".tp10-evidence",oldCard)?.open,details:!!$(".tp-card-details",oldCard)?.open}:null;
+ const restoreKey=origin?.dataset?.tp10Check||origin?.dataset?.tp10Cost||origin?.dataset?.tp10Action||"";
+ const restoreType=origin?.dataset?.tp10Check?"check":origin?.dataset?.tp10Cost?"cost":"action";
  pending.add(url);const control=origin?.closest("button,label,.tp10-tools-content");
  if(control)control.classList.add("tp10-saving");
  try{
@@ -375,6 +379,20 @@ async function persistFlag(url,next,origin){
   if(window.TurinPippsBridge?.applyPersonalFlag)window.TurinPippsBridge.applyPersonalFlag(url,next);
   else {prefs().flags=prefs().flags||{};prefs().flags[url]=next;api()?.refresh?.();}
   homeUpdate();
+  // Rerendering is required by the existing search controller: restore the
+  // expansion and input focus instead of collapsing the user's form.
+  if(openState)queueMicrotask(()=>{
+   enhanceCards();simplifyListingDetails();
+   const article=$(".listing").find(x=>$('[data-action="save"][data-url]',x)?.dataset.url===url);
+   if(!article)return;
+   const tools=$(".tp10-property-tools",article),proof=$(".tp10-evidence",article),details=$(".tp-card-details",article);
+   if(tools)tools.open=openState.tools;
+   if(proof)proof.open=openState.proof;
+   if(details)details.open=openState.details;
+   const selector=restoreType==="check"?'[data-tp10-check="'+restoreKey+'"]':
+      restoreType==="cost"?'[data-tp10-cost="'+restoreKey+'"]':'[data-tp10-action="'+restoreKey+'"]';
+   article.querySelector(selector)?.focus({preventScroll:true});
+  });
   return true;
  }catch(err){
   const toast=$("#tp-toast");if(toast){toast.textContent="Salvataggio non riuscito: "+String(err.message||err);toast.hidden=false;toast.className="tp-toast warn";}
