@@ -1,6 +1,8 @@
-// TurinPipps · Collector v3.1
+// TurinPipps · Collector v11: source-safe enrichment, provenance and quality metrics
 // Scansioni di ricerca pubblica via indice Bing RSS, senza login o scraping dei portali.
 // Invocazione server-to-server protetta da chiave casuale conservata in Supabase Vault.
+import {extractClickCaseDetails,sourceIdentity} from "./listing-extractor.js";
+const ROBOTS_CACHE=new Map<string,Promise<{status:number,ok:boolean,content:string}>>();
 const JOB_SHA256 = "f56439eb86364195905be2060527f091e4404619203a6ce0f55493dc934a3542";
 // Bing RSS non fornisce risultati pertinenti in modo affidabile: resta ricerca manuale in UI.
 const QUERY_SET = [] as const;
@@ -40,6 +42,7 @@ function canonical(link:string) {
   try {
     const u=new URL(link.replace(/&amp;/g,"&"));if(u.protocol!=="https:"&&u.protocol!=="http:")return null;
     u.hostname=u.hostname.toLowerCase();let h=u.hostname.replace(/^www\./,"");
+    if(h==="clickcase.it"||h==="immobiliare.it"||h==="subito.it"||h==="idealista.it")u.hostname="www."+h;
     let source="";
     if(h==="subito.it"&&/^\/appartamenti\/[^/]+\.htm$/i.test(u.pathname))source="Subito";
     if(h==="immobiliare.it"&&/^\/annunci\/\d+\/?$/i.test(u.pathname))source="Immobiliare.it";
@@ -104,12 +107,19 @@ async function scanOne(engine:string,query:string,time:string) {
 
 /** Lettura delle pagine pubbliche ClickCase soltanto dove permesso da robots.txt. */
 async function robotsPermits(origin:string,path:string) {
-  let response:Response;
-  try {response=await fetch(origin+"/robots.txt",{signal:AbortSignal.timeout(6000)});}
-  catch(_) {return {allowed:false,reason:"robots non raggiungibile"};}
-  if(response.status===404)return {allowed:true,reason:"robots assente"};
-  if(!response.ok)return {allowed:false,reason:"robots HTTP "+response.status};
-  const robots=(await response.text()).slice(0,300000);
+  let robotsFile:{status:number,ok:boolean,content:string};
+  try {
+    if(!ROBOTS_CACHE.has(origin)){
+      ROBOTS_CACHE.set(origin,(async()=>{
+        const response=await fetch(origin+"/robots.txt",{signal:AbortSignal.timeout(6000)});
+        return {status:response.status,ok:response.ok,content:response.ok?(await response.text()).slice(0,300000):""};
+      })());
+    }
+    robotsFile=await ROBOTS_CACHE.get(origin)!;
+  }catch(_) {return {allowed:false,reason:"robots non raggiungibile"};}
+  if(robotsFile.status===404)return {allowed:true,reason:"robots assente"};
+  if(!robotsFile.ok)return {allowed:false,reason:"robots HTTP "+robotsFile.status};
+  const robots=robotsFile.content;
   const groups:{agents:string[],rules:{type:string,pattern:string}[]}[]=[];
   let agents:string[]=[],rules:{type:string,pattern:string}[]=[];
   const flush=()=>{if(agents.length)groups.push({agents,rules});agents=[];rules=[]};
@@ -169,14 +179,12 @@ async function collectClickCase(time:string){
           const snippet=unescapeXml(html.slice(Math.max(0,m.index-160),Math.min(html.length,m.index+750)));
           const zone=zoneOf(headline+" "+snippet);
           if(!zone)continue;
-          // Il canone viene acquisito solo se la cifra compare vicino alla scheda; altrimenti è sconosciuto.
-          const match=snippet.match(/(?:€\s*(\d{2,4})|\b(\d{2,4})\s*€)\b/);
-          const price=match?Number(match[1]||match[2]):0;
-          const monthly=price>=180&&price<=2500?price:0;
+          // A price near the link can belong to an adjacent card: no amount is trusted here.
+          // Monthly rent is extracted only from an explicit label on a permitted detail page.
           found.set(item.url,{
             listing_url:item.url,title:headline,description:snippet.slice(0,450),
             source:"ClickCase",origin_engine:"ClickCase: pagine pubbliche",zone,
-            price:monthly,private_status:"source",last_seen:time
+            price:0,private_status:"source",last_seen:time
           });
           newOnPage++;
         }
@@ -333,6 +341,90 @@ async function checkListingLinks(){
  return result;
 }
 
+/** A small rotating detail-page queue, never a mass scraper.
+    No fetch without a robots.txt allowance. No blind assertion of availability. */
+async function enrichClickCase(rows:any[],existing:Map<string,any>,time:string){
+ const totals={checked:0,read:0,blocked:0,errors:0,new_fields:0};
+ const found=new Map<string,any>();
+ const choices=rows.filter(a=>a.source==="ClickCase").map(a=>({row:a,old:existing.get(a.listing_url)||{}}))
+ .filter(({old})=>!old.detail_checked_at||Date.now()-Date.parse(old.detail_checked_at)>(
+    Number(old.price)>0?7*86400000:48*3600000))
+ .sort((a,b)=>(a.old.detail_checked_at?1:0)-(b.old.detail_checked_at?1:0)
+    ||(Date.parse(a.old.detail_checked_at||"")||0)-(Date.parse(b.old.detail_checked_at||"")||0))
+ .slice(0,3);
+ await Promise.all(choices.map(async ({row})=>{
+   const now=new Date().toISOString();
+   const out:any={status:"error",checked_at:now,fields:{},field_provenance:{}};
+   try{
+     const target=new URL(row.listing_url);
+     const permission=await robotsPermits(target.origin,target.pathname);
+     if(!permission.allowed){out.status="blocked";totals.blocked++;}
+     else{
+       const response=await fetch(row.listing_url,{signal:AbortSignal.timeout(7500),redirect:"manual",
+         headers:{"User-Agent":"TurinPipps/4.1 (public details, respects robots.txt)","Accept":"text/html"}});
+       if(response.status===404||response.status===410){out.status="not_found";totals.errors++;}
+       else if(response.status===401||response.status===403||response.status===429||response.status>=300&&response.status<400){out.status="blocked";totals.blocked++;}
+       else if(!response.ok){out.status="error";totals.errors++;}
+       else{
+         const text=(await response.text()).slice(0,1450000);
+         if(!/<html\b/i.test(text)){totals.errors++;}
+         else{
+           const parsed=extractClickCaseDetails(text,row.listing_url,now);
+           out.status=parsed.status==="source_read"?"source_read":"error";
+           out.fields=parsed.fields;out.field_provenance=parsed.field_provenance;
+           if(out.status==="source_read"){totals.read++;totals.new_fields+=Object.keys(out.fields).length;}
+           else totals.errors++;
+         }
+       }
+     }
+   }catch(e){totals.errors++;console.warn("Detail read inconclusive",String(e).slice(0,85));}
+   totals.checked++;
+   found.set(row.listing_url,out);
+ }));
+ return {found,totals};
+}
+function mergeSourceDetail(row:any,old:any,detail:any,time:string){
+ let combined:any={...row};
+ const metadata:any={...(old.field_provenance&&typeof old.field_provenance==="object"?old.field_provenance:{})};
+ if(detail&&detail.status==="source_read"){
+  for(const [key,value] of Object.entries(detail.fields||{})){
+   const prior:any=metadata[key]||{};
+   const sameSource=prior.origin==="public_listing_page"&&prior.evidence_url===row.listing_url;
+   const independent=old.verification_level==="owner_confirmed";
+   const external=old.origin_engine==="ricerca_web_verificata";
+   let use=false;
+   if(key==="price")use=!independent&&!external&&(
+     !(Number(old.price)>0)||(sameSource&&Number(old.price)!==Number(value)));
+   else if(key==="expenses"||key==="sqm")use=!independent&&!external&&(
+     !(Number(old[key])>0)||(sameSource&&Number(old[key])!==Number(value)));
+   else if(key==="address")use=!independent&&!external&&(!old.address||sameSource);
+   else if(key==="description")use=!independent&&!external&&(!old.description||old.description.length<60||sameSource);
+   else if(key==="source_updated")use=!!value&&(!old.source_updated||sameSource&&Date.parse(String(value))>=Date.parse(old.source_updated));
+   else if(key==="published_at")use=!!value&&!old.published_at;
+   else if(key==="private_status")use=old.private_status!=="confirmed"&&old.verification_level!=="owner_confirmed";
+   if(use){
+     combined[key]=value;
+     metadata[key]=detail.field_provenance[key];
+   }
+  }
+  if(Object.keys(detail.fields).length&&(!old.evidence_url||old.evidence_url===row.listing_url))
+    combined.evidence_url=row.listing_url;
+ }
+ combined.field_provenance=metadata;
+ combined.detail_checked_at=detail?.checked_at||old.detail_checked_at||null;
+ combined.detail_status=detail?.status||old.detail_status||"unchecked";
+ // Never call a source claim independently confirmed.
+ combined.verification_level=old.verification_level||"unverified";
+ combined.verification_reason=old.verification_reason||"";
+ combined.last_verified_at=old.last_verified_at||null;
+ combined.price_verified_at=old.price_verified_at||null;
+ combined.availability_status=old.availability_status||"unknown";
+ combined.expired_at=old.expired_at||null;
+ combined.published_at=combined.published_at||old.published_at||null;
+ combined.source_updated=combined.source_updated||old.source_updated||null;
+ return combined;
+}
+
 async function scan(time:string,feeds:string[]){
   const started=Date.now(),outputs:any[]=[];
   // Richieste limitate a gruppi di tre; nessun login Facebook, nessun aggiramento di blocchi.
@@ -343,21 +435,47 @@ async function scan(time:string,feeds:string[]){
   // Bakeca e Immobiliare.it: robots.txt ne vieta la lettura automatica; consultabili manualmente dal Radar.
   outputs.push(...await readGoogleAlerts(feeds,time));
   const found=new Map<string,any>();
-  outputs.flatMap(x=>x.rows).forEach(x=>{if(!found.has(x.listing_url))found.set(x.listing_url,x)});
+  let duplicateSightings=0;
+  outputs.flatMap(x=>x.rows).forEach(x=>{
+    const key=sourceIdentity(x.listing_url)||x.listing_url;
+    if(found.has(key)){
+      duplicateSightings++;
+      const old=found.get(key);
+      if((!old.price&&x.price)||(String(x.description||"").length>String(old.description||"").length&&x.source===old.source)){
+        found.set(key,{...old,...x,listing_url:old.listing_url});
+      }
+    }else found.set(key,x);
+  });
   const all=[...found.values()],ok=outputs.filter(x=>x.ok).length;
   const stats=outputs.map(({engine,ok,count,items,status})=>({engine,ok,count,items:items||0,status}));
   let saved=0,newLinks=0;
+  let quality:any[]=[];let enrichmentStats:any={checked:0,read:0,blocked:0,errors:0,new_fields:0};
   if(all.length){
-    const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen,title,description,price,expenses,source_updated,sqm,address,property_type,origin_engine,evidence_url,private_status&limit=10000",{headers:dbHeaders()});
+    const existingRes=await fetch(DB_ROOT+"/turinpipps_discovered_listings?select=listing_url,first_seen,title,description,price,expenses,source_updated,sqm,address,property_type,origin_engine,evidence_url,private_status,published_at,last_verified_at,price_verified_at,verification_level,verification_reason,availability_status,expired_at,field_provenance,detail_checked_at,detail_status&limit=10000",{headers:dbHeaders()});
     if(!existingRes.ok)throw new Error("Database read HTTP "+existingRes.status);
-    const existing=new Map((await existingRes.json()).map((v:any)=>[v.listing_url,v]));
-    newLinks=all.filter(x=>!existing.has(x.listing_url)).length;
-    const rows=all.map(x=>{
+    const previous=await existingRes.json();
+    const existing=new Map(previous.map((v:any)=>[v.listing_url,v]));
+    const identityKeys=new Map(previous.map((v:any)=>[sourceIdentity(v.listing_url),v.listing_url]));
+    // Keep the existing primary URL when an alternate URL points to the same source ID.
+    for(const row of all){
+      if(!existing.has(row.listing_url)){
+        const original=identityKeys.get(sourceIdentity(row.listing_url));
+        if(original&&original!==row.listing_url){
+          duplicateSightings++;
+          row.listing_url=original;
+        }
+      }
+    }
+    const combined=new Map<string,any>();
+    for(const x of all)if(!combined.has(x.listing_url))combined.set(x.listing_url,x);
+    const unique=[...combined.values()];
+    newLinks=unique.filter(x=>!existing.has(x.listing_url)).length;
+    const enriched=await enrichClickCase(unique,existing,time);
+    enrichmentStats=enriched.totals;
+    const rows=unique.map(x=>{
       const old:any=existing.get(x.listing_url)||{};
-      // Non cancellare canone, data originale e informazioni verificate quando un feed
-      // contiene soltanto titolo e URL. Il feed rinnova last_seen, non published_at.
       const richer=old.origin_engine==="ricerca_web_verificata";
-      return {...x,
+      const baseline:any={...x,
         first_seen:old.first_seen||time,
         title:richer&&old.title?old.title:x.title,
         description:richer&&old.description?old.description:x.description,
@@ -367,11 +485,28 @@ async function scan(time:string,feeds:string[]){
         address:old.address||"",
         property_type:old.property_type||"",
         source_updated:old.source_updated||null,
+        published_at:old.published_at||null,
         evidence_url:old.evidence_url||"",
         origin_engine:richer?old.origin_engine:x.origin_engine,
-        private_status:richer?old.private_status:x.private_status
-      }
+        private_status:old.private_status==="confirmed"?"confirmed":richer?old.private_status:x.private_status
+      };
+      return mergeSourceDetail(baseline,old,enriched.found.get(x.listing_url),time);
     });
+    const grouped=new Map<string,any>();
+    for(const o of outputs){
+      const group=grouped.get(o.engine)||{source:o.engine,checks:0,ok:0,found:0,unique:0,new:0,errors:0,blocked:0};
+      group.checks++;if(o.ok)group.ok++;else group.errors++;
+      group.found+=(o.rows||[]).length;
+      if(/robots|bloccato|403|429/i.test(String(o.status||"")))group.blocked++;
+      grouped.set(o.engine,group);
+    }
+    for(const row of unique){
+      const engine=row.origin_engine?.startsWith("ClickCase")?"ClickCase diretto":
+        row.origin_engine==="Google Alerts RSS"?"Google Alerts":row.origin_engine;
+      const group=grouped.get(engine);
+      if(group){group.unique++;if(!existing.has(row.listing_url))group.new++;}
+    }
+    quality=[...grouped.values()];
     for(let i=0;i<rows.length;i+=100){
       const r=await fetch(DB_ROOT+"/turinpipps_discovered_listings?on_conflict=listing_url",{
         method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}),
@@ -385,7 +520,10 @@ async function scan(time:string,feeds:string[]){
   const entry={started_at:time,finished_at:new Date().toISOString(),
     status:ok===0?"failed":ok===outputs.length?"ok":"partial",
     jobs_checked:outputs.length,jobs_ok:ok,discovered:newLinks,
-    details:{engines:stats,link_health:health,duration_ms:Date.now()-started}};
+    details:{engines:stats,source_quality:quality,detail_enrichment:enrichmentStats,
+      dedup:{raw:outputs.reduce((n,x)=>n+(x.rows||[]).length,0),unique:all.length,
+        duplicate_observations:duplicateSightings,new_unique:newLinks},
+      link_health:health,duration_ms:Date.now()-started}};
   const stored=await fetch(DB_ROOT+"/turinpipps_scan_runs",{
     method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(entry)
   });
@@ -397,7 +535,7 @@ Deno.serve(async req=>{
     "Access-Control-Allow-Origin":ALLOWED_ORIGIN,"Access-Control-Allow-Methods":"GET,POST,OPTIONS",
     "Access-Control-Allow-Headers":"Content-Type,x-tp-scan-secret"
   }});
-  if(req.method==="GET")return reply({name:"TurinPipps collector",version:"3.1",status:"ready"});
+  if(req.method==="GET")return reply({name:"TurinPipps collector",version:"11.0",status:"ready"});
   if(req.method!=="POST")return reply({error:"Method not allowed"},405);
   const given=req.headers.get("x-tp-scan-secret")||"";
   if(given.length<40||given.length>256||!constantTime(await sha256(given),JOB_SHA256))
