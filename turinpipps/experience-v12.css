@@ -193,7 +193,7 @@ body{background:var(--tp12-bg)!important}
   box-shadow:none!important}
  .tp12-topbar #tp-guide-open .tp-guide-label,.tp12-topbar #tp-account-button>span{display:none!important}
  .tp12-topbar #tp-guide-open i{font-size:18px}
- .tp12-topbar .tp-theme-popover{right:-85px}
+ .tp12-topbar .tp12-theme-popover{right:10px;width:min(330px,calc(100vw - 28px))}
  #view-results>.tp-page-lead{display:flex!important;flex-direction:column!important;gap:11px!important;
  padding:0 1px!important;margin:0 0 13px!important}
  #view-results>.tp-page-lead h1{font-size:28px!important;letter-spacing:-1.1px!important;margin:6px 0!important}
@@ -497,3 +497,8 @@ html[data-tp-theme="dark"] #tp-guide-dialog .tp-ob-scroll #tp-guide-description{
 #tp-welcome #tp-welcome-signin{background:transparent!important;color:var(--tp12-accent-text)!important;
  border:0!important;text-decoration:underline;text-underline-offset:3px}
 #tp-welcome .tp-welcome-footer{font-size:11px;color:var(--tp12-muted);line-height:1.5}
+
+/* Anchor theme choices to the full header, not to the middle of four small buttons. */
+.tp12-topbar{position:relative}
+.tp12-topbar .tp12-theme-menu{position:static}
+.tp12-topbar .tp12-theme-popover{position:absolute;right:10px;top:calc(100% + 9px)}
