@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-19T07:21:26.839Z",
+  "updated_at": "2026-11-19T11:38:52.787Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -95,10 +95,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-18T17:38:52.435Z",
+      "availability_checked_at": "2026-11-19T11:38:52.787Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
+      "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -121,10 +121,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-18T17:38:52.435Z",
+      "availability_checked_at": "2026-11-19T11:38:52.787Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
+      "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-271099.html",
@@ -147,10 +147,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-18T17:38:52.435Z",
+      "availability_checked_at": "2026-11-19T11:38:52.787Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T17:38:52.435Z"
+      "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-200568.html",
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-18T23:38:52.241Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-19T05:38:52.658Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-19T05:38:52.658Z",
       "availability_state": "online_alla_verifica",
@@ -437,7 +437,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-18T17:38:52.435Z",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert"
     },
     {
@@ -452,8 +452,106 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-18T17:38:52.435Z",
-      "last_seen": "2026-11-19T05:38:52.658Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/alloggio-ristrutturato-zona-pozzo-strada-torino-425573.html",
+      "title": "Alloggio ristrutturato zona Pozzo Strada",
+      "description": "Alloggio ristrutturato zona Pozzo Strada - Affitto Appartamento da Privato a Torino, Pozzo Strada - 425573 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 425573 Alloggio ristrutturato zona Pozzo Strada Appartamento in Affitto da Privato - ",
+      "price": 650,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-spaziosa-con-cucina-e-salotto-in-comune-e-servizi-torino-423888.html",
+      "title": "CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI",
+      "description": "CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI - Affitto Palazzo/Stabile da Privato a Torino, Campidoglio - 423888 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Palazzi/Stabili &raquo; Rif. 423888 CAMERA SPAZIOSA CON CUCINA E SALOTTO IN COMUNE E SERVIZI ",
+      "price": 450,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
+      "title": "Camera con bagno privato",
+      "description": "Camera con bagno privato - Affitto Appartamento da Privato a Torino, Italia 61 - 423697 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 423697 Camera con bagno privato Appartamento in Affitto da Privato - Via Nizza 386, Torino 93 m&sup2; | ",
+      "price": 500,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
+      "title": "DA PRIVATO POSTO LETTO PER MASCHI",
+      "description": "DA PRIVATO POSTO LETTO PER MASCHI - Affitto Appartamento da Privato a Torino, Barriera Milano - 422215 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 422215 DA PRIVATO POSTO LETTO PER MASCHI Appartamento in Affitto da Privato - Via Pierlui",
+      "price": 300,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/stanza-torino-421979.html",
+      "title": "Annuncio ClickCase · da verificare",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-19T11:38:52.787Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
+    },
+    {
+      "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
+      "title": "Annuncio ClickCase · da verificare",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Santa Rita",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T11:38:52.787Z",
+      "origin": "automatic_alert",
+      "availability_checked_at": "2026-11-19T11:38:52.787Z",
+      "availability_state": "online_alla_verifica",
+      "availability_consecutive_missing": 0,
+      "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
     }
   ]
 }
