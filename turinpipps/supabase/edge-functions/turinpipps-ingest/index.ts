@@ -20,8 +20,9 @@ function canonical(raw:string){
   return u.toString();
  }catch(_){return null}
 }
-const allowedZones=["Crocetta","Cenisia","Borgo San Paolo","San Paolo","Cit Turin","Santa Rita","Pozzo Strada"];
+const allowedZones=["Crocetta","Cenisia","Borgo San Paolo","San Paolo","Cit Turin","Santa Rita"];
 const normalize=(item:any,stamp:string)=>{
+  if(/pozzo[\s./_-]*strada/i.test([item?.zone,item?.title,item?.description,item?.url].join(" ")))return null;
  const url=canonical(String(item?.url||""));
  if(!url)return null;
  const title=String(item.title||"").trim().replace(/\s+/g," ").slice(0,220);
