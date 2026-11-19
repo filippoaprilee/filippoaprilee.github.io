@@ -124,6 +124,18 @@ function draw(step){
       persistValues();
       if(active===2&&draft.zones.length===0){$('#tp-ob-zone-error').hidden=false;return}
       if(active<steps.length-1){draw(active+1);return}
+      // On the final, user-initiated tap, request iOS push permission
+      // BEFORE any await/network operation could lose the gesture.
+      var user=window.TurinPippsAuth&&window.TurinPippsAuth.getCurrentUser?.();
+      var mail=!!$('#tp14-guide-release-email')?.checked;
+      var push=!!$('#tp14-guide-release-push')?.checked;
+      if(user&&push&&window.TurinPippsV5?.enablePush)window.TurinPippsV5.enablePush();
+      if(user&&(mail||push)&&window.TurinPippsV5?.saveReleasePreferences){
+       window.TurinPippsV5.saveReleasePreferences(mail,push).catch(function(err){
+         var status=document.getElementById('tp-toast');
+         if(status){status.textContent='Attivazione avvisi non riuscita: '+String(err.message||err);status.hidden=false;status.className='tp-toast warn'}
+       });
+      }
       savePrefs();
       localStorage.setItem('turinpipps.onboard.v4','1');
       localStorage.setItem('turinpipps.onboard.v2','1');
@@ -140,11 +152,21 @@ function draw(step){
  $('#tp-guide-fields').innerHTML=bodyForStep(step);
  $('#tp-guide-progress').style.width=((step+1)/steps.length*100)+'%';
  $('#tp-guide-skip').textContent=step===0?'Salta configurazione':'Indietro';
- $('#tp-guide-next').innerHTML=step===steps.length-1?'Salva e apri il radar <i class="fa-solid fa-arrow-right"></i>':'Continua <i class="fa-solid fa-arrow-right"></i>';
+ $('#tp-guide-next').innerHTML=step===steps.length-1?'Salva e cerca casa <i class="fa-solid fa-arrow-right"></i>':'Continua <i class="fa-solid fa-arrow-right"></i>';
  var scroll=$('#tp-ob-scroll');if(scroll)scroll.scrollTop=0;
  if(step===2){var error=document.createElement('p');error.id='tp-ob-zone-error';error.className='tp-ob-error';error.hidden=true;error.textContent='Scegli almeno un quartiere per proseguire.';$('#tp-guide-fields').append(error)}
 }
-function bodyForStep(step){return body([0,1,2,3,8][step]??0)}
+function bodyForStep(step){
+ var html=body([0,1,2,3,8][step]??0);
+ if(step!==steps.length-1)return html;
+ var user=window.TurinPippsAuth&&window.TurinPippsAuth.getCurrentUser?.();
+ if(!user)return html+'<p class="tp14-onboard-note">Vuoi ricevere nuove offerte e aggiornamenti? Dopo la registrazione potrai scegliere email e notifiche push dal Profilo.</p>';
+ return html+'<div class="tp14-onboard-notifications">'+
+  '<h3>Vuoi essere aggiornato?</h3><p>Le novità dell’app e gli avvisi sulle case sono separati. Scegli liberamente, senza iscrizione automatica.</p>'+
+  '<label><input type="checkbox" id="tp14-guide-release-email" '+(user.confirmed?'':'disabled')+'> Email per le nuove versioni di TurinPipps</label>'+
+  '<label><input type="checkbox" id="tp14-guide-release-push"> Push quando pubblichiamo una nuova versione (iPhone: app installata)</label>'+
+  '<small>Le autorizzazioni vengono richieste solo se scegli di abilitarle. Puoi disattivarle da Profilo.</small></div>';
+}
 function savePrefs(){
  var api=window.TurinPippsUXV3;
  var bg=$('#budget'),sqm=$('#tp-min-sqm'),type=$('#tp-property-type'),walk=$('#tp-max-walk'),name=$('#fullname'),intro=$('#intro');
