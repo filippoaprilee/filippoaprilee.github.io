@@ -125,7 +125,7 @@ html[data-tp-theme] #tp9-main :is(
 ){color:var(--tp16-muted)!important}
 /* Consistent app controls. No pale text on a white field in dark mode. */
 html[data-tp-theme] #tp9-main :is(
- .input,input:not([type="checkbox"]):not([type="radio"]),select,textarea,
+ .input,input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]),select,textarea,
  .tp-v5-input,.tp-ob-field input,.tp-ob-field textarea,
  #tp-main-search,#budget,#tp-property-type
 ){
