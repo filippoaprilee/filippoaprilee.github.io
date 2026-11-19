@@ -18,7 +18,7 @@ test('PWA precaches matching v12 UI files and invalidates old shell',()=>{
   assert.ok(html.includes(file),file+' absent from document');
   assert.ok(sw.includes(file),file+' absent from service worker');
  }
- assert.match(sw,/turinpipps-shell-v14\.0\.2/);
+ assert.match(sw,/turinpipps-shell-v14\.0\.3/);
 });
 function harness(){
  const root={dataset:{tpThemeChoice:'system'},style:{}};
