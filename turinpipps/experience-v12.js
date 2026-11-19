@@ -222,11 +222,13 @@ function reconcileCard(article,map){
  const menu=$(".tp-card-menu",actions||article);
  const compare=actions?.querySelector('button[data-action="compare"]');
  const inner=$(".tp-card-menu-items",menu||article);
+ // Comparing homes is a core task. Keep its existing button visible beside
+ // Save; do not bury it behind an unnamed "more" menu.
  if(compare&&inner){
-   inner.prepend(compare);
-   menu.classList.add("tp12-merged-actions");
+   compare.classList.add("tp14-compare-action");
+   menu.classList.add("tp14-other-actions");
    const summary=$("summary",menu);
-   if(summary)summary.innerHTML='<i class="fa-solid fa-ellipsis" aria-hidden="true"></i> Confronta e altre azioni';
+   if(summary)summary.innerHTML='<i class="fa-solid fa-ellipsis" aria-hidden="true"></i> Altre azioni';
  }
  const original=$(".tp-card-details",article);
  if(original){const summary=$("summary",original);if(summary)summary.textContent="Descrizione e dati originali";}
