@@ -86,6 +86,80 @@ async function email(user:any,kind:"daily"|"weekly"|"manual",localDay:string,row
   return {sent:false,error:String(e)};
  }
 }
+// v14 release notices: a deployment is eligible only after the public release
+// manifest and deployed service worker agree. Never use GitHub commit count.
+// Both delivery channels are separately opt-in; existing accounts default off.
+async function releaseCycle(){
+ const manifestRequest=await fetch(baseUrl+"release.json?check="+Date.now(),{
+   cache:"no-store",signal:AbortSignal.timeout(8000)
+ });
+ if(!manifestRequest.ok)return {skipped:"no_release_manifest"};
+ const announcement=await manifestRequest.json().catch(()=>null);
+ if(!announcement||!/^([1-9]\d*)\.(\d+)\.(\d+)$/.test(String(announcement.version||"")))
+   return {skipped:"invalid_release"};
+ const version=String(announcement.version);
+ const published=Date.parse(announcement.published_at||"");
+ if(!Number.isFinite(published)||published>Date.now()+300000||published<Date.now()-35*86400000)
+   return {skipped:"release_date_outside_window"};
+ const sw=await fetch(baseUrl+"sw.js?check="+Date.now(),{
+   cache:"no-store",signal:AbortSignal.timeout(8000)
+ });
+ if(!sw.ok)return {skipped:"deployed_worker_unavailable"};
+ const deployed=/turinpipps-shell-v(\d+\.\d+\.\d+)/.exec(await sw.text());
+ if(!deployed||deployed[1]!==version)return {skipped:"deployment_not_ready"};
+ const heading=String(announcement.title||"TurinPipps è stato aggiornato").slice(0,145);
+ const summary=String(announcement.summary||"Novità e miglioramenti della ricerca casa sono disponibili.").slice(0,400);
+ const people=await query("turinpipps_profiles?or=(release_email_enabled.eq.true,release_push_enabled.eq.true)&select=user_id,email,email_confirmed,release_email_enabled,release_email_opted_in_at,release_push_enabled,release_push_opted_in_at&limit=200");
+ let pushQueued=0,emailsSent=0,failed=0;
+ for(const user of people){
+  const mayPush=user.release_push_enabled&&Number.isFinite(Date.parse(user.release_push_opted_in_at||""))&&
+    Date.parse(user.release_push_opted_in_at)<=published;
+  const mayEmail=user.release_email_enabled&&user.email_confirmed&&user.email&&
+    Number.isFinite(Date.parse(user.release_email_opted_in_at||""))&&Date.parse(user.release_email_opted_in_at)<=published;
+  if(mayPush){
+   const devices=await query("turinpipps_push_subscriptions?user_id=eq."+encodeURIComponent(user.user_id)+"&enabled=eq.true&select=id&limit=1");
+   if(devices.length){
+    const q=await insert("turinpipps_notification_inbox",{
+     user_id:user.user_id,event_key:"release:"+version,type:"notice",title:heading,body:summary
+    },"resolution=ignore-duplicates,return=representation");
+    if(q.length)pushQueued++;
+   }
+  }
+  if(!mayEmail||!KEY||!FROM)continue;
+  const key=version.slice(0,32),prior=await query("turinpipps_email_dispatches?user_id=eq."+user.user_id+
+    "&kind=eq.release&period_key=eq."+encodeURIComponent(key)+"&select=id&limit=1");
+  if(prior.length)continue;
+  const inserted=await insert("turinpipps_email_dispatches",{
+   user_id:user.user_id,kind:"release",period_key:key,status:"sending"
+  },"resolution=ignore-duplicates,return=representation");
+  if(!inserted.length)continue;
+  const dispatchId=inserted[0].id;
+  try{
+   const html='<div style="max-width:600px;margin:auto;font-family:Arial,sans-serif;color:#263b4e;line-height:1.65">'+
+     '<p style="color:#176779;font-size:13px">TURINPIPPS · AGGIORNAMENTO '+esc(version)+'</p>'+
+     '<h1 style="font-size:25px;font-weight:650">'+esc(heading)+'</h1><p>'+esc(summary)+'</p>'+
+     '<p style="margin:30px 0"><a href="'+baseUrl+'?screen=notifications" style="background:#176779;padding:13px 19px;color:#fff;text-decoration:none;border-radius:8px">Apri TurinPipps</a></p>'+
+     '<p style="font-size:12px;color:#617584">Ricevi questa email perché hai attivato gli aggiornamenti dell’app. Puoi disattivarli in Profilo → Preferenze notifiche. Le email sui nuovi annunci sono separate.</p></div>';
+   const sent=await fetch("https://api.resend.com/emails",{
+    method:"POST",headers:{"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},
+    body:JSON.stringify({from:FROM,to:[user.email],subject:heading,html,
+     headers:{"List-Unsubscribe":"<"+baseUrl+"?screen=profile>"},
+     tags:[{name:"app",value:"turinpipps"},{name:"type",value:"release"}]})
+   });
+   const body=await sent.json().catch(()=>({}));
+   if(!sent.ok)throw Error("Email HTTP "+sent.status+" "+String(body.message||"").slice(0,75));
+   await patch("turinpipps_email_dispatches","id=eq."+dispatchId,{status:"sent",provider_id:String(body.id||""),completed_at:new Date().toISOString()});
+   emailsSent++;
+  }catch(e){
+   failed++;
+   await patch("turinpipps_email_dispatches","id=eq."+dispatchId,{
+    status:"failed",error_text:String(e).slice(0,350),completed_at:new Date().toISOString()
+   });
+  }
+ }
+ return {version,checked:people.length,push_queued:pushQueued,email_sent:emailsSent,email_failed:failed};
+}
+
 Deno.serve(async req=>{
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:CORS});
  if(req.method!=="POST")return reply({error:"Metodo non consentito"},405);
@@ -107,7 +181,11 @@ Deno.serve(async req=>{
        return reply({error:"Utente non valido"},400);
    }
   }else return reply({error:"Azione non supportata"},400);
-  if(!KEY||!FROM)return reply({error:"Invio email non configurato: collega un provider di posta verificato al backend TurinPipps.",provider_ready:false},503);
+  let releases:unknown=null;
+  if(action==="cron"){
+   try{releases=await releaseCycle()}catch(e){console.error("release cycle",String(e));releases={error:"Release check failed"}}
+  }
+  if(!KEY||!FROM)return reply({error:"Invio email non configurato: collega un provider di posta verificato al backend TurinPipps.",provider_ready:false,releases},503);
   const all=await query("turinpipps_discovered_listings?select=listing_url,title,zone,price,first_seen,property_type,private_status,link_status,availability_status,expired_at,price_history&order=first_seen.desc&limit=2500");
   let people:any[];
   if(current)people=await query("turinpipps_profiles?user_id=eq."+encodeURIComponent(action==="admin_manual"?String(body.user_id):current.id)+"&select=user_id,email,email_confirmed,digest_enabled,digest_frequency,last_digest_at,notify_new_listings,notify_price_drops&limit=1");
@@ -118,7 +196,7 @@ Deno.serve(async req=>{
   const now=new Date(),local=now.toLocaleString("sv-SE",{timeZone:"Europe/Rome"}).slice(0,10);
   const hour=Number(now.toLocaleString("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",hourCycle:"h23"}));
   const dow=new Intl.DateTimeFormat("en-US",{timeZone:"Europe/Rome",weekday:"short"}).format(now);
-  if(action==="cron"&&(hour<8||hour>10))return reply({checked:0,skipped:"outside_delivery_window"});
+  if(action==="cron"&&(hour<8||hour>10))return reply({checked:0,skipped:"outside_delivery_window",releases});
   const outcomes:any[]=[];
   for(const person of people){
    if(action==="cron"&&(!person.digest_enabled||person.digest_frequency==="off"||(person.digest_frequency==="weekly"&&dow!=="Mon")))continue;
@@ -135,6 +213,6 @@ Deno.serve(async req=>{
    }
    return o.sent?reply(o):reply({error:o.error||"Nessun nuovo invio disponibile in questa fascia oraria",sent:false},o.error?502:429);
   }
-  return reply({checked:outcomes.length,sent:outcomes.filter(x=>x.sent).length,failed:outcomes.filter(x=>x.error).length});
+  return reply({checked:outcomes.length,sent:outcomes.filter(x=>x.sent).length,failed:outcomes.filter(x=>x.error).length,releases});
  }catch(e){console.error("mail job",String(e));return reply({error:"Errore di elaborazione report"},500)}
 });
