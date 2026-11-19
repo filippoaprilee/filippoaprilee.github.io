@@ -1,12 +1,13 @@
 {
-  "version": "14.0.3",
-  "published_at": "2026-11-19T06:27:25.500Z",
-  "title": "TurinPipps 14.0.3 · Ricerca e confronti riorganizzati",
-  "summary": "Confronti chiari su iPhone, meno grassetto e schermate meno affollate, un migliore contrasto scuro, azioni Confronta visibili e preferenze facoltative per ricevere via email o push le nuove versioni.",
+  "version": "15.0.0",
+  "published_at": "2026-11-19T07:19:10.534Z",
+  "title": "TurinPipps 15 · Annunci più utili e un'interfaccia più semplice",
+  "summary": "Schede immobili riorganizzate senza stacchi di colore, Profilo separato dalle preferenze, ricerca ordinata per utilità, percorso in tre tappe e miglioramenti alla qualità delle fonti.",
   "highlights": [
-    "Confronto tra immobili su schede mobili, senza tabelle tagliate",
-    "Meno grassetto e una gerarchia più chiara nella ricerca",
-    "Nuova scelta separata per email e push sugli aggiornamenti",
-    "Miglioramenti del contrasto per la modalità scura"
+    "Il quartiere rimosso è escluso dalle preferenze, dalle fonti e da tutti i risultati",
+    "Schede più compatte e coerenti in modalità chiara e scura",
+    "Account raggruppato in sezioni espandibili, con preferenze di ricerca separate",
+    "Confronto e tracciamento del contatto più immediati",
+    "Fonti deduplicate per identificativo; link definitivamente mancanti nascosti; più campi estratti solo se dichiarati"
   ]
 }
