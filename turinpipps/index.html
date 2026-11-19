@@ -662,19 +662,58 @@ function renderResults(){
 function renderComparison(){
  var node=el('tp-compare-content');if(!node)return;
  var chosen=all().filter(function(a){return !!flag(a.url).compare}).slice(0,4);
- if(!chosen.length){node.innerHTML='<p class="note">Seleziona «Confronta» in una scheda (massimo 4 immobili).</p>';return;}
- var fields=[['Immobile',function(a){return '<a target="_blank" rel="noopener noreferrer" href="'+esc(a.url)+'">'+esc(a.title)+'</a>';}],
- ['Zona',function(a){return esc(a.zone||'Da verificare');}],
- ['Canone',function(a){return a.price?esc(a.price)+' €':'Non dichiarato';}],
- ['Totale mensile noto',function(a){return a.price?esc(recurringCost(a).total)+' €'+(recurringCost(a).unknown?' + altre spese':''):'Da verificare';}],
- ['Superficie',function(a){return a.sqm?esc(a.sqm)+' m²':'Da verificare';}],
- ['Distanza dal campus',function(a){return a.walking_minutes?esc(a.walking_minutes)+' min a piedi':'Da verificare';}],
- ['TurinPipps Score',function(a){return esc(score(a))+'/100';}],
- ['Privato',function(a){return a.private_status==='confirmed'?'Confermato dalla fonte':'Da controllare';}]
- ];
- node.innerHTML='<div class="tp-compare-wrap"><table class="tp-compare-table"><thead><tr><th>Indicatore</th>'+chosen.map(function(a){return '<th>'+esc(a.title.slice(0,38))+'</th>'}).join('')+'</tr></thead><tbody>'+
- fields.map(function(f){return '<tr><th>'+f[0]+'</th>'+chosen.map(function(a){return '<td>'+f[1](a)+'</td>'}).join('')+'</tr>'}).join('')+
+ var lead=el('view-compare');
+ var intro=lead&&lead.querySelector('.tp-page-lead p');
+ if(intro)intro.textContent='Confronta fino a quattro case. Prima guarda canone, spese e zona; i dati mancanti restano evidenti.';
+ var cta=lead&&lead.querySelector('.tp-page-lead>button');
+ if(cta)cta.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i> '+(chosen.length?'Aggiungi un’altra casa':'Scegli le case');
+ if(!chosen.length){
+  node.innerHTML='<div class="tp14-compare-empty"><div class="tp14-empty-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></div>'+
+   '<h2>Nessuna casa da confrontare</h2><p>Apri Cerca, scegli un annuncio e usa «Confronta e altre azioni». Le case selezionate appariranno qui.</p>'+
+   '<button type="button" class="button primary" data-nav="results">Esplora gli annunci</button></div>';return;
+ }
+ var fmt=function(a){return a.price?Number(a.price).toLocaleString('it-IT')+' €':'Non dichiarato';};
+ var owner=function(a){return a.private_status==='confirmed'&&a.verification_level==='owner_confirmed'?'Conferma documentata':a.private_status==='source'?'Privato dichiarato, non verificato':'Da verificare';};
+ var estimated=function(a){if(!a.price)return 'Sconosciuto';
+  var c=recurringCost(a);return Number(c.total).toLocaleString('it-IT')+' €'+(c.unknown?' + spese da chiarire':'')+'/mese';};
+ var walk=function(a){return a.walking_minutes&&a.route_checked_at?Number(a.walking_minutes)+' min verificati a piedi':'Da verificare';};
+ var records=chosen.map(function(a){
+  return {a:a,rows:[
+   ['Canone mensile',fmt(a)],
+   ['Spese mensili note',a.price?estimated(a):'Non calcolabili'],
+   ['Quartiere',a.zone||'Da verificare'],
+   ['Superficie',a.sqm?Number(a.sqm)+' m²':'Da verificare'],
+   ['Percorso al Politecnico',walk(a)],
+   ['Inserzionista',owner(a)],
+   ['Disponibilità',a.availability_status==='confirmed'?'Dichiarata confermata dalla fonte':'Da confermare con l’inserzionista']
+  ]};
+ });
+ var introHtml='<div class="tp14-compare-intro"><div><span class="tp14-eyebrow">CONFRONTO</span><strong>'+chosen.length+' '+(chosen.length===1?'casa selezionata':'case selezionate')+'</strong>'+
+ '<p>'+(chosen.length===1?'Aggiungi almeno un’altra casa per confrontare realmente le alternative.':
+ 'I valori sconosciuti non equivalgono a zero. Non considerare una casa migliore solo perché contiene meno dati.')+'</p></div>'+
+ (chosen.length<4?'<button type="button" class="button" data-nav="results"><i class="fa-solid fa-plus" aria-hidden="true"></i> Aggiungi casa</button>':'')+'</div>';
+ var mobile='<div class="tp14-compare-mobile" aria-label="Schede degli immobili a confronto">'+records.map(function(item,i){
+  var a=item.a,full=String(a.title||'Immobile'),short=full.replace(/\\s*[-–|]\\s*Appartamenti? [Ii]n affitto a Torino\\s*[-–|]\\s*Subito\\s*$/i,'').trim();
+  return '<article class="tp14-compare-card"><header><div class="tp14-compare-index">'+(i+1)+'</div><div class="tp14-compare-property"><span>'+esc(a.source||'Fonte')+' · '+esc(a.zone||'Zona sconosciuta')+'</span><h2>'+esc(short||full)+'</h2></div>'+
+   '<button type="button" class="tp14-compare-remove" data-action="compare" data-url="'+esc(a.url)+'" aria-label="Rimuovi dal confronto '+esc(short||full)+'"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header>'+
+   '<div class="tp14-compare-price"><span>Canone dichiarato</span><strong>'+esc(fmt(a))+'</strong><small>al mese · spese escluse o da chiarire</small></div>'+
+   '<dl>'+item.rows.slice(1).map(function(row){
+     var unknown=/^(Da verificare|Non calcolabili|Da confermare|Sconosciuto)/.test(row[1]);
+     return '<div class="'+(unknown?'tp14-unknown':'')+'"><dt>'+esc(row[0])+'</dt><dd>'+esc(row[1])+'</dd></div>';
+   }).join('')+'</dl>'+
+   '<div class="tp14-compare-actions"><a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a>'+
+   '<button class="button" data-action="save" data-url="'+esc(a.url)+'"><i class="fa-regular fa-heart" aria-hidden="true"></i> '+(flag(a.url).saved?'Salvato':'Salva')+'</button></div>'+
+   '</article>';
+ }).join('')+'</div>';
+ var fields=records[0].rows.map(function(r){return r[0]});
+ var desktop='<div class="tp14-compare-desktop" role="region" aria-label="Tabella di confronto affitti" tabindex="0"><table class="tp14-compare-table">'+
+ '<thead><tr><th scope="col">Indicatore</th>'+chosen.map(function(a,i){return '<th scope="col"><span class="tp14-compare-num">'+(i+1)+'</span><span>'+esc(String(a.title||'Immobile').slice(0,68))+'</span></th>';}).join('')+'</tr></thead>'+
+ '<tbody>'+fields.map(function(label,i){return '<tr><th scope="row">'+esc(label)+'</th>'+records.map(function(r){
+   var value=r.rows[i][1];return '<td class="'+(/^(Da verificare|Non calcolabili|Da confermare|Sconosciuto)/.test(value)?'tp14-unknown':'')+'">'+esc(value)+'</td>';
+ }).join('')+'</tr>';}).join('')+
+ '<tr><th scope="row">Apri l’annuncio</th>'+chosen.map(function(a){return '<td><a href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer">Fonte originale</a></td>';}).join('')+'</tr>'+
  '</tbody></table></div>';
+ node.innerHTML=introHtml+mobile+desktop+'<p class="tp14-compare-disclaimer">Informazioni dichiarate nelle fonti: identità, condizioni e disponibilità devono essere confermate prima di prendere decisioni o versare denaro.</p>';
 }
 function renderVisits(){
  var node=el('tp-visits-content');if(!node)return;
