@@ -59,11 +59,11 @@ function canonical(link:string) {
   } catch(_) {return null}
 }
 function zoneOf(text:string){
-  for(const zone of ["Crocetta","Cenisia","Borgo San Paolo","San Paolo","Cit Turin","Santa Rita","Pozzo Strada"])
+  for(const zone of ["Crocetta","Cenisia","Borgo San Paolo","San Paolo","Cit Turin","Santa Rita"])
     if(text.toLowerCase().includes(zone.toLowerCase()))return zone;
   return "";
 }
-const place=/torino|torinese|politecnico|cenisia|crocetta|san paolo|cit turin|santa rita|pozzo strada/i;
+const place=/torino|torinese|politecnico|cenisia|crocetta|san paolo|cit turin|santa rita/i;
 function parseRss(xml:string,engine:string,time:string) {
   const items=xml.match(/<item(?:\s[^>]*)?>[\s\S]*?<\/item>/gi)||[];
   const rows:any[]=[];
@@ -439,7 +439,13 @@ async function scan(time:string,feeds:string[]){
   outputs.push(...await readGoogleAlerts(feeds,time));
   const found=new Map<string,any>();
   let duplicateSightings=0;
+  // Only retain requested districts before deduplication and database writes.
+  const disallowed=/pozzo[\s./_-]*strada/i;
+  let excludedObservations=0;
   outputs.flatMap(x=>x.rows).forEach(x=>{
+    if(disallowed.test([x.zone,x.title,x.description,x.address,x.listing_url].join(" "))){
+      excludedObservations++;return;
+    }
     const key=sourceIdentity(x.listing_url)||x.listing_url;
     if(found.has(key)){
       duplicateSightings++;
@@ -525,7 +531,7 @@ async function scan(time:string,feeds:string[]){
     jobs_checked:outputs.length,jobs_ok:ok,discovered:newLinks,
     details:{engines:stats,source_quality:quality,detail_enrichment:enrichmentStats,
       dedup:{raw:outputs.reduce((n,x)=>n+(x.rows||[]).length,0),unique:all.length,
-        duplicate_observations:duplicateSightings,new_unique:newLinks},
+        duplicate_observations:duplicateSightings,excluded_zone_observations:excludedObservations,new_unique:newLinks},
       link_health:health,duration_ms:Date.now()-started}};
   const stored=await fetch(DB_ROOT+"/turinpipps_scan_runs",{
     method:"POST",headers:dbHeaders({"Content-Type":"application/json","Prefer":"return=minimal"}),body:JSON.stringify(entry)
