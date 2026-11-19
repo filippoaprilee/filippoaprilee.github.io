@@ -216,6 +216,7 @@ async function loadLiveListings(force){
    ]);
    if(a.status==='fulfilled'){
      window.TurinPippsUXV3.addDiscovery(a.value,b.status==='fulfilled'?b.value[0]||null:null);
+     window.dispatchEvent(new Event('turinpipps:listings-updated'));
      var live=$('#tp-radar-live-status');
      if(live){
        var run=b.status==='fulfilled'?b.value[0]:null,when=run&&new Date(run.finished_at||run.started_at);
