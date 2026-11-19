@@ -448,9 +448,11 @@ async function scan(time:string,feeds:string[]){
   let duplicateSightings=0;
   // Only retain requested districts before deduplication and database writes.
   const disallowed=/pozzo[\s./_-]*strada/i;
+  const irrelevantRoom=(v:any)=>/\/(?:camera|stanza|posto[-_]?letto)[-_]/i.test(String(v.listing_url||""))
+    ||/^\s*(?:camera|stanza|posto[\s-]*letto)\b/i.test(String(v.title||""));
   let excludedObservations=0;
   outputs.flatMap(x=>x.rows).forEach(x=>{
-    if(disallowed.test([x.zone,x.title,x.description,x.address,x.listing_url].join(" "))){
+    if(disallowed.test([x.zone,x.title,x.description,x.address,x.listing_url].join(" "))||irrelevantRoom(x)){
       excludedObservations++;return;
     }
     const key=sourceIdentity(x.listing_url)||x.listing_url;
