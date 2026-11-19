@@ -1,7 +1,7 @@
 /* TurinPipps v3 · ricerca estesa e UX, senza credenziali o scraping lato browser. */
 (function(){
 'use strict';
-var zones=['Tutte le zone','Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
+var zones=['Tutte le zone','Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita'];
 function $(s){return document.querySelector(s)}
 function node(tag,className,text){var n=document.createElement(tag);if(className)n.className=className;if(text)n.textContent=text;return n}
 function q(){return String($('#tp-radar-term')&&$('#tp-radar-term').value||'bilocale arredato').trim().slice(0,120)}
