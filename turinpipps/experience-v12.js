@@ -19,7 +19,7 @@ function applyTheme(choice,persist){
  root.dataset.tpTheme=resolved;
  root.dataset.tpThemeChoice=theme;
  root.style.colorScheme=resolved;
- const color=resolved==="dark"?"#101c29":"#f5f8fa";
+ const color=resolved==="dark"?"#0c1623":"#f5f8fa";
  const meta=$('meta[name="theme-color"]');if(meta)meta.setAttribute("content",color);
  if(persist){try{localStorage.setItem(themeKey,theme)}catch(_){}}
  $$("[data-tp12-theme]").forEach(button=>{
