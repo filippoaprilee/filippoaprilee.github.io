@@ -241,7 +241,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div class="cards tp-home-highlight" id="tp-home-list"></div>
 </section>
 <section id="view-results" class="hidden"><div class="tp-page-lead"><div><div class="tp-kicker">ESPLORA</div><h1>Trova la tua prossima casa</h1><p>Cerca nella raccolta, filtra per zona e valuta gli immobili direttamente dalla scheda originale.</p></div><button class="button" id="reload"><i class="fa-solid fa-rotate"></i> Aggiorna</button></div><div class="tp-intelbar" id="tp-intelbar" aria-label="Analisi annunci"></div>
-<div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option></select><select id="sort"><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Pubblicati o aggiornati negli ultimi 7 giorni</option><option value="30">Pubblicati o aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
+<div class="tp-search-tools"><div style="flex:1;max-width:570px"><label for="tp-main-search" class="label" style="margin-bottom:6px">Cerca per parola, quartiere o indirizzo</label><input id="tp-main-search" class="input" type="search" autocomplete="off" placeholder="Es. Bilocale in Cenisia" style="background:#fff"></div><button class="button tp-filter-toggle" type="button" id="tp-filter-toggle"><i class="fa-solid fa-sliders"></i> Filtri avanzati <i class="fa-solid fa-chevron-down"></i></button></div><div class="filterbar" id="tp-filterbar" hidden><input class="input search" id="query" placeholder="Cerca per zona, indirizzo, parola…"><select id="zone"><option value="">Tutte le zone</option><option>Crocetta</option><option>Cenisia</option><option>San Paolo</option><option>Borgo San Paolo</option><option>Cit Turin</option><option>Santa Rita</option></select><select id="sort"><option value="smart">Più utili</option><option value="recent">Più recenti</option><option value="price">Prezzo crescente</option><option value="score">Più compatibili</option></select><select id="source-filter" aria-label="Filtra per fonte"><option value="">Tutte le fonti</option><option value="immobiliare">Immobiliare.it</option><option value="subito">Subito</option><option value="clickcase">ClickCase</option><option value="bakeca">Bakeca</option><option value="idealista">Idealista</option></select><select id="age-filter" aria-label="Periodo pubblicazione"><option value="">Tutte le date</option><option value="7">Pubblicati o aggiornati negli ultimi 7 giorni</option><option value="30">Pubblicati o aggiornati negli ultimi 30 giorni</option></select><select id="distance-filter" aria-label="Distanza a piedi dal Politecnico"><option value="">Tutte le distanze</option><option value="15">Entro 15 min a piedi (verificati)</option><option value="25">Entro 25 min a piedi (verificati)</option><option value="unknown">Percorso non verificato</option></select><select id="stale-filter" aria-label="Età dell’annuncio"><option value="">Tutti gli annunci</option><option value="recent">Dati negli ultimi 30 giorni</option><option value="aged">Potenzialmente datati (oltre 60 giorni)</option></select><button class="button" id="add"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inserisci annuncio</button></div>
 <div class="tp-map-toolbar"><button class="button" type="button" id="tp-toggle-map"><i class="fa-solid fa-map-location-dot"></i> Mostra mappa immobili</button><span class="note">Localizzazione solo per gli annunci con coordinate verificabili.</span></div><div id="tp-map" class="tp-app-map" hidden></div>
 <div class="tp-listing-toolbar"><span class="tp-kicker" id="tp-search-result-count" role="status" aria-live="polite">Risultati</span><span class="note">I dati non verificati sono segnalati su ogni scheda.</span></div><div class="tabs"><button class="chip selected" data-mode="candidate">Per te</button><button class="chip" data-mode="good">Compatibili</button><button class="chip" data-mode="review">Da verificare</button><button class="chip" data-mode="all">Tutti</button></div><div class="cards" id="list"></div><div id="tp-page-more" style="text-align:center;margin:22px 0" hidden><button class="button" id="tp-more"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Carica altri annunci</button></div></section>
 <section id="view-map" class="hidden tp8-map-view">
@@ -634,6 +634,20 @@ function updateCompareUI(){
  if(bar){bar.hidden=n===0;label.textContent=n+' '+(n===1?'immobile selezionato':'immobili selezionati');}
  if(el('tp-nav-compare-count'))el('tp-nav-compare-count').textContent=n?'('+n+')':'';
 }
+function listingUsefulness(a){
+ // Ranking prioritizes usable evidence, not unverified "availability".
+ // Unknown attributes do not count as negative claims about a home.
+ const c=classification(a).status;
+ let n=c==="good"?32:c==="excluded"?-45:12;
+ if(Number(a.price)>0)n+=24;
+ if(a.link_status==="reachable")n+=3;
+ if(a.published_at||a.source_updated)n+=3;
+ if(Number(a.sqm)>0)n+=4;
+ if(a.address)n+=3;
+ if(a.private_status==="confirmed"&&a.verification_level==="owner_confirmed")n+=5;
+ else if(a.private_status==="source")n+=1;
+ return n;
+}
 function renderResults(){
  var arr=all(),q=el('query').value.trim().toLowerCase(),z=el('zone').value.toLowerCase(),
  sort=el('sort').value,source=el('source-filter').value.toLowerCase(),
@@ -654,7 +668,12 @@ function renderResults(){
   if(days){var sourceDate=a.source_updated||a.published_at;if(!sourceDate)return false;var d=new Date(sourceDate);if(!Number.isFinite(d.getTime())||Date.now()-d.getTime()>days*86400000)return false}
   return true;
  });
- arr.sort(function(a,b){if(sort==='price')return (a.price||999999)-(b.price||999999);if(sort==='score')return score(b)-score(a);return String(b.seen).localeCompare(String(a.seen))});
+ arr.sort(function(a,b){
+  if(sort==='price')return (a.price||999999)-(b.price||999999);
+  if(sort==='score')return score(b)-score(a);
+  if(sort==='smart')return listingUsefulness(b)-listingUsefulness(a) || String(b.seen).localeCompare(String(a.seen));
+  return String(b.seen).localeCompare(String(a.seen));
+ });
  el('list').innerHTML=arr.slice(0,page*pageSize).map(card).join('')||
  showEmpty('Nessun immobile soddisfa i filtri selezionati. Allarga la zona oppure consulta gli annunci da verificare.');
  el('tp-page-more').hidden=arr.length<=page*pageSize;
@@ -709,7 +728,8 @@ function renderComparison(){
      return '<div class="'+(unknown?'tp14-unknown':'')+'"><dt>'+esc(row[0])+'</dt><dd>'+esc(row[1])+'</dd></div>';
    }).join('')+'</dl>'+
    '<div class="tp14-compare-actions"><a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a>'+
-   '<button class="button" data-action="save" data-url="'+esc(a.url)+'"><i class="fa-regular fa-heart" aria-hidden="true"></i> '+(flag(a.url).saved?'Salvato':'Salva')+'</button></div>'+
+   '<button class="button" data-action="save" data-url="'+esc(a.url)+'"><i class="fa-regular fa-heart" aria-hidden="true"></i> '+(flag(a.url).saved?'Salvato':'Salva')+'</button>'+
+   '<button class="button tp15-record-contact" data-action="contact" data-url="'+esc(a.url)+'"><i class="fa-solid fa-comment-dots" aria-hidden="true"></i> '+(flag(a.url).contact?'Contatto registrato':'Segna contatto')+'</button></div>'+
    '</article>';
  }).join('')+'</div>';
  var fields=records[0].rows.map(function(r){return r[0]});
@@ -877,7 +897,7 @@ if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact'){f
  renderResults();renderSaved();updateCompareUI();
  if(b.dataset.action==='compare'){
    var c=all().filter(function(x){return !!flag(x.url).compare}).length;
-   if(c>0)showToast(c+' immobili selezionati. Premi «Confronta ora» per aprire la tabella.','good');
+   if(c>0)showToast(c+' immobili selezionati. Apri Confronta per valutare le alternative.','good');
  }
 });
 document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){page=1;mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(function(x){x.classList.toggle('selected',x===b)});renderResults()})});
