@@ -39,7 +39,15 @@ function valid(u){try{var x=new URL(u);return x.protocol==='https:'?x.toString()
 function fetchData(u,headers){return fetch(u,{headers:headers||{},cache:'no-store',signal:AbortSignal.timeout(7500)}).then(function(r){if(!r.ok)throw Error(r.status);return r.json()})}
 function render(rows,date){
  var map=new Map();rows.forEach(function(r){var url=valid(r.url||r.listing_url);if(url&&!map.has(url))map.set(url,r)});
- var all=Array.from(map.values()),limit=700;
+ var all=Array.from(map.values()).filter(function(r){
+  var url=String(r.url||r.listing_url||'');
+  if(r.excluded_from_search)return false;
+  if(/pozzo[\s./_-]*strada/i.test([r.zone,r.title,r.description,r.address,url].join(' ')))return false;
+  if(/\/(?:camera|stanza|posto[-_]?letto)[-_]/i.test(url))return false;
+  if(r.link_status==='missing'&&Number(r.link_failure_count||0)>=2)return false;
+  if(['unavailable','expired'].includes(String(r.availability_status||'')))return false;
+  return true;
+ }),limit=700;
  try{var saved=JSON.parse(localStorage.getItem('turinpipps.v1')||'{}');limit=Number(saved.budget)||700}catch(_){}
  $('#count').textContent=all.length;
  $('#fresh').textContent=all.filter(function(r){var t=Date.parse(r.first_seen||r.seen||'');return Number.isFinite(t)&&Date.now()-t<86400000}).length;
@@ -47,7 +55,7 @@ function render(rows,date){
  var filtered=all.filter(function(r){
    var title=(r.title||'').toLowerCase(),zone=(r.zone||'').toLowerCase();
    if(/(?:\bstanza\b|\bcamera singola\b|\bposto letto\b)/i.test(title))return false;
-   if(!['cenisia','crocetta','san paolo','cit turin','santa rita','pozzo strada'].some(function(x){return zone.includes(x)}))return false;
+   if(!['cenisia','crocetta','san paolo','borgo san paolo','cit turin','santa rita'].some(function(x){return zone.includes(x)}))return false;
    return !r.price||Number(r.price)<=limit;
  }).sort(function(a,b){return Date.parse(b.first_seen||b.seen||'')-Date.parse(a.first_seen||a.seen||'')}).slice(0,4);
  var host=$('#items');host.replaceChildren();
