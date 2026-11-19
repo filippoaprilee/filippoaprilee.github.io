@@ -202,3 +202,24 @@ html[data-tp-theme="dark"] .tp14-notes-footer button{background:#244454!importan
  .tp14-notes-footer{flex-direction:column;align-items:stretch}
  .tp14-notes-footer button{width:100%}
 }
+
+
+/* Primary vs secondary listing actions: compare is visible, not buried. */
+#view-results .tp12-card .actions>.tp-card-menu,
+#view-saved .tp12-card .actions>.tp-card-menu{grid-column:auto!important;width:100%!important;min-width:0}
+#view-results .tp12-card .actions>.tp14-compare-action,
+#view-saved .tp12-card .actions>.tp14-compare-action{display:flex!important;align-items:center;justify-content:center;
+ min-height:44px!important;background:var(--tp14-panel)!important;color:var(--tp14-ink)!important;
+ border:1px solid var(--tp14-line)!important;border-radius:9px!important;font-weight:590!important}
+#view-results .tp12-card .actions>.tp14-other-actions>summary,
+#view-saved .tp12-card .actions>.tp14-other-actions>summary{min-height:44px!important;
+ background:var(--tp14-panel)!important;color:var(--tp14-ink)!important;
+ font-weight:560!important;padding:8px 5px!important;line-height:1.25!important}
+#view-results .tp12-card .actions>.tp14-other-actions .tp-card-menu-items,
+#view-saved .tp12-card .actions>.tp14-other-actions .tp-card-menu-items{min-width:0}
+@media(max-width:760px){
+ #view-results .tp12-card .actions>.tp14-compare-action,
+ #view-saved .tp12-card .actions>.tp14-compare-action,
+ #view-results .tp12-card .actions>.tp14-other-actions>summary,
+ #view-saved .tp12-card .actions>.tp14-other-actions>summary{font-size:12px!important;white-space:normal!important}
+}
