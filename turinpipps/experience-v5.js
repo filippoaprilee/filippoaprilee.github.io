@@ -121,6 +121,11 @@ function renderProfile(){
  '<label class="tp-v5-form-label">Frequenza del riepilogo<select id="tp-v5-frequency" class="tp-v5-input"><option value="daily">Ogni giorno</option><option value="weekly">Una volta a settimana</option><option value="off">Disattivato</option></select></label>'+
  '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-new-on" '+(p.notify_new_listings?'checked':'')+'><span><b>Segnalami nuove case compatibili</b><small>Solo per annunci con canone e quartiere riconoscibili.</small></span></label>'+
  '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-drop-on" '+(p.notify_price_drops?'checked':'')+'><span><b>Avvisami dei ribassi verificati</b><small>La funzione richiede uno storico prezzi affidabile.</small></span></label>'+
+ '<div class="tp14-release-prefs"><div class="tp14-pref-head"><span class="tp14-eyebrow">NOVITÀ DI TURINPIPPS</span><h3>Aggiornamenti dell’app</h3><p>Scegli come essere informato quando pubblichiamo una nuova versione. Le comunicazioni sono separate dagli avvisi sugli immobili.</p></div>'+
+ '<label class="tp-v5-check tp14-consent"><input type="checkbox" id="tp14-release-email" '+(p.release_email_enabled?'checked':'')+(p.email_confirmed?'':' disabled')+'><span><b>Email per le nuove versioni</b><small>'+(p.email_confirmed?'Solo dopo il tuo consenso. Puoi disattivarla qui.':'Prima verifica il tuo indirizzo email.')+'</small></span></label>'+
+ '<label class="tp-v5-check tp14-consent"><input type="checkbox" id="tp14-release-push" '+(p.release_push_enabled?'checked':'')+'><span><b>Push per le nuove versioni</b><small>Richiede anche la registrazione di questo dispositivo. Su iPhone usa l’app aggiunta alla schermata Home.</small></span></label>'+
+ '<button type="button" class="tp-v5-secondary tp14-open-notifications" data-nav="notifications"><i class="fa-regular fa-bell" aria-hidden="true"></i> Configura il dispositivo per le push</button>'+
+ '<p class="tp14-consent-note">Nessuna iscrizione automatica. Non riceverai retroattivamente gli aggiornamenti pubblicati prima dell’attivazione.</p></div>'+
  '<div class="tp-v5-row-actions"><button class="tp-v5-primary" id="tp-v5-profile-save">Salva preferenze</button><button class="tp-v5-secondary" id="tp-v5-send-mail">Invia riepilogo adesso</button></div>'+
  '<p id="tp-v5-profile-message" class="tp-v5-status" aria-live="polite"></p><div class="tp-v5-rule"></div>'+
  '<div class="tp-v5-account-links"><button class="tp-v5-link" data-nav="settings">Budget, zone e ricerca</button><button class="tp-v5-link" id="tp-v5-account-open">Password e accesso</button></div>';
@@ -143,14 +148,27 @@ async function saveProfile(){
   var body={digest_enabled:$('#tp-v5-digest-on').checked,
    digest_frequency:$('#tp-v5-frequency').value,
    notify_new_listings:$('#tp-v5-new-on').checked,
-   notify_price_drops:$('#tp-v5-drop-on').checked};
+   notify_price_drops:$('#tp-v5-drop-on').checked,
+   release_email_enabled:!!$('#tp14-release-email')?.checked,
+   release_push_enabled:!!$('#tp14-release-push')?.checked};
   if(!body.digest_enabled)body.digest_frequency='off';
   var rows=await rest('turinpipps_profiles?user_id=eq.'+encodeURIComponent(p.user_id),
    {method:'PATCH',body:body});
   if(!rows.length)throw Error('Il server non ha confermato il salvataggio');
-  state.profile=rows[0];note('tp-v5-profile-message','Preferenze salvate e confermate dal server.','ok');
+  state.profile=rows[0];note('tp-v5-profile-message',
+   body.release_push_enabled&&!state.push?'Preferenze salvate. Per ricevere push su questo dispositivo apri Notifiche e premi Attiva notifiche.':
+   'Preferenze salvate e confermate dal server.','ok');
  }catch(e){note('tp-v5-profile-message',e.message,'error')}
  finally{btn.disabled=false}
+}
+async function saveReleasePreferences(emailEnabled,pushEnabled){
+ const user=session();if(!user)throw Error('Accedi per abilitare gli aggiornamenti.');
+ const rows=await rest('turinpipps_profiles?user_id=eq.'+encodeURIComponent(user.id),{
+  method:'PATCH',body:{release_email_enabled:!!emailEnabled,release_push_enabled:!!pushEnabled}
+ });
+ if(!rows.length)throw Error('Il server non ha confermato il consenso agli aggiornamenti.');
+ state.profile=rows[0];renderProfile();
+ return rows[0];
 }
 async function requestMail(){
  var b=$('#tp-v5-send-mail');b.disabled=true;note('tp-v5-profile-message','Richiesta in corso…');
@@ -248,7 +266,7 @@ async function testPush(){
  finally{if(button)button.disabled=false;refreshPushTestButton()}
 }
 async function enablePush(){
- var button=$('#tp-v5-push-enable');button.disabled=true;note('tp-v5-push-message','Controllo requisiti…');
+ var button=$('#tp-v5-push-enable');if(button)button.disabled=true;note('tp-v5-push-message','Controllo requisiti…');
  try{
   if(!session())throw Error('Accedi prima di attivare le notifiche.');
   if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window))
@@ -277,8 +295,9 @@ async function enablePush(){
   if(!rows.length)throw Error('Il server non ha confermato la registrazione del dispositivo');
   state.push=true;note('tp-v5-push-message','Dispositivo registrato. Riceverai gli avvisi consentiti dalle tue preferenze.','ok');
   await refreshPushTestButton();
- }catch(e){note('tp-v5-push-message',e.message,'error')}
- finally{button.disabled=false}
+  return true;
+ }catch(e){note('tp-v5-push-message',e.message,'error');return false}
+ finally{if(button)button.disabled=false}
 }
 function clearAdminButtons(){
  ['tp-v5-nav-admin','tp-v5-more-admin','tp-v9-admin-top','tp-v9-admin-profile'].forEach(function(id){
@@ -409,7 +428,8 @@ function onNavigate(view){
 function init(){
  if(!$('#view-home')||$('#view-profile'))return;
  build();
- window.TurinPippsV5={onNavigate:onNavigate,canAdmin:function(){var s=session();return state.staff===true&&!!s&&s.confirmed===true&&String(s.email||'').toLowerCase()==='filippo@maben.it'}};
+ window.TurinPippsV5={onNavigate:onNavigate,enablePush:enablePush,saveReleasePreferences:saveReleasePreferences,
+  canAdmin:function(){var s=session();return state.staff===true&&!!s&&s.confirmed===true&&String(s.email||'').toLowerCase()==='filippo@maben.it'}};
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
    var b=e.target.closest('[data-tp-v5-save-user]');if(b){e.preventDefault();saveUser(b.dataset.tpV5SaveUser)}
