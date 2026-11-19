@@ -65,13 +65,13 @@ test('dark text, muted labels and primary buttons meet 4.5:1 for tested pairs',(
 });
 test('v13 assets match service-worker cache and page sources',()=>{
  for(const file of [
- 'organize-v7.js?v=13.0.0','experience-v10.js?v=13.0.1',
- 'experience-v12.js?v=16.0.0','styles-v16.css?v=16.0.1'
+ 'organize-v7.js?v=13.0.0','experience-v10.js?v=16.0.0',
+ 'experience-v12.js?v=16.0.0','styles-v16.css?v=16.0.2'
  ]){
   assert.ok(index.includes(file),'HTML missing '+file);
   assert.ok(sw.includes(file),'Worker missing '+file);
  }
- assert.match(sw,/turinpipps-shell-v16\.0\.1/);
+ assert.match(sw,/turinpipps-shell-v16\.0\.2/);
 });
 test('browser JavaScript remains parsable after integrating changes',()=>{
  for(const [name,code] of [['organization',source],['v10',v10],['v12',v12],['worker',sw]])
