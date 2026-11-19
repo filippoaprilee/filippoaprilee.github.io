@@ -252,3 +252,22 @@ html[data-tp-theme="dark"] .tp14-notification-invite p{color:#b5c9d6!important}
 html[data-tp-theme="dark"] #view-results .tp12-card .listing-banner .price.tp14-price-unavailable,
 html[data-tp-theme="dark"] #view-saved .tp12-card .listing-banner .price.tp14-price-unavailable{
  background:#1b3042!important;color:#c7d9e3!important;border-color:#4b687b!important}
+
+
+/* One add-to-comparison CTA per viewport, never duplicate buttons. */
+#view-compare .tp-page-lead>.tp14-compare-hide-cta{display:none!important}
+@media(min-width:761px){
+ #view-compare .tp-page-lead>button{display:none!important}
+}
+/* Feedback should never obscure a large portion of the iPhone screen. */
+.tp-toast{box-sizing:border-box!important;max-width:min(92vw,460px)!important;line-height:1.45!important;
+ padding:11px 14px!important;font-size:13px!important;font-weight:570!important;
+ border-radius:11px!important;box-shadow:0 8px 30px rgba(0,0,0,.15)!important}
+html[data-tp-theme="dark"] .tp-toast{background:#203749!important;color:#e6f5fa!important;
+ border:1px solid #45677b!important}
+html[data-tp-theme="dark"] .tp-toast.good{background:#1b4136!important;color:#ddf9e7!important;
+ border-color:#42896c!important}
+html[data-tp-theme="dark"] .tp-toast.warn{background:#493627!important;color:#ffe8cb!important;
+ border-color:#977450!important}
+html[data-tp-theme="dark"] .tp-toast.error{background:#4c292f!important;color:#ffe3e1!important;
+ border-color:#b16a70!important}
