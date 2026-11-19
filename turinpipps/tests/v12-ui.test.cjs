@@ -14,11 +14,11 @@ test('all new browser scripts and inline scripts parse',()=>{
  for(const match of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g))if(match[1].trim())assert.doesNotThrow(()=>new vm.Script(match[1]));
 });
 test('PWA precaches matching v12 UI files and invalidates old shell',()=>{
- for(const file of ['styles-v16.css?v=16.0.1','experience-v12.js?v=16.0.0']){
+ for(const file of ['styles-v16.css?v=16.0.2','experience-v12.js?v=16.0.0']){
   assert.ok(html.includes(file),file+' absent from document');
   assert.ok(sw.includes(file),file+' absent from service worker');
  }
- assert.match(sw,/turinpipps-shell-v16\.0\.1/);
+ assert.match(sw,/turinpipps-shell-v16\.0\.2/);
 });
 function harness(){
  const root={dataset:{tpThemeChoice:'system'},style:{}};
