@@ -29,7 +29,8 @@ async function patch(table:string,filter:string,obj:any){
  if(!r.ok)throw Error("DB update "+r.status);
 }
 function esc(text:unknown){return String(text==null?"":text).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]||ch))}
-function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|garage|camera doppia)\b/i.test(String(row.title||"")+" "+String(row.property_type||""))}
+function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|garage|camera doppia)\b/i.test(String(row.title||"")+" "+String(row.property_type||""))
+ && !/\/(?:camera|stanza|posto[-_]?letto)[-_]/i.test(String(row.listing_url||""))}
 function candidates(data:any[],p:any){
  const zones=Array.isArray(p.preferred_zones)&&p.preferred_zones.length?p.preferred_zones:['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita'];
  return data.filter((x:any)=>{
