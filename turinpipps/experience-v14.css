@@ -175,3 +175,30 @@ html[data-tp-theme="dark"] .tp14-release-prefs .tp14-open-notifications{backgrou
  #tp-guide-dialog .tp14-onboard-notifications label{padding:8px 0;min-height:40px}
  #tp-guide-dialog .tp14-onboard-notifications p{font-size:11px}
 }
+
+
+/* Readable, in-app release changelog; no unsolicited permission prompt. */
+.tp14-release-notes{background:var(--tp14-paper);border:1px solid var(--tp14-line);border-radius:14px;
+ padding:17px 18px;margin:0 0 15px}
+.tp14-notes-head h2{font-size:17px!important;font-weight:680!important;color:var(--tp14-ink)!important;
+ margin:6px 0 7px!important;line-height:1.35}
+.tp14-notes-head p{font-size:13px!important;line-height:1.6!important;color:var(--tp14-subtle)!important;margin:0 0 10px!important}
+.tp14-release-notes>details{border-top:1px solid var(--tp14-line);margin-top:8px;padding:7px 0}
+.tp14-release-notes>details>summary{cursor:pointer;min-height:44px;display:flex;justify-content:space-between;
+ gap:10px;align-items:center;font-size:13px;font-weight:610;color:var(--tp14-ink);list-style:none}
+.tp14-release-notes>details>summary::-webkit-details-marker{display:none}
+.tp14-release-notes>details li{font-size:12px;line-height:1.6;color:var(--tp14-subtle);margin:6px 0}
+.tp14-notes-footer{display:flex;align-items:center;justify-content:space-between;gap:11px;
+ padding:12px 0 0;border-top:1px solid var(--tp14-line)}
+.tp14-notes-footer span{font-size:12px;line-height:1.5;color:var(--tp14-subtle)}
+.tp14-notes-footer button{font-size:12px!important;min-height:44px!important;font-weight:610!important}
+.tp14-ios-instructions{font-size:12px!important;line-height:1.6!important;color:var(--tp14-subtle)!important;margin:11px 0!important}
+html[data-tp-theme="dark"] .tp14-release-notes{background:#192a3b!important;border-color:#385367!important}
+html[data-tp-theme="dark"] .tp14-release-notes :is(h2,summary){color:#e9f2f7!important}
+html[data-tp-theme="dark"] .tp14-release-notes :is(p,li,span){color:#b5c9d6!important}
+html[data-tp-theme="dark"] .tp14-notes-footer button{background:#244454!important;color:#e9f2f7!important;border-color:#45697c!important}
+@media(max-width:700px){
+ .tp14-release-notes{padding:14px 15px}
+ .tp14-notes-footer{flex-direction:column;align-items:stretch}
+ .tp14-notes-footer button{width:100%}
+}
