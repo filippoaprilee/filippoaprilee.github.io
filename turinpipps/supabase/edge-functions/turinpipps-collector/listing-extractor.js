@@ -77,10 +77,15 @@ export function extractClickCaseDetails(html,listingUrl,stamp){
  if(rent!==null&&rent>=150&&rent<=10000)put("price",rent,headerRent?"Canone mensile nella testata":"Canone esplicito nella descrizione");
  const expenseText=details.match(/\bspese\s*:\s*(?:€|euro)?\s*([\d.,]+)\s*(?:mensili|al mese|\/mese)/i)
     ||(descriptionPart?.[1]||"").match(/\bspese\s+(?:condominiali)\s*(?:di|pari\s+a|:)?\s*(?:€|euro)\s*([\d.,]+)/i);
- const expenses=parseMoney(expenseText?.[1]);
+ const explicitlyMonthly=(details+" "+(descriptionPart?.[1]||"")).match(/\bspese\s+(?:condominiali\s*)?[:\-]?\s*([\d.,]+)\s*(?:€|euro)\s*(?:\/\s*mese|al\s*mese|mensili)\b/i);
+ const expenses=parseMoney(expenseText?.[1]||explicitlyMonthly?.[1]);
  if(expenses!==null&&expenses>=0&&expenses<=3000)put("expenses",expenses,"Spese mensili esplicitamente indicate");
- const sqm=prefix.match(/\b(\d{2,4})\s*(?:m²|mq|m2)(?=\s|[|·,]|$)/i);
- if(sqm&&+sqm[1]>=12&&+sqm[1]<=650)put("sqm",Number(sqm[1]),"Superficie indicata nella testata");
+ // Only extract size if a unit is explicit and the page associates it with
+ // this listing. Do not infer from neighboring teaser cards or free-form numbers.
+ const sqm=prefix.match(/\b(\d{2,4})\s*(?:m²|mq|m2)(?=\s|[|·,]|$)/i)
+   ||details.match(/\b(?:superficie|metri quadri)\s*[:\-]?\s*(\d{2,4})\s*(?:m²|mq|m2)\b/i)
+   ||(descriptionPart?.[1]||"").match(/\b(?:superficie|metratura)\s*(?:di|:)?\s*(\d{2,4})\s*(?:m²|mq|m2)\b/i);
+ if(sqm&&+sqm[1]>=12&&+sqm[1]<=650)put("sqm",Number(sqm[1]),"Metratura esplicita nella fonte");
  const street=explicitStreet(prefix);
  if(street)put("address",street,"Indirizzo con numero civico esplicitato");
  const zones=["Borgo San Paolo","Cit Turin","San Paolo","Cenisia","Crocetta","Santa Rita"];
