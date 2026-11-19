@@ -668,11 +668,12 @@ function renderComparison(){
  var cta=lead&&lead.querySelector('.tp-page-lead>button');
  if(cta){
   cta.disabled=chosen.length>=4;
+  cta.classList.toggle('tp14-compare-hide-cta',chosen.length===0||chosen.length>=4);
   cta.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i> '+(chosen.length>=4?'Limite: quattro case':chosen.length?'Aggiungi un’altra casa':'Scegli le case');
  }
  if(!chosen.length){
   node.innerHTML='<div class="tp14-compare-empty"><div class="tp14-empty-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></div>'+
-   '<h2>Nessuna casa da confrontare</h2><p>Apri Cerca, scegli un annuncio e usa «Confronta e altre azioni». Le case selezionate appariranno qui.</p>'+
+   '<h2>Nessuna casa da confrontare</h2><p>Apri Cerca, scegli un annuncio e premi «Confronta» nella scheda. Le case selezionate appariranno qui.</p>'+
    '<button type="button" class="button primary" data-nav="results">Esplora gli annunci</button></div>';return;
  }
  var fmt=function(a){return a.price?Number(a.price).toLocaleString('it-IT')+' €':'Non dichiarato';};
