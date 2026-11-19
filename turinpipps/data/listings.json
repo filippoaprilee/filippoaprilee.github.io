@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-19T11:38:52.787Z",
+  "updated_at": "2026-11-19T17:38:53.464Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -173,10 +173,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-18T23:38:52.241Z",
+      "availability_checked_at": "2026-11-19T17:38:53.464Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
+      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
     },
     {
       "url": "https://www.clickcase.it/disponibile-appartamento-torino-387546.html",
@@ -192,10 +192,10 @@
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-10-27",
       "property_type": "Bilocale · canone da chiedere",
-      "availability_checked_at": "2026-11-18T23:38:52.241Z",
+      "availability_checked_at": "2026-11-19T17:38:53.464Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
+      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-415406.html",
@@ -211,10 +211,10 @@
       "last_seen": "2026-11-12T09:20:00Z",
       "source_updated": "2026-07-18",
       "property_type": "Bilocale · transitorio · prezzo incerto",
-      "availability_checked_at": "2026-11-18T23:38:52.241Z",
+      "availability_checked_at": "2026-11-19T17:38:53.464Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
+      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
     },
     {
       "url": "https://www.immobiliare.it/annunci/133448718/",
@@ -365,12 +365,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-18T23:38:52.241Z",
+      "availability_checked_at": "2026-11-19T17:38:53.464Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-18T23:38:52.241Z"
+      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
     },
     {
       "url": "https://www.clickcase.it/quadrilocale-transitorio-torino-423592.html",
@@ -384,12 +384,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T05:38:52.658Z",
+      "availability_checked_at": "2026-11-19T17:38:53.464Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-19T05:38:52.658Z"
+      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
     },
     {
       "url": "https://www.clickcase.it/mini-loft-bilocale-su-due-livelli-con-ascensore-torino-423014.html",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-19T05:38:52.658Z",
       "availability_state": "online_alla_verifica",
@@ -482,7 +482,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert"
     },
     {
@@ -497,7 +497,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert"
     },
     {
@@ -512,7 +512,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert"
     },
     {
@@ -527,7 +527,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-19T11:38:52.787Z",
       "availability_state": "online_alla_verifica",
@@ -546,12 +546,42 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-19T11:38:52.787Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-19T11:38:52.787Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
       "availability_last_ok_at": "2026-11-19T11:38:52.787Z"
+    },
+    {
+      "url": "https://www.immobiliare.it/annunci/134852307",
+      "title": "Trilocale via Timavo 5, San Paolo , Torino",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "San Paolo",
+      "sqm": 0,
+      "source": "immobiliare.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T17:38:53.464Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.clickcase.it/bilocale-zona-spaolo-torino-425122.html",
+      "title": "Bilocale zona s.Paolo",
+      "description": "Bilocale zona s.Paolo - Affitto Appartamento da Privato a Torino, San Paolo - 425122 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 425122 Bilocale zona s.Paolo Appartamento in Affitto da Privato - Via Roccaforte 3, Torino 55 m&sup2; | 3 l",
+      "price": 500,
+      "zone": "San Paolo",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-19T17:38:53.464Z",
+      "last_seen": "2026-11-19T17:38:53.464Z",
+      "origin": "automatic_alert"
     }
   ]
 }
