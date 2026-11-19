@@ -385,7 +385,15 @@ function all(){if(memoListings)return memoListings;
  (prefs.manual||[]).concat(externalRemote,remote).map(normalize).forEach(function(a){
   if(!a)return;var key=sourceId(a.url),prior=found.get(key);
   if(!prior){found.set(key,a);return}
-  // Same portal and same listing identifier: retain the first URL and the user's notes.
+  // Same portal + same listing identifier only. Prefer the more descriptive
+  // source title when the primary record is an obvious placeholder.
+  // A related listing from another provider is NOT automatically merged.
+  const genericTitle=/^(?:annuncio(?:\s+clickcase)?|bilocale\s+arredato|disponibile\s+appartamento|casa\s+in\s+affitto|appartamento\s+torino)\s*$/i;
+  if(genericTitle.test(String(prior.title||"").trim())&&
+     String(a.title||"").trim().length>String(prior.title||"").trim().length+8){
+    prior.title=a.title;
+  }
+  // Keep the first source URL and the user's notes.
   // Never merge two different providers automatically.
   ['price','sqm','expenses','address','property_type','published_at','source_updated','last_verified_at','price_verified_at','evidence_url','description','link_checked_at'].forEach(function(field){
    if((prior[field]===0||prior[field]===null||prior[field]===undefined||prior[field]==='')&&a[field])prior[field]=a[field];
