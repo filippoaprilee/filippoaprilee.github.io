@@ -31,8 +31,9 @@ async function patch(table:string,filter:string,obj:any){
 function esc(text:unknown){return String(text==null?"":text).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]||ch))}
 function isWhole(row:any){return !/\b(?:stanza|camera singola|posto letto|box|garage|camera doppia)\b/i.test(String(row.title||"")+" "+String(row.property_type||""))}
 function candidates(data:any[],p:any){
- const zones=Array.isArray(p.preferred_zones)&&p.preferred_zones.length?p.preferred_zones:['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
+ const zones=Array.isArray(p.preferred_zones)&&p.preferred_zones.length?p.preferred_zones:['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita'];
  return data.filter((x:any)=>{
+  if(/pozzo[\s./_-]*strada/i.test([x.zone,x.title,x.description,x.address,x.listing_url].join(" ")))return false;
   return ["source","confirmed"].includes(String(x.private_status))&&x.price>=150&&x.price<=p.budget&&x.zone&&
     zones.some((z:string)=>x.zone.toLowerCase().includes(z.toLowerCase()))&&isWhole(x)&&
     x.link_status!=="missing"&&x.availability_status!=="unavailable"&&x.availability_status!=="expired"&&!x.expired_at;
@@ -202,7 +203,7 @@ Deno.serve(async req=>{
    if(action==="cron"&&(!person.digest_enabled||person.digest_frequency==="off"||(person.digest_frequency==="weekly"&&dow!=="Mon")))continue;
    const k=action==="manual"||action==="admin_manual"?"manual":person.digest_frequency==="weekly"?"weekly":"daily";
    const p=await query("turinpipps_preferences?user_id=eq."+person.user_id+"&select=budget,preferred_zones&limit=1");
-   const outcome=await email(person,k,local,all,p[0]||{budget:700,preferred_zones:["Crocetta","Cenisia","San Paolo","Borgo San Paolo","Cit Turin","Santa Rita","Pozzo Strada"]});
+   const outcome=await email(person,k,local,all,p[0]||{budget:700,preferred_zones:["Crocetta","Cenisia","San Paolo","Borgo San Paolo","Cit Turin","Santa Rita"]});
    outcomes.push(outcome);
   }
   if(current){
