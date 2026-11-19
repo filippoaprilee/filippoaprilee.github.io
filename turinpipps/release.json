@@ -1,13 +1,14 @@
 {
-  "version": "15.0.0",
-  "published_at": "2026-11-19T07:19:10.534Z",
-  "title": "TurinPipps 15 · Annunci più utili e un'interfaccia più semplice",
-  "summary": "Schede immobili riorganizzate senza stacchi di colore, Profilo separato dalle preferenze, ricerca ordinata per utilità, percorso in tre tappe e miglioramenti alla qualità delle fonti.",
+  "version": "15.1.0",
+  "published_at": "2026-11-19T07:27:12.183Z",
+  "title": "TurinPipps 15.1 · Ricerca casa più chiara",
+  "summary": "Schede immobili senza stacchi bianchi, Profilo semplificato, ricerca e confronti orientati alle tre azioni fondamentali. Quartieri esclusi e annunci di camere o posti letto rimossi dai risultati; maggiore cura di duplicati, link e dati dichiarati.",
   "highlights": [
-    "Il quartiere rimosso è escluso dalle preferenze, dalle fonti e da tutti i risultati",
-    "Schede più compatte e coerenti in modalità chiara e scura",
-    "Account raggruppato in sezioni espandibili, con preferenze di ricerca separate",
-    "Confronto e tracciamento del contatto più immediati",
-    "Fonti deduplicate per identificativo; link definitivamente mancanti nascosti; più campi estratti solo se dichiarati"
+    "Rimossi tutti gli annunci della zona esclusa da sito, widget e notifiche",
+    "Eliminati dall'archivio statico sette annunci fuori obiettivo, inclusi posti letto e camere",
+    "Schede immobili con un'unica superficie continua nei temi chiaro e scuro",
+    "Account e preferenze di ricerca separati, con sezioni richiudibili",
+    "Tre percorsi in evidenza: trova, confronta, contatta e organizza una visita",
+    "Migliore raccolta dei dati espliciti e controllo dei collegamenti originali"
   ]
 }
