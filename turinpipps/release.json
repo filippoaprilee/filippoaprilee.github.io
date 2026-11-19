@@ -1,14 +1,14 @@
 {
-  "version": "15.1.1",
-  "published_at": "2026-11-19T07:31:24.470Z",
-  "title": "TurinPipps 15.1 · Ricerca casa più chiara",
-  "summary": "Schede immobili senza stacchi bianchi, Profilo semplificato, ricerca e confronti orientati alle tre azioni fondamentali. Quartieri esclusi e annunci di camere o posti letto rimossi dai risultati; maggiore cura di duplicati, link e dati dichiarati.",
+  "version": "16.0.0",
+  "published_at": "2026-11-19T08:00:50.733Z",
+  "title": "TurinPipps 16 · Stesso design su computer e telefono",
+  "summary": "Navigazione, schede, ricerca, confronto e profilo uniformati tra desktop e mobile. Dark mode con colori leggibili per testi, pulsanti, modali e riquadri. Le vecchie regole di stile sono consolidate in un unico foglio, senza costi aggiuntivi.",
   "highlights": [
-    "Rimossi tutti gli annunci della zona esclusa da sito, widget e notifiche",
-    "Eliminati dall'archivio statico sette annunci fuori obiettivo, inclusi posti letto e camere",
-    "Schede immobili con un'unica superficie continua nei temi chiaro e scuro",
-    "Account e preferenze di ricerca separati, con sezioni richiudibili",
-    "Tre percorsi in evidenza: trova, confronta, contatta e organizza una visita",
-    "Migliore raccolta dei dati espliciti e controllo dei collegamenti originali"
+    "Un tema chiaro/scuro coerente per tutte le principali sezioni, con tema automatico di sistema",
+    "Nuova navigazione desktop, spaziature regolari e larghezze dei contenuti controllate",
+    "Il confronto usa schede confrontabili anche su PC, senza tabella orizzontale",
+    "Schede annuncio con peso tipografico ridotto, informazioni principali in evidenza e sfondi uniformi",
+    "Ricerca, account, Organizza e stati vuoti con controlli e testi contrastati",
+    "Un solo CSS precache al posto di 12 file, conservando la compatibilità con le funzioni esistenti"
   ]
 }
