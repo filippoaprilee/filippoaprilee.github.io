@@ -666,7 +666,10 @@ function renderComparison(){
  var intro=lead&&lead.querySelector('.tp-page-lead p');
  if(intro)intro.textContent='Confronta fino a quattro case. Prima guarda canone, spese e zona; i dati mancanti restano evidenti.';
  var cta=lead&&lead.querySelector('.tp-page-lead>button');
- if(cta)cta.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i> '+(chosen.length?'Aggiungi un’altra casa':'Scegli le case');
+ if(cta){
+  cta.disabled=chosen.length>=4;
+  cta.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i> '+(chosen.length>=4?'Limite: quattro case':chosen.length?'Aggiungi un’altra casa':'Scegli le case');
+ }
  if(!chosen.length){
   node.innerHTML='<div class="tp14-compare-empty"><div class="tp14-empty-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></div>'+
    '<h2>Nessuna casa da confrontare</h2><p>Apri Cerca, scegli un annuncio e usa «Confronta e altre azioni». Le case selezionate appariranno qui.</p>'+
@@ -693,7 +696,7 @@ function renderComparison(){
  'I valori sconosciuti non equivalgono a zero. Non considerare una casa migliore solo perché contiene meno dati.')+'</p></div>'+
  (chosen.length<4?'<button type="button" class="button" data-nav="results"><i class="fa-solid fa-plus" aria-hidden="true"></i> Aggiungi casa</button>':'')+'</div>';
  var mobile='<div class="tp14-compare-mobile" aria-label="Schede degli immobili a confronto">'+records.map(function(item,i){
-  var a=item.a,full=String(a.title||'Immobile'),short=full.replace(/\\s*[-–|]\\s*Appartamenti? [Ii]n affitto a Torino\\s*[-–|]\\s*Subito\\s*$/i,'').trim();
+  var a=item.a,full=String(a.title||'Immobile'),short=full.replace(/\s*[-–|]\s*Appartamenti? [Ii]n affitto a Torino\s*[-–|]\s*Subito\s*$/i,'').trim();
   return '<article class="tp14-compare-card"><header><div class="tp14-compare-index">'+(i+1)+'</div><div class="tp14-compare-property"><span>'+esc(a.source||'Fonte')+' · '+esc(a.zone||'Zona sconosciuta')+'</span><h2>'+esc(short||full)+'</h2></div>'+
    '<button type="button" class="tp14-compare-remove" data-action="compare" data-url="'+esc(a.url)+'" aria-label="Rimuovi dal confronto '+esc(short||full)+'"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header>'+
    '<div class="tp14-compare-price"><span>Canone dichiarato</span><strong>'+esc(fmt(a))+'</strong><small>al mese · spese escluse o da chiarire</small></div>'+
