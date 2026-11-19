@@ -3,7 +3,7 @@
 'use strict';
 var $=function(sel,root){return (root||document).querySelector(sel)};
 var $$=function(sel,root){return Array.from((root||document).querySelectorAll(sel))};
-var zones=['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita','Pozzo Strada'];
+var zones=['Crocetta','Cenisia','San Paolo','Borgo San Paolo','Cit Turin','Santa Rita'];
 var steps=[
  {icon:'fa-solid fa-house',eyebrow:'BENVENUTO · 1 DI 5',title:'Trova casa, con meno confusione.',
   text:'Imposta i tuoi criteri in pochi passaggi. Annunci e fonti saranno sempre distinguibili dalle informazioni che devi ancora verificare.'},
