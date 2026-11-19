@@ -52,7 +52,7 @@ function themeControls(){
   else if(account&&account.parentElement===actions)actions.insertBefore(menu,account);
   else actions.append(menu);
  }
- for(const view of ["#view-profile","#view-settings"]){
+ for(const view of ["#view-settings"]){
   const host=$(view);
   if(!host||host.querySelector(".tp12-theme-settings"))continue;
   const card=document.createElement("section");card.className="tp12-theme-settings";
