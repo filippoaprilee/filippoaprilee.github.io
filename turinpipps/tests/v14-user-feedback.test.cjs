@@ -76,9 +76,9 @@ test('release channels are opt-in, not auto-activated',()=>{
  assert.match(v14,/readRelease/);
 });
 test('notification release matches cached PWA',()=>{
- assert.equal(release.version,'15.1.1');
- assert.match(worker,/turinpipps-shell-v15\.1\.1/);
- for(const p of ['experience-v14.css?v=14.0.3','experience-v14.js?v=14.0.3','release.json']){
+ assert.equal(release.version,'16.0.1');
+ assert.match(worker,/turinpipps-shell-v16\.0\.1/);
+ for(const p of ['styles-v16.css?v=16.0.1','experience-v14.js?v=14.0.3','release.json']){
   assert.ok(html.includes(p)||p==='release.json');
   assert.ok(worker.includes(p),p);
  }
