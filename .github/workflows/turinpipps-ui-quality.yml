@@ -12,15 +12,32 @@ concurrency:
   cancel-in-progress: true
 jobs:
   qa:
+    name: "Check ${{ matrix.suite }}"
     runs-on: ubuntu-latest
     timeout-minutes: 6
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [bundle, v12, v13, v14, v15, v16]
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 22
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify generated UI stylesheet matches sources
-        run: node turinpipps/scripts/build-css.cjs --check
-      - name: Run deterministic TurinPipps UX, data and contrast regression tests
-        run: node --test turinpipps/tests/v12-ui.test.cjs turinpipps/tests/v13-user-journeys.test.cjs turinpipps/tests/v14-user-feedback.test.cjs turinpipps/tests/v15-quality.test.cjs turinpipps/tests/v16-theme-responsive.test.cjs
+      - name: Run check
+        shell: bash
+        run: |
+          set -o pipefail
+          if [ "${{ matrix.suite }}" = "bundle" ]; then
+            node turinpipps/scripts/build-css.cjs --check 2>&1 | tee qa-report.txt
+          else
+            node --test "turinpipps/tests/${{ matrix.suite }}-"*.test.cjs 2>&1 | tee qa-report.txt
+          fi
+      - name: Keep QA output for troubleshooting
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: turinpipps-qa-${{ matrix.suite }}
+          path: qa-report.txt
+          if-no-files-found: ignore
+          retention-days: 2
