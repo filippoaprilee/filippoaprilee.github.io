@@ -83,7 +83,7 @@ export function extractClickCaseDetails(html,listingUrl,stamp){
  if(sqm&&+sqm[1]>=12&&+sqm[1]<=650)put("sqm",Number(sqm[1]),"Superficie indicata nella testata");
  const street=explicitStreet(prefix);
  if(street)put("address",street,"Indirizzo con numero civico esplicitato");
- const zones=["Borgo San Paolo","Cit Turin","Pozzo Strada","San Paolo","Cenisia","Crocetta","Santa Rita"];
+ const zones=["Borgo San Paolo","Cit Turin","San Paolo","Cenisia","Crocetta","Santa Rita"];
  const namedZone=zones.find(z=>new RegExp("(^|[^a-zà-ÿ])"+z+"([^a-zà-ÿ]|$)","i").test(heading));
  if(namedZone)put("zone",namedZone,"Quartiere dichiarato nel titolo dell'immobile");
  const namedType=heading.toLowerCase().match(/\b(monolocale|bilocale|trilocale|quadrilocale)\b/);
