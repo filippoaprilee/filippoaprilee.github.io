@@ -476,6 +476,7 @@ function init(){
  // The five-step onboarding module is authoritative; do not overwrite its steps.
  if(!window.TurinPippsEnhanceGuide)api().guideSlides?.(slides);
  window.addEventListener("turinpipps:ready",()=>{refresh()});
+ window.addEventListener('turinpipps:listings-updated',()=>{refresh()});
  window.addEventListener("turinpipps:account-ready",()=>{refresh()});
  window.addEventListener("turinpipps:account-signed-out",()=>{refresh()});
 }
