@@ -347,8 +347,15 @@ async function enrichClickCase(rows:any[],existing:Map<string,any>,time:string){
  const totals={checked:0,read:0,blocked:0,errors:0,new_fields:0};
  const found=new Map<string,any>();
  const choices=rows.filter(a=>a.source==="ClickCase").map(a=>({row:a,old:existing.get(a.listing_url)||{}}))
- .filter(({old})=>!old.detail_checked_at||Date.now()-Date.parse(old.detail_checked_at)>(
-    Number(old.price)>0?7*86400000:48*3600000))
+ .filter(({old})=>{
+   if(!old.detail_checked_at)return true;
+   // Respect repeated blocking: no aggressive retries against a closed source.
+   const nextMs=old.detail_status==="blocked"?14*86400000:
+     old.detail_status==="not_found"?14*86400000:
+     Number(old.price)<=0?72*3600000:
+     (!Number(old.sqm)||!old.address||!old.published_at)?4*86400000:21*86400000;
+   return Date.now()-Date.parse(old.detail_checked_at)>nextMs;
+ })
  .sort((a,b)=>(a.old.detail_checked_at?1:0)-(b.old.detail_checked_at?1:0)
     ||(Date.parse(a.old.detail_checked_at||"")||0)-(Date.parse(b.old.detail_checked_at||"")||0))
  .slice(0,3);
