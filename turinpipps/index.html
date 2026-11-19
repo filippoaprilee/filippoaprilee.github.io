@@ -371,7 +371,7 @@ function cleanTitle(s){s=String(s||'').trim();if(s.startsWith('{')||s.startsWith
 function canonical(url){try{var u=new URL(url);if(!/^https?:$/.test(u.protocol))return '';u.hash='';var h=u.hostname.toLowerCase().replace(/^www\./,'');if(['clickcase.it','subito.it','immobiliare.it','idealista.it'].includes(h)){u.protocol='https:';u.hostname='www.'+h;u.search='';}else ['utm_source','utm_medium','utm_campaign','fbclid','gclid','utm_content','utm_term'].forEach(function(k){u.searchParams.delete(k)});return u.toString().replace(/\/$/,'')}catch(_){return ''}}
 function sourceId(url){try{var u=new URL(url),h=u.hostname.toLowerCase().replace(/^www\./,''),p=u.pathname.toLowerCase(),m=null;if(h==='clickcase.it')m=p.match(/-(\d+)\.html$/);else if(h==='subito.it')m=p.match(/-(\d+)\.htm$/);else if(h==='immobiliare.it')m=p.match(/^\/annunci\/(\d+)\/?$/);else if(h==='idealista.it')m=p.match(/^\/immobile\/(\d+)\/?$/);else if(h.endsWith('.bakeca.it'))m=p.match(/-([a-z0-9]{8,})\/?$/);return m?h.replace(/^[^.]+\.bakeca\.it$/,'bakeca.it')+':'+m[1]:url}catch(_){return url}}
 
-function normalize(item){if(!item||typeof item!=='object')return null;var url=canonical(item.url||item.link);if(!url)return null;var desc=String(item.description||item.summary||'').replace(/<[^>]+>/g,' ').slice(0,1200);var price=Number(item.price||item.rent||0);if(!Number.isFinite(price)||price<0)price=0;var zone=String(item.zone||'').trim();if(item.excluded_from_search===true||/pozzo[\\s.\/_-]*strada/i.test([zone,item.title||'',item.description||'',item.address||''].join(' ')))return null;
+function normalize(item){if(!item||typeof item!=='object')return null;var url=canonical(item.url||item.link);if(!url)return null;var desc=String(item.description||item.summary||'').replace(/<[^>]+>/g,' ').slice(0,1200);var price=Number(item.price||item.rent||0);if(!Number.isFinite(price)||price<0)price=0;var zone=String(item.zone||'').trim();if(item.excluded_from_search===true||/pozzo[\s.\/_-]*strada/i.test([zone,item.title||'',item.description||'',item.address||''].join(' ')))return null;
 if(item.link_status==='missing'&&Number(item.link_failure_count||0)>=2)return null;
 if(['unavailable','expired'].includes(String(item.availability_status||'')))return null;
 var probe=(zone+' '+String(item.title||'')+' '+desc).toLowerCase();if(!zone){zones.forEach(function(z){if(!zone&&probe.includes(z))zone=z.replace(/\b\w/g,function(m){return m.toUpperCase()})})}
@@ -1145,7 +1145,7 @@ el('tp-add-form').addEventListener('submit',async function(event){
  var url=canonical(el('tp-add-url').value);
  if(!url){showToast('Inserisci un link valido.','warn');return}
  if(all().some(function(x){return x.url===url})){showToast('Questo annuncio è già nella tua raccolta.','warn');return}
- if(/pozzo[\\s.\/_-]*strada/i.test(url+' '+el('tp-add-name').value+' '+el('tp-add-zone').value)){showToast('Questo quartiere non è incluso nella ricerca.','warn');return}
+ if(/pozzo[\s.\/_-]*strada/i.test(url+' '+el('tp-add-name').value+' '+el('tp-add-zone').value)){showToast('Questo quartiere non è incluso nella ricerca.','warn');return}
  var row={url:url,title:el('tp-add-name').value.trim().slice(0,170),
   price:Math.max(0,Number(el('tp-add-price').value)||0),
   zone:el('tp-add-zone').value,source:'Aggiunto da te',
@@ -1169,7 +1169,7 @@ window.TurinPippsBridge={
   accountMode=true;
   if(el('tp-saved-context'))el('tp-saved-context').textContent='Sincronizzati sul tuo account';
   prefs=Object.assign({},guestPrefs,{flags:data.flags||{},manual:data.manual||[]});
-  if(data.settings){prefs.budget=data.settings.budget||700;prefs.fullname=data.settings.fullname||'';prefs.intro=data.settings.intro||'';prefs.minSqm=data.settings.minSqm||0;prefs.preferredZones=Array.isArray(data.settings.preferredZones)?data.settings.preferredZones.filter(function(z){return !/pozzo[\\s.\/_-]*strada/i.test(z)}):null;prefs.propertyType=data.settings.propertyType||'tutte';prefs.maxWalkMinutes=data.settings.maxWalkMinutes||null}
+  if(data.settings){prefs.budget=data.settings.budget||700;prefs.fullname=data.settings.fullname||'';prefs.intro=data.settings.intro||'';prefs.minSqm=data.settings.minSqm||0;prefs.preferredZones=Array.isArray(data.settings.preferredZones)?data.settings.preferredZones.filter(function(z){return !/pozzo[\s.\/_-]*strada/i.test(z)}):null;prefs.propertyType=data.settings.propertyType||'tutte';prefs.maxWalkMinutes=data.settings.maxWalkMinutes||null}
   memoListings=null;
   el('budget').value=prefs.budget;el('fullname').value=prefs.fullname;el('intro').value=prefs.intro;
   fillPersonalSettings();renderResults();renderSaved();
@@ -1220,7 +1220,7 @@ window.TurinPippsBridge={
    stats();renderHome();renderResults();
  },
  setZones:function(z){
-   prefs.preferredZones=Array.isArray(z)&&z.length?z.filter(function(name){return !/pozzo[\\s.\/_-]*strada/i.test(name)}):zones;
+   prefs.preferredZones=Array.isArray(z)&&z.length?z.filter(function(name){return !/pozzo[\s.\/_-]*strada/i.test(name)}):zones;
    fillPersonalSettings();persist();memoListings=null;
    stats();renderHome();renderResults();
  }
