@@ -171,6 +171,7 @@ html[data-tp-theme] #tp9-main :is(
   display:flex!important;margin:1px 3px 20px!important;padding:6px 6px 18px!important;
   border-bottom:1px solid var(--tp16-border)!important;gap:11px!important;min-height:61px}
  html[data-tp-theme] .side .brand-name{
+  display:block!important;min-width:0!important;
   color:var(--tp16-text)!important;font-size:17px!important;
   font-weight:670!important;line-height:1.2!important;letter-spacing:-.3px!important}
  html[data-tp-theme] .side .brand-name small{
@@ -192,7 +193,9 @@ html[data-tp-theme] #tp9-main :is(
   box-shadow:none!important;white-space:normal!important}
  html[data-tp-theme] .side .nav button i{width:18px!important;flex:none;
   font-size:15px!important;text-align:center!important;color:currentColor!important}
- html[data-tp-theme] .side .nav button .nav-label{display:inline!important;font-size:12px!important}
+ html[data-tp-theme] .side .nav button .nav-label,
+ html[data-tp-theme] .side .nav .tp10-nav-item .nav-label{
+  display:inline!important;font-size:12px!important;min-width:0!important}
  html[data-tp-theme] .side .nav button:is(:hover,:focus-visible){
   background:var(--tp16-soft)!important;color:var(--tp16-text)!important}
  html[data-tp-theme] .side .nav button.active{
@@ -632,6 +635,8 @@ html[data-tp-theme] #tp9-global-footer.tp12-footer nav a{
   border-radius:12px!important}
  html[data-tp-theme] .topline.tp12-topbar #tp15-settings-trigger{
   display:grid!important}
+ html[data-tp-theme] .topline.tp12-topbar #tp-guide-open{
+  display:none!important}
  html[data-tp-theme] .topline.tp12-topbar .top-actions{gap:6px!important}
  html[data-tp-theme] .topline.tp12-topbar :is(
   #tp12-theme-trigger,#tp-v5-bell,#tp15-settings-trigger
