@@ -6,6 +6,7 @@
 const $=(sel,root=document)=>root.querySelector(sel);
 const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
 let scheduled=false,started=false;
+const setText=(node,value)=>{if(node&&node.textContent!==value)node.textContent=value};
 function header(){
  const top=$(".topline .top-actions"),old=$("#tp-account-button");
  if(!top||$("#tp15-settings-trigger"))return;
@@ -47,9 +48,9 @@ function account(){
  const heading=$(".tp-v5-screen-header",view);
  if(heading){
   const title=$("h1",heading),eyebrow=$(".tp-v5-kicker",heading),desc=$("p",heading);
-  if(title)title.textContent="Account";
-  if(eyebrow)eyebrow.textContent="IL TUO ACCOUNT";
-  if(desc)desc.textContent="Accesso, notifiche e dati personali. Le preferenze della ricerca sono in una sezione separata.";
+  setText(title,"Account");
+  setText(eyebrow,"IL TUO ACCOUNT");
+  setText(desc,"Accesso, notifiche e dati personali. Le preferenze della ricerca sono in una sezione separata.");
  }
  const theme=$(".tp12-theme-settings",view);if(theme)theme.remove();
  const body=$("#tp-v5-profile-body");
@@ -58,7 +59,7 @@ function account(){
   if(links){
    links.classList.add("tp15-profile-shortcuts");
    const search=links.querySelector('[data-nav="settings"]');
-   if(search)search.textContent="Preferenze di ricerca";
+   setText(search,"Preferenze di ricerca");
    identity.after(links);
   }
   const details=document.createElement("details");details.className="tp15-account-notifications";
@@ -90,8 +91,8 @@ function account(){
  const settings=$("#view-settings");
  if(settings){
   const title=$(".section-heading h2",settings),p=$(".section-heading p",settings);
-  if(title)title.textContent="Preferenze di ricerca";
-  if(p)p.textContent="Budget, quartieri e tipologia. Le notifiche e i dati dell’account si gestiscono in Profilo.";
+  setText(title,"Preferenze di ricerca");
+  setText(p,"Budget, quartieri e tipologia. Le notifiche e i dati dell’account si gestiscono in Profilo.");
  }
 }
 function journey(){
