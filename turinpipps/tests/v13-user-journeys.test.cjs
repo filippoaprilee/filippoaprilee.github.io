@@ -71,7 +71,7 @@ test('v13 assets match service-worker cache and page sources',()=>{
   assert.ok(index.includes(file),'HTML missing '+file);
   assert.ok(sw.includes(file),'Worker missing '+file);
  }
- assert.match(sw,/turinpipps-shell-v15\.1\.0/);
+ assert.match(sw,/turinpipps-shell-v15\.1\.1/);
 });
 test('browser JavaScript remains parsable after integrating changes',()=>{
  for(const [name,code] of [['organization',source],['v10',v10],['v12',v12],['worker',sw]])
