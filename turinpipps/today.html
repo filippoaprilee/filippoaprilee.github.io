@@ -1,6 +1,15 @@
 <!doctype html><html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101d30"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#101d30"><script id="tp16-today-theme">(function(){
+ try{
+  var saved=localStorage.getItem('turinpipps.theme.v12')||'system';
+  var dark=saved==='dark'||saved!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.tpTheme=dark?'dark':'light';
+  document.documentElement.style.colorScheme=dark?'dark':'light';
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=dark?'#0c1623':'#f5f8fa';
+ }catch(_){document.documentElement.dataset.tpTheme='light'}
+})();</script><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Oggi · TurinPipps</title>
 <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -24,6 +33,29 @@
 .actions a{display:grid;place-items:center;background:#165971;color:#fff;text-decoration:none;border-radius:12px;padding:13px 7px;font-size:12px;font-weight:800;min-height:50px}
 .actions a+ a{color:#15556a;background:#e0edf0}
 .note{font-size:10px;color:#8393a1;line-height:1.6;margin-top:17px}
+</style><style>
+/* Uses the same accessible palette as the main app, including system mode. */
+html[data-tp-theme="dark"]{
+ --q-bg:#0c1623;--q-surface:#172838;--q-border:#435b6f;
+ --q-text:#eff6fa;--q-muted:#bacbd7;--q-accent:#9bdde7;
+ color-scheme:dark;color:var(--q-text)!important;background:var(--q-bg)!important}
+html[data-tp-theme="dark"] body{background:var(--q-bg)!important;color:var(--q-text)!important}
+html[data-tp-theme="dark"] :is(.stat,.listing){
+ background:var(--q-surface)!important;color:var(--q-text)!important;
+ border-color:var(--q-border)!important;box-shadow:none!important}
+html[data-tp-theme="dark"] :is(.header b,.stat b,.listing b,.heading h2){
+ color:var(--q-text)!important}
+html[data-tp-theme="dark"] :is(.header small,.stat span,.heading small,.meta,.note){
+ color:var(--q-muted)!important}
+html[data-tp-theme="dark"] .tag{color:var(--q-accent)!important}
+html[data-tp-theme="dark"] .actions a+a{
+ background:#22374a!important;color:var(--q-text)!important;
+ border:1px solid var(--q-border)!important}
+html[data-tp-theme="dark"] .actions a:first-child{
+ background:#17667a!important;color:#ffffff!important}
+html[data-tp-theme] :is(.listing,.actions a):focus-visible{
+ outline:3px solid #9bdde7!important;outline-offset:3px!important}
+@media(prefers-reduced-motion:reduce){.listing,.actions a{transition:none!important}}
 </style></head><body><main>
 <header class="header"><img src="./icon.svg" alt=""><div><b>TurinPipps</b><small>ACCESSO RAPIDO</small></div></header>
 <section class="hero"><div class="eyebrow">IL TUO RADAR IMMOBILIARE</div><h1>La ricerca casa,<br>a colpo d'occhio.</h1><p>Annunci pubblici a Torino, vicino al Politecnico. Le disponibilità vanno confermate con i proprietari.</p></section>
