@@ -240,3 +240,15 @@ html[data-tp-theme="dark"] .tp14-notification-invite p{color:#b5c9d6!important}
  .tp14-invite-actions{flex-wrap:wrap}
  .tp14-invite-actions button{flex:1 1 150px}
 }
+
+
+/* Unknown rent is a secondary missing-data signal, not the largest card heading. */
+#view-results .tp12-card .listing-banner .price.tp14-price-unavailable,
+#view-saved .tp12-card .listing-banner .price.tp14-price-unavailable{
+ font-size:14px!important;line-height:1.35!important;font-weight:600!important;
+ max-width:min(70%,230px)!important;padding:9px 12px!important;
+ background:var(--tp14-paper)!important;color:var(--tp14-subtle)!important;
+ border:1px solid var(--tp14-line)!important;box-shadow:none!important}
+html[data-tp-theme="dark"] #view-results .tp12-card .listing-banner .price.tp14-price-unavailable,
+html[data-tp-theme="dark"] #view-saved .tp12-card .listing-banner .price.tp14-price-unavailable{
+ background:#1b3042!important;color:#c7d9e3!important;border-color:#4b687b!important}
