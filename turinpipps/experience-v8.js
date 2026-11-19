@@ -205,18 +205,10 @@ function renderMap(){
  if(api()&&api().drawMap)api().drawMap();
 }
 function buildProfileHub(){
- const root=$("#view-profile");if(!root||$("#tp8-account-hub"))return;
- const box=document.createElement("section");box.id="tp8-account-hub";box.className="tp8-account-hub";
- box.innerHTML='<div class="tp8-account-title"><span class="tp8-eyebrow">IL TUO ACCOUNT</span><h2>Le tue impostazioni, in ordine.</h2><p>Un unico punto per gestire account, ricerca, comunicazioni e assistenza.</p></div>'+
- '<div class="tp8-account-links">'+[
- ["settings","fa-solid fa-sliders","Preferenze ricerca","Budget, zone e tipologia"],
- ["notifications","fa-regular fa-bell","Notifiche","Push, prove e avvisi"],
- ["sources","fa-solid fa-chart-line","Monitoraggio","Stato delle ricerche"],
- ["visits","fa-regular fa-calendar-check","Organizzazione","Contatti e appuntamenti"]
- ].map(x=>'<button type="button" data-nav="'+x[0]+'"><i class="'+x[1]+'"></i><span><b>'+x[2]+'</b><small>'+x[3]+'</small></span><i class="fa-solid fa-chevron-right"></i></button>').join("")+
- '</div><button type="button" id="tp8-help" class="tp8-help"><i class="fa-regular fa-circle-question"></i> Guida all’app</button>';
- const body=$("#tp-v5-profile-body");if(body)root.insertBefore(box,body);else root.appendChild(box);
- box.querySelector("#tp8-help").addEventListener("click",()=>$("#tp-guide-open")?.click());
+ // The account screen already has identity and security sections.
+ // Avoid repeating the sidebar's preferences, alerts and workflow links.
+ const duplicate=$("#tp8-account-hub");
+ if(duplicate)duplicate.remove();
 }
 function onNavigate(name){
  if(name==="home")updateHome();

@@ -1,15 +1,13 @@
 {
-  "version": "16.0.2",
-  "published_at": "2026-11-19T08:09:43.903Z",
-  "title": "TurinPipps 16 · Stesso design su computer e telefono",
-  "summary": "Home unica su PC e telefono, senza vecchie dashboard sovrapposte. Contatori aggiornati dopo il caricamento live. Schede, ricerca, confronti e account coerenti su desktop e mobile, con tema chiaro/scuro ad alto contrasto e CSS unificato.",
+  "version": "16.1.0",
+  "published_at": "2026-11-19T10:30:00+01:00",
+  "title": "TurinPipps · Schermate più chiare su desktop e mobile",
+  "summary": "La ricerca utilizza meglio lo spazio desktop, riduce le navigazioni duplicate e distingue meglio pannelli, pulsanti e contenuti nei temi chiaro e scuro.",
   "highlights": [
-    "Eliminate le vecchie dashboard duplicate dalla Home desktop",
-    "Contatori della Home sincronizzati con il caricamento degli annunci Supabase",
-    "Dark mode corretta su schede, Home, confronti, organizzazione, profilo, notifiche e input",
-    "Sidebar e spaziature desktop coerenti con la navigazione mobile",
-    "Confronto desktop a schede invece della vecchia tabella orizzontale",
-    "Panoramica rapida iPhone con tema automatico del dispositivo",
-    "Un solo CSS per l'intera app, con cache PWA aggiornata"
+    "Più spazio utile nelle schermate desktop",
+    "Account semplificato senza scorciatoie duplicate",
+    "Contrasto e separazione visiva migliorati in entrambi i temi",
+    "Schede e risultati più leggibili e coerenti",
+    "Navigazione mobile compatta e cache PWA aggiornata"
   ]
 }
