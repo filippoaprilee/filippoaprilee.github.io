@@ -102,10 +102,10 @@ test("Account and Search Preferences have separate navigation and account groups
   assert.ok(js.includes(x));
 });
 test("release file, service worker and new assets are aligned",()=>{
- assert.equal(release.version,"16.0.1");
- assert.match(sw,/turinpipps-shell-v16\.0\.1/);
- for(const asset of ["experience-v15.js?v=15.0.0","styles-v16.css?v=16.0.1",
-   "experience-v12.js?v=16.0.0","experience-v3.js?v=15.0.0"]){
+ assert.equal(release.version,"16.0.2");
+ assert.match(sw,/turinpipps-shell-v16\.0\.2/);
+ for(const asset of ["experience-v15.js?v=15.0.0","styles-v16.css?v=16.0.2",
+   "experience-v12.js?v=16.0.0","experience-v3.js?v=16.0.0"]){
   assert.ok(html.includes(asset),"missing "+asset+" in HTML");
   assert.ok(sw.includes(asset),"missing "+asset+" in service worker");
  }
