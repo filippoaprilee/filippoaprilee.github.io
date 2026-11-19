@@ -139,6 +139,7 @@ async function loadProfile(){
  try{
   var rows=await rest('turinpipps_profiles?select=*&user_id=eq.'+encodeURIComponent(s.id)+'&limit=1');
   state.profile=rows[0]||null;renderProfile();
+  window.dispatchEvent(new Event('turinpipps:profile-loaded'));
  }catch(err){note('tp-v5-profile-message',err.message,'error')}
 }
 async function saveProfile(){
@@ -429,6 +430,7 @@ function init(){
  if(!$('#view-home')||$('#view-profile'))return;
  build();
  window.TurinPippsV5={onNavigate:onNavigate,enablePush:enablePush,saveReleasePreferences:saveReleasePreferences,
+  getProfile:function(){return state.profile?Object.assign({},state.profile):null},
   canAdmin:function(){var s=session();return state.staff===true&&!!s&&s.confirmed===true&&String(s.email||'').toLowerCase()==='filippo@maben.it'}};
  document.addEventListener('click',function(e){
    var a=e.target.closest('[data-tp-v5-read]');if(a){e.preventDefault();markRead(Number(a.dataset.tpV5Read))}
