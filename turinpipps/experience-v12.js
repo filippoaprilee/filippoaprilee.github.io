@@ -200,6 +200,11 @@ function reconcileCard(article,map){
  }
  if(article.dataset.tp12CardReady)return;
  const body=$(".body",article);if(!body)return;
+ const label=$(".listing-banner .price",article);
+ if(label&&!(Number(record.price)>0)){
+  label.classList.add("tp14-price-unavailable");
+  label.textContent="Canone non indicato";
+ }
  article.dataset.tp12CardReady="1";
  article.classList.add("tp12-card");
  const heading=$("h3",body);
@@ -212,8 +217,8 @@ function reconcileCard(article,map){
    const isClaim=record.private_status==="source";
    const compatibility=window.TurinPippsUXV3?.classifyListing?.(record)?.status||"review";
    badges.innerHTML='<span class="tp12-status '+(compatibility==="excluded"?"tp12-warning":compatibility==="good"?"tp12-positive":"")+'">'+
-    (compatibility==="excluded"?"Fuori criteri":compatibility==="good"?"Compatibilità preliminare":"Dati da verificare")+'</span>'+
-    '<span class="tp12-status">'+(isOwner?"Privato verificato":isClaim?"Privato dichiarato":"Inserzionista da verificare")+'</span>';
+    (compatibility==="excluded"?"Fuori criteri":compatibility==="good"?"In linea con i criteri":"Dati incompleti")+'</span>'+
+    '<span class="tp12-status">'+(isOwner?"Identità confermata":isClaim?"Privato dichiarato":"Inserzionista non confermato")+'</span>';
    const after=$(".tp10-card-summary",body);
    if(after)after.before(badges);
    else heading.after(badges);
