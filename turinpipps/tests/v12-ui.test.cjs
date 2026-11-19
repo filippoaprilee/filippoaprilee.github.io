@@ -14,11 +14,11 @@ test('all new browser scripts and inline scripts parse',()=>{
  for(const match of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g))if(match[1].trim())assert.doesNotThrow(()=>new vm.Script(match[1]));
 });
 test('PWA precaches matching v12 UI files and invalidates old shell',()=>{
- for(const file of ['experience-v12.css?v=13.0.1','experience-v12.js?v=15.0.0']){
+ for(const file of ['styles-v16.css?v=16.0.1','experience-v12.js?v=16.0.0']){
   assert.ok(html.includes(file),file+' absent from document');
   assert.ok(sw.includes(file),file+' absent from service worker');
  }
- assert.match(sw,/turinpipps-shell-v15\.1\.1/);
+ assert.match(sw,/turinpipps-shell-v16\.0\.1/);
 });
 function harness(){
  const root={dataset:{tpThemeChoice:'system'},style:{}};
@@ -38,7 +38,7 @@ test('system theme follows OS and manual themes override it',()=>{
  change('light',true);assert.equal(h.root.dataset.tpTheme,'light');
  change('dark',true);assert.equal(h.root.dataset.tpTheme,'dark');
  assert.equal(h.memory.get('turinpipps.theme.v12'),'dark');
- assert.equal(h.meta.value,'#101c29');
+ assert.equal(h.meta.value,'#0c1623');
 });
 test('light and dark are styled as independent color schemes',()=>{
  assert.match(css,/html\[data-tp-theme="dark"\]/);
