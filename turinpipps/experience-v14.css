@@ -223,3 +223,20 @@ html[data-tp-theme="dark"] .tp14-notes-footer button{background:#244454!importan
  #view-results .tp12-card .actions>.tp14-other-actions>summary,
  #view-saved .tp12-card .actions>.tp14-other-actions>summary{font-size:12px!important;white-space:normal!important}
 }
+
+
+.tp14-notification-invite{margin:12px 0 18px;padding:16px 18px;display:flex;justify-content:space-between;
+ align-items:center;gap:16px;border:1px solid var(--tp14-line);border-radius:13px;background:var(--tp14-paper)}
+.tp14-notification-invite h2{font-size:16px!important;font-weight:680!important;margin:4px 0!important;
+ color:var(--tp14-ink)!important;line-height:1.4}
+.tp14-notification-invite p{font-size:12px!important;line-height:1.55!important;margin:2px 0!important;color:var(--tp14-subtle)!important}
+.tp14-invite-actions{display:flex;align-items:center;gap:8px;flex:none}
+.tp14-invite-actions button{font-size:12px!important;min-height:44px!important;font-weight:600!important;padding:9px 12px!important}
+html[data-tp-theme="dark"] .tp14-notification-invite{background:#192a3b!important;border-color:#385367!important}
+html[data-tp-theme="dark"] .tp14-notification-invite :is(h2){color:#e9f2f7!important}
+html[data-tp-theme="dark"] .tp14-notification-invite p{color:#b5c9d6!important}
+@media(max-width:760px){
+ .tp14-notification-invite{padding:14px;flex-direction:column;align-items:stretch;gap:12px}
+ .tp14-invite-actions{flex-wrap:wrap}
+ .tp14-invite-actions button{flex:1 1 150px}
+}
