@@ -1,0 +1,26 @@
+name: TurinPipps UI and theme quality
+on:
+  push:
+    paths:
+      - 'turinpipps/**'
+      - '.github/workflows/turinpipps-ui-quality.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: turinpipps-ui-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify generated UI stylesheet matches sources
+        run: node turinpipps/scripts/build-css.cjs --check
+      - name: Run deterministic TurinPipps UX, data and contrast regression tests
+        run: node --test turinpipps/tests/v12-ui.test.cjs turinpipps/tests/v13-user-journeys.test.cjs turinpipps/tests/v14-user-feedback.test.cjs turinpipps/tests/v15-quality.test.cjs turinpipps/tests/v16-theme-responsive.test.cjs
