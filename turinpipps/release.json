@@ -1,15 +1,16 @@
 {
-  "version": "19.0.0",
-  "published_at": "2026-11-20T08:56:40.381Z",
-  "title": "TurinPipps 19 · Meno riquadri, più chiarezza",
-  "summary": "Nuovo impianto editoriale: risultati in elenco per confrontare titoli, prezzi e caratteristiche, Home essenziale, notifiche e preferenze alleggerite, dettagli disponibili solo quando servono.",
+  "version": "20.0.0",
+  "published_at": "2026-11-20T09:33:47.065Z",
+  "title": "TurinPipps 20 · Nuova Home, ricerca e notifiche",
+  "summary": "Home centrata sulle case reali, nessuna sovrascrittura del titolo, filtri leggibili, menu mobile corretto, Account semplificato e Notifiche divise per attività, preferenze e dispositivo.",
   "highlights": [
-    "Annunci in elenco anziché card a tre colonne: prezzo e azioni sempre nella stessa posizione",
-    "Affidabilità, descrizione e costi in una sola sezione espandibile per immobile",
-    "Home semplificata: budget integrato, statistiche inline e shortlist senza riquadri",
-    "Preferenze di ricerca come modulo continuo con gruppi tematici",
-    "Notifiche come elenco di attività, consensi non incorniciati e note di versione comprimibili",
-    "Contatti, visite e Account alleggeriti visivamente, conservando i flussi già presenti",
-    "Tema chiaro e scuro con gerarchia tipografica e contrasto coerenti su desktop e mobile"
+    "Home: shortlist utile e conteggi alimentati dai dati",
+    "Eliminata la riscrittura accidentale della Home da uno script precedente",
+    "Ricerca con filtri chiari, elenco ordinato e menu mobile contenuto nello schermo",
+    "Contatti e visite: stato iniziale breve senza un grande riquadro vuoto",
+    "Account: email non più duplicata e istruzioni di installazione espandibili",
+    "Notifiche: tre schede separate, senza ripetizioni",
+    "Contrasti ricalibrati per light e dark mode",
+    "Verifica browser automatizzata su desktop e due dimensioni mobile"
   ]
 }
