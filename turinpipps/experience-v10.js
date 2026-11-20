@@ -59,8 +59,8 @@ function navigation(){
  const nav=$(".side .nav");if(!nav||nav.dataset.tp10Ready)return;
  const existing={};$$("button[data-nav]",nav).forEach(b=>{existing[b.dataset.nav]=b});
  const areas=[["CERCA CASA",[["home","fa-solid fa-house","Panoramica"],["results","fa-solid fa-magnifying-glass","Cerca immobili"],["map","fa-solid fa-map-location-dot","Mappa"]]],
- ["LA TUA RICERCA",[["saved","fa-regular fa-heart","Salvati"],["visits","fa-regular fa-calendar-check","Contatti e visite"],["compare","fa-solid fa-scale-balanced","Confronti"]]],
- ["IMPOSTAZIONI",[["profile","fa-regular fa-user","Il tuo account"],["settings","fa-solid fa-sliders","Preferenze"],["notifications","fa-regular fa-bell","Notifiche"],["sources","fa-solid fa-chart-line","Monitoraggio"]]]];
+ ["LA TUA RICERCA",[["saved","fa-regular fa-heart","Salvati"],["visits","fa-regular fa-calendar-check","Contatti e visite"],["compare","fa-solid fa-scale-balanced","Confronti"],["sources","fa-solid fa-chart-line","Monitoraggio"]]],
+ ["ACCOUNT",[["profile","fa-regular fa-user","Il tuo account"],["settings","fa-solid fa-sliders","Preferenze ricerca"],["notifications","fa-regular fa-bell","Notifiche"]]]];
  nav.replaceChildren();
  areas.forEach(group=>{
   const shell=document.createElement("section");shell.className="tp10-nav-group";
@@ -73,7 +73,7 @@ function navigation(){
    btn.innerHTML='<i class="'+icon+'" aria-hidden="true"></i><span class="nav-label">'+title+"</span>";
    shell.append(btn);
   });
-  if(group[0]==="IMPOSTAZIONI"){
+  if(group[0]==="ACCOUNT"){
    const holder=document.createElement("div");holder.id="tp8-nav-staff";shell.append(holder);
    if($("#tp-v5-nav-admin"))holder.append($("#tp-v5-nav-admin"));
    const link=document.createElement("a");link.href="./informazioni.html";link.className="tp10-sidebar-help";
