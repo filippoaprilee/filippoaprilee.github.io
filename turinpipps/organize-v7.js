@@ -45,10 +45,10 @@ function render(node){
  const replies=groups.replies.length,ready=groups.saved.length;
  const active=stages.filter(stage=>groups[stage[0]].length>0);
  if(!tracked.length){
-  node.innerHTML='<section class="tp18-journey-empty"><div class="tp18-empty-symbol"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i></div>'+
-   '<span class="tp17-eyebrow">IL TUO PERCORSO</span><h2>Le tue visite iniziano da una casa salvata</h2>'+
-   '<p>Quando salvi un immobile o contatti un inserzionista, lo ritrovi qui con note, risposte e appuntamenti. Non serve compilare nulla in anticipo.</p>'+
-   '<button type="button" class="button primary" data-nav="results">Cerca un immobile <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></section>';
+  node.innerHTML='<div class="tp20-visits-empty"><div class="tp20-visits-icon"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i></div>'+
+   '<span class="tp20-overline">IL TUO PERCORSO</span><h2>Ancora nessuna visita in programma</h2>'+
+   '<p>Qui potrai seguire le case salvate, le risposte ricevute e gli appuntamenti. Comincia da un annuncio interessante.</p>'+
+   '<button type="button" class="button primary" data-nav="results">Esplora le case <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
   return;
  }
  let step;
