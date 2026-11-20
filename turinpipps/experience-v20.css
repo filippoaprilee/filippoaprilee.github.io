@@ -273,9 +273,10 @@ html[data-tp-theme] #tp9-main #tp10-home .tp20-home-utility{
  gap:8px!important;padding:4px 0 12px!important;
  color:var(--tp16-muted)!important;font-size:11px!important;
 }
-html[data-tp-theme] #tp9-main #tp10-home .tp20-home-utility a{
+html[data-tp-theme] #tp9-main #tp10-home .tp20-home-utility .tp20-utility-link{
  color:var(--tp16-accent)!important;font-weight:660!important;
- text-decoration:none!important;
+ text-decoration:none!important;border:0!important;background:transparent!important;
+ padding:2px!important;min-height:32px!important;cursor:pointer!important;
 }
 
 /* PROPERTY SEARCH — one bounded comparison list rather than floating rows. */
