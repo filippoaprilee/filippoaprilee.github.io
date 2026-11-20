@@ -230,6 +230,18 @@ function enhanceCards(){
   if(article.dataset.tp10Ready)return;
   const action=$('[data-action="save"][data-url]',article),a=action?by.get(action.dataset.url):null;
   if(!a)return;
+  if(article.classList.contains("tp18-listing")){
+   article.dataset.tp10Ready="1";
+   const area=$(".tp18-tools-anchor",article),f=getFlag(a.url);
+   if(area){
+    const tools=document.createElement("div");tools.className="tp18-personal-tools";
+    tools.innerHTML='<div class="tp18-detail-section tp18-your-evaluation"><h4>La tua valutazione privata</h4><p>Queste informazioni sono solo tue e non certificano l’annuncio.</p>'+
+     checksForm(a,f)+'<div class="tp18-cost-planning">'+costForm(a,f)+'</div>'+stageTools(a,f)+
+     '<p class="tp10-save-feedback" role="status" aria-live="polite"></p></div>';
+    area.append(tools);
+   }
+   return;
+  }
   article.dataset.tp10Ready="1";article.classList.add("tp10-listing");
   const f=getFlag(a.url),head=$(".body",article);if(!head)return;
   const header=document.createElement("div");header.innerHTML=scoreBadge(a);
