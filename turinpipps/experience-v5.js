@@ -88,8 +88,9 @@ function build(){
  section('profile','Il tuo account','ACCOUNT E SICUREZZA',
   'Identità, accesso e protezione dei tuoi dati. Gli avvisi si configurano in Notifiche.',
   '<div id="tp-v5-profile-body" class="tp-v5-panel tp17-account-surface"><div class="tp-v5-empty">Caricamento account…</div></div>'+
-  '<section class="tp-v5-quick-install tp-v5-panel tp17-install"><div class="tp17-section-heading"><div><span class="tp17-eyebrow">ACCESSO RAPIDO</span><h2>TurinPipps su iPhone</h2><p>Aggiungi il sito alla schermata Home da Safari per aprirlo come un’app.</p></div><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></div>'+
-  '<div class="tp17-inline-actions"><a href="./today.html" class="tp-v5-link">Panoramica rapida</a><a href="./widget-iphone.html" class="tp-v5-link">Istruzioni per iPhone</a></div></section>');
+  '<details class="tp20-install-guide"><summary><span><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Installazione su iPhone</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+  '<div><p>Aggiungi TurinPipps alla schermata Home da Safari per aprirlo come un’app.</p>'+
+  '<div class="tp17-inline-actions"><a href="./today.html" class="tp-v5-link">Panoramica rapida</a><a href="./widget-iphone.html" class="tp-v5-link">Istruzioni per iPhone</a></div></div></details>');
  section('notifications','Notifiche','AVVISI E AGGIORNAMENTI',
   'Leggi gli avvisi e scegli qui, in un unico posto, quando ricevere email e notifiche push.',
   '<div class="tp17-notification-layout">'+
@@ -127,10 +128,12 @@ function renderProfile(){
   return;
  }
  var email=esc(s.email||p.email||'Email non disponibile');
- root.innerHTML='<div class="tp17-profile-identity"><div class="tp17-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></div>'+
- '<div><span class="tp17-eyebrow">ACCOUNT TURINPIPPS</span><h2>'+email+'</h2><span class="tp17-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+(p.email_confirmed?'Email verificata':'Email da verificare')+'</span></div></div>'+
- '<div class="tp17-account-columns"><div class="tp17-account-detail"><span>EMAIL DI ACCESSO</span><strong>'+email+'</strong><p>Utilizzata per accedere e ricevere le comunicazioni autorizzate.</p></div>'+
- '<div class="tp17-account-detail tp17-security"><span>SICUREZZA</span><strong>Password e accesso</strong><p>Gestisci le credenziali e le modalità di autenticazione del tuo account.</p><button id="tp-v5-account-open" type="button" class="tp-v5-secondary">Gestisci accesso <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>';
+ root.innerHTML='<div class="tp20-account-identity tp17-profile-identity"><div class="tp17-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></div>'+
+ '<div><span class="tp17-eyebrow">ACCOUNT TURINPIPPS</span><h2>'+email+'</h2>'+
+ '<span class="tp17-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+(p.email_confirmed?'Email verificata':'Email da verificare')+'</span></div></div>'+
+ '<div class="tp20-account-security"><div><h3>Accesso e sicurezza</h3>'+
+ '<p>Gestisci password, credenziali e modalità di accesso al tuo account.</p></div>'+
+ '<button id="tp-v5-account-open" type="button" class="tp-v5-secondary">Gestisci accesso <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
  $('#tp-v5-account-open')?.addEventListener('click',function(){window.TurinPippsAuth?.open()});
  if(!prefsRoot)return;
  prefsRoot.innerHTML='<div class="tp17-pref-group"><div class="tp17-pref-group-title"><h3>Immobili e riepiloghi</h3><p>Ricevi solo le informazioni che hai scelto, usando i tuoi criteri di ricerca.</p></div>'+
