@@ -148,8 +148,9 @@ html[data-tp-theme] #tp9-main #view-results .tp12-result-tabs .chip:is(.selected
 html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .cards{
  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
  gap:13px!important;border:0!important;padding:0 0 4px!important;
+ width:100%!important;max-width:none!important;margin:0!important;
 }
-html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp19-property-row{
+html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp18-listing.tp19-property-row.tp22-property-card{
  display:grid!important;grid-template-columns:minmax(0,1fr) 218px!important;
  align-items:start!important;gap:8px 25px!important;
  background:var(--tp16-surface)!important;
@@ -159,11 +160,11 @@ html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp19-prope
  min-width:0!important;
  transition:border-color .16s ease,box-shadow .16s ease!important;
 }
-html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp19-property-row:is(:hover,:focus-within){
+html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp18-listing.tp19-property-row.tp22-property-card:is(:hover,:focus-within){
  border-color:color-mix(in srgb,var(--tp16-accent) 39%,var(--tp16-border))!important;
  box-shadow:var(--tp22-card-hover)!important;
 }
-html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp19-property-row:last-child{
+html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp18-listing.tp19-property-row.tp22-property-card:last-child{
  border-bottom:1px solid var(--tp16-border)!important;
 }
 html[data-tp-theme] #tp9-main .listing.tp19-property-row>.body.tp19-property-main{
@@ -329,7 +330,7 @@ html[data-tp-theme] :is(.button,.chip,select,input,summary){
  }
 }
 @media(max-width:800px){
- html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp19-property-row{
+ html[data-tp-theme] #tp9-main :is(#view-results,#view-saved) .listing.tp18-listing.tp19-property-row.tp22-property-card{
   grid-template-columns:minmax(0,1fr)!important;
   gap:0!important;padding:18px 17px 10px!important;
  }
