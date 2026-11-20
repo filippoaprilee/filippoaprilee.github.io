@@ -846,9 +846,18 @@ html[data-tp-theme] #tp9-main #tp9-global-footer.tp18-footer{
   font-size:18px!important;width:auto!important;
   flex:none!important;
  }
- html[data-tp-theme] .side .nav button .nav-label{
-  display:none!important;
+ html[data-tp-theme] .layout>.side .nav button{
+  gap:0!important;font-size:0!important;overflow:hidden!important;white-space:nowrap!important;
  }
+ html[data-tp-theme] .layout>.side .nav button .nav-label,
+ html[data-tp-theme] .layout>.side .nav button .nav-label *{
+  display:none!important;max-width:0!important;width:0!important;height:0!important;
+  padding:0!important;margin:0!important;overflow:hidden!important;visibility:hidden!important;
+ }
+ html[data-tp-theme] .layout>.side .nav button i{
+  display:block!important;font-size:18px!important;flex:none!important;
+ }
+
  html[data-tp-theme] .side .tp10-sidebar-help{
   display:flex!important;align-items:center!important;justify-content:center!important;
   min-height:43px!important;font-size:0!important;text-align:center!important;
