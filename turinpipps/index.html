@@ -281,12 +281,31 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <button class="button" data-nav="settings"><i class="fa-solid fa-sliders"></i> Preferenze di ricerca</button>
 <button class="button" id="tp-more-guide"><i class="fa-regular fa-circle-question"></i> Guida all'app</button>
 </div></section>
-<section id="view-settings" class="hidden"><div class="section-heading"><div><h2>Personalizza la ricerca</h2><p>Imposta i criteri più importanti; con un account vengono sincronizzati tra dispositivi.</p></div></div><div class="panel">
-<div class="formgrid"><div><div class="field"><label class="label" for="budget">Canone massimo (€ al mese, escluse spese)</label><input id="budget" class="input" type="number" min="100" max="5000" value="700"></div><div class="field"><label class="label" for="tp-min-sqm">Metratura minima preferita (m²)</label><input id="tp-min-sqm" type="number" min="0" max="400" class="input" value="0" placeholder="0 = qualsiasi"></div>
-<div class="field"><label class="label" for="tp-property-type">Tipologia preferita</label><select id="tp-property-type" class="input"><option value="tutte">Tutte le tipologie</option><option value="monolocale">Monolocale</option><option value="bilocale">Bilocale</option><option value="trilocale">Trilocale</option><option value="quadrilocale">Quadrilocale</option></select></div>
-<div class="field"><label class="label" for="tp-max-walk">Massimo minuti a piedi dal Politecnico (verificati)</label><input id="tp-max-walk" class="input" type="number" min="5" max="180" placeholder="Vuoto = nessun limite"></div>
-<div class="field"><label class="label" for="tp-zones">Quartieri preferiti</label><div id="tp-zones" class="tp-zones-choices"></div></div>
-<div class="field"><label class="label" for="fullname">Nome per il messaggio ai proprietari</label><input id="fullname" class="input" placeholder="Es. Mario" maxlength="70"></div><div class="field"><label class="label" for="intro">Informazioni aggiuntive da comunicare</label><textarea id="intro" class="input" rows="3" placeholder="Es. Studente al Politecnico, cerco da gennaio…"></textarea></div><button class="button primary" id="save-settings">Salva preferenze</button></div><div><b>La tua applicazione su iPhone</b><p class="note">Apri questo indirizzo in Safari, premi Condividi → Aggiungi alla schermata Home → Apri come app. L’icona apparirà come un’app normale.</p><details class="tp-card-details" style="margin-top:20px"><summary>Importa o esporta i tuoi dati <i class="fa-solid fa-chevron-down"></i></summary><div class="tp-card-expanded"><p class="note">Puoi trasferire i tuoi annunci personali tra dispositivi con un file.</p><input type="file" accept=".json,application/json" id="import-file" class="input"><div style="height:8px"></div><button class="button" id="export">Esporta i miei dati</button> <button class="button" id="csv-button"><i class="fa-solid fa-file-csv"></i> Esporta annunci CSV</button></div></details></div></div></div>
+<section id="view-settings" class="hidden tp18-settings-screen">
+ <header class="tp18-screen-intro"><span class="tp17-eyebrow">LA TUA RICERCA</span><h1>Preferenze di ricerca</h1><p>Le caratteristiche che contano per trovare una casa. Puoi cambiarle quando vuoi.</p></header>
+ <div class="panel tp18-preferences-panel">
+  <section class="tp18-preferences-section"><div class="tp18-form-heading"><span class="tp18-step-number">01</span><div><h2>Budget e caratteristiche</h2><p>Imposta i criteri principali per filtrare gli annunci.</p></div></div>
+   <div class="tp18-form-grid">
+    <div class="field tp18-field-major"><label class="label" for="budget">Budget massimo mensile (€)</label><input id="budget" class="input" type="number" min="100" max="5000" value="700" inputmode="numeric"><small>Canone al mese; spese extra non incluse.</small></div>
+    <div class="field"><label class="label" for="tp-property-type">Tipologia</label><select id="tp-property-type" class="input"><option value="tutte">Tutte le tipologie</option><option value="monolocale">Monolocale</option><option value="bilocale">Bilocale</option><option value="trilocale">Trilocale</option><option value="quadrilocale">Quadrilocale</option></select></div>
+    <div class="field"><label class="label" for="tp-min-sqm">Superficie minima (m²)</label><input id="tp-min-sqm" type="number" min="0" max="400" class="input" value="0" placeholder="Nessun limite"><small>Lascia 0 per non applicare un minimo.</small></div>
+    <div class="field"><label class="label" for="tp-max-walk">Tempo a piedi dal Politecnico</label><input id="tp-max-walk" class="input" type="number" min="5" max="180" placeholder="Nessun limite" inputmode="numeric"><small>Si applica soltanto a percorsi verificati.</small></div>
+   </div>
+  </section>
+  <section class="tp18-preferences-section"><div class="tp18-form-heading"><span class="tp18-step-number">02</span><div><h2>Quartieri preferiti</h2><p>Scegli le zone in cui vuoi concentrare la ricerca.</p></div></div>
+   <div class="tp18-zone-field" id="tp-zones" role="group" aria-label="Quartieri preferiti"></div>
+  </section>
+  <section class="tp18-preferences-section"><div class="tp18-form-heading"><span class="tp18-step-number">03</span><div><h2>Messaggi ai proprietari</h2><p>Informazioni da usare per preparare il messaggio di contatto. L’invio rimane manuale.</p></div></div>
+   <div class="tp18-form-grid"><div class="field"><label class="label" for="fullname">Come vuoi presentarti?</label><input id="fullname" class="input" placeholder="Es. Mario" maxlength="70"></div>
+   <div class="field tp18-field-wide"><label class="label" for="intro">Informazioni da aggiungere al messaggio</label><textarea id="intro" class="input" rows="3" placeholder="Es. Studio al Politecnico, cerco casa da gennaio…"></textarea></div></div>
+  </section>
+  <div class="tp18-settings-actions"><button type="button" class="button primary" id="save-settings">Salva preferenze</button><span>Le modifiche ai criteri vengono applicate alla ricerca.</span></div>
+  <details class="tp18-settings-import"><summary><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i> Importazione ed esportazione dei dati <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
+   <div class="tp18-import-content"><p>Trasferisci gli annunci personali tramite un file, oppure esporta una copia dei dati.</p>
+    <label class="label" for="import-file">Importa un archivio JSON</label><input type="file" accept=".json,application/json" id="import-file" class="input">
+    <div class="tp18-inline-actions"><button type="button" class="button" id="export">Esporta dati JSON</button><button type="button" class="button" id="csv-button"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta CSV</button></div>
+   </div></details>
+ </div>
 </section>
 </main></div>
 <nav class="mobile-nav" aria-label="Navigazione rapida">
