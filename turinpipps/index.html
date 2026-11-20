@@ -269,7 +269,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 <div id="tp-compare-content" class="panel"><div class="tp-empty-big"><i class="fa-solid fa-scale-balanced"></i><h3>Nessun immobile selezionato</h3><p>Vai in Cerca casa e premi Confronta sulle schede che ti interessano.</p><button class="button primary" data-nav="results">Esplora immobili</button></div></div></section>
 <section id="view-visits" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">APPUNTAMENTI</div><h1>Organizza la ricerca</h1><p>Salvati, contatti, visite e decisioni: gestisci ogni casa in un unico percorso.</p></div></div>
-<div class="panel"><div id="tp-visits-content"><p class="note">Nessuna visita programmata.</p></div></div></section>
+<div id="tp-visits-content" class="tp20-visit-content"><p class="note">Nessuna visita programmata.</p></div></section>
 <section id="view-saved" class="hidden">
 <div class="tp-page-lead"><div><div class="tp-kicker">LA TUA RACCOLTA</div><h1>Case da non perdere</h1><p>Gli immobili che hai salvato, con note e stato dei contatti. Puoi confrontarli o programmare una visita.</p></div>
 <button class="button" data-nav="results"><i class="fa-solid fa-magnifying-glass"></i> Altri annunci</button></div>
@@ -609,7 +609,7 @@ function card(a){
    '<div class="tp19-quick-actions">'+
     '<button type="button" class="button tp19-save" data-action="save" data-url="'+esc(a.url)+'" aria-label="'+(f.saved?'Rimuovi dai salvati':'Salva immobile')+'"><i class="'+(f.saved?'fa-solid':'fa-regular')+' fa-heart" aria-hidden="true"></i> '+(f.saved?'Salvato':'Salva')+'</button>'+
     '<button type="button" class="button tp19-compare" data-action="compare" data-url="'+esc(a.url)+'"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> '+(f.compare?'Selezionato':'Confronta')+'</button>'+
-    '<details class="tp-card-menu tp19-more"><summary aria-label="Altre azioni"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary><div class="tp-card-menu-items">'+
+    '<details class="tp-card-menu tp19-more tp20-more"><summary aria-label="Altre azioni"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i><span>Altro</span></summary><div class="tp-card-menu-items">'+
      '<button class="button" data-action="visit" data-url="'+esc(a.url)+'">Programma visita</button>'+
      '<button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'Segnato come contattato':'Segna contattato')+'</button>'+
      '<button class="button" data-action="note" data-url="'+esc(a.url)+'">Nota personale</button>'+
@@ -918,6 +918,7 @@ async function load(){
  renderReport();
  el('updated').textContent=lastUpdate?'Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT'):'Ricerca in attesa di dati';
  renderResults();renderSaved();if(tab==='sources')renderSources();
+ window.dispatchEvent(new Event('turinpipps:listings-updated'));
 }
 document.addEventListener('click',async function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);var previousFlag=Object.assign({},f);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
@@ -931,6 +932,7 @@ if(b.dataset.action==='save')f.saved=!f.saved;if(b.dataset.action==='contact'){f
    }else showToast('Modifica salvata sul tuo account.','good');
  }
  renderResults();renderSaved();updateCompareUI();
+ window.dispatchEvent(new Event('turinpipps:flags-updated'));
  if(b.dataset.action==='compare'){
    var c=all().filter(function(x){return !!flag(x.url).compare}).length;
    if(c>0)showToast(c+' immobili selezionati. Apri Confronta per valutare le alternative.','good');
