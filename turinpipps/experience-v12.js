@@ -292,11 +292,13 @@ function onboarding(){
 function footer(){
  const node=$("#tp9-global-footer");
  if(!node)return;
- node.classList.add("tp12-footer");
+ node.classList.add("tp12-footer","tp18-footer");
  const text=node.querySelector("span");
- if(text)text.textContent="TurinPipps · Ricerca casa indipendente. Annunci, prezzi e disponibilità sempre da verificare con la fonte.";
- const nav=$("nav",node);if(nav)nav.setAttribute("aria-label","Guida, privacy, termini e assistenza");
+ if(text)text.textContent="TurinPipps · Annunci da fonti pubbliche, informazioni da verificare.";
+ const nav=$("nav",node);
+ if(nav)nav.setAttribute("aria-label","Supporto e informazioni legali");
 }
+
 /* Fix the reading order: search first, answers second, technical methodology last. */
 function simplifySearch(){
  const section=$("#view-results");if(!section||section.dataset.tp13Search)return;
