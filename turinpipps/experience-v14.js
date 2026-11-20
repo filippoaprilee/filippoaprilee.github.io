@@ -32,14 +32,13 @@ function renderNotes(){
  '<h2>'+esc(latest.title)+'</h2><p>'+esc(latest.summary)+'</p></div></div>'+
  (latest.highlights.length?'<details><summary>Che cosa è cambiato <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
  '<ul>'+latest.highlights.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ul></details>':'')+
- '<div class="tp14-notes-footer"><span>Vuoi ricevere queste novità automaticamente?</span>'+
- '<button type="button" class="button" data-nav="profile">Scegli email o push</button></div>';
+ '<div class="tp14-notes-footer"><span>Puoi scegliere email e push nella sezione «Quali avvisi ricevere» presente in questa pagina.</span></div>';
 }
 function improveNotifications(){
  const view=$("#view-notifications");if(!view)return;
- const title=$(".tp-v5-screen-header h1",view);if(title)title.textContent="Notifiche e novità";
+ const title=$(".tp-v5-screen-header h1",view);if(title)title.textContent="Notifiche";
  const intro=$(".tp-v5-screen-header p",view);
- if(intro)intro.textContent="Avvisi sugli immobili e aggiornamenti dell’app, con preferenze separate e modificabili.";
+ if(intro)intro.textContent="Tutti gli avvisi, le preferenze e i dispositivi in un’unica schermata.";
  const btn=$("#tp-v5-push-enable");
  if(btn){btn.textContent="Attiva push sul dispositivo";btn.setAttribute("aria-describedby","tp14-ios-instructions");}
  const note=$("#tp14-ios-instructions");
