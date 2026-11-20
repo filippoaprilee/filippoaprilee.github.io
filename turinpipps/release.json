@@ -1,14 +1,15 @@
 {
-  "version": "17.0.0",
-  "published_at": "2026-11-20T08:03:14.564Z",
-  "title": "TurinPipps 17 · Account, Notifiche e ricerca più semplici",
-  "summary": "Account dedicato a identità, accesso e privacy. Notifiche riunisce avvisi, consenso email, push e novità. Home con un solo prossimo passo, gerarchia chiara su desktop e iPhone.",
+  "version": "18.0.0",
+  "published_at": "2026-11-20T08:23:14.392Z",
+  "title": "TurinPipps 18 · Informazioni e azioni finalmente in ordine",
+  "summary": "Ricerca e schede immobili ricostruite: prezzo e titolo subito, verifiche solo nei dettagli; Home con prossimo passo essenziale, Preferenze organizzate, Notifiche leggibili, Contatti e visite senza sezioni vuote e footer compatto.",
   "highlights": [
-    "Account ricostruito: informazioni personali e sicurezza, senza percorsi ripetuti",
-    "Notifiche riorganizzate: attività, preferenze e dispositivi sulla stessa pagina",
-    "Nuova sezione «Da una scoperta a una visita» con unica azione prioritaria",
-    "Gerarchia visiva uniforme: azioni principali distinguibili, meno contenitori annidati",
-    "Versione desktop e mobile adattiva, stessi significati e stato dei controlli",
-    "Correzione autorizzazioni Supabase per salvare le preferenze senza errore 403"
+    "Schede annunci con prezzo, titolo, zona e stato di verifica come informazioni principali",
+    "Dettagli, controlli di affidabilità, spese e valutazione privata raccolti in un solo pannello",
+    "Contatti e visite mostra solo le fasi utilizzate, con schermata iniziale quando non ci sono immobili",
+    "Preferenze di ricerca organizzate in budget, zone e messaggi ai proprietari",
+    "Notifiche: attività principale, consensi semplificati e gestione dispositivi secondaria",
+    "Home: una sola azione consigliata, senza tripli contatori vuoti",
+    "Footer minimale e layout responsive per desktop e smartphone"
   ]
 }
