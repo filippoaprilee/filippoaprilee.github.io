@@ -6423,3 +6423,20 @@ html[data-tp-theme="dark"]{
   width:100%!important;min-height:44px!important;
  }
 }
+
+/* Empty notification inbox is not a large illustration panel. */
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section{
+ min-height:0!important;
+}
+html[data-tp-theme] #tp9-main #view-notifications #tp-v5-alert-list.tp-v5-empty{
+ min-height:0!important;
+ background:transparent!important;
+ padding:18px 0!important;
+ margin:0!important;
+ text-align:left!important;
+ font-size:13px!important;
+ color:var(--tp16-muted)!important;
+}
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section .tp-v5-empty{
+ padding:18px 0!important;
+}
