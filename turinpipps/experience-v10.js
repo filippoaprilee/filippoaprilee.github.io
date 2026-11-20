@@ -97,7 +97,7 @@ function homeMarkup(){
  '<div class="tp10-budget-card"><small>BUDGET IMPOSTATO</small><strong id="tp10-budget">—</strong><span>al mese, spese escluse</span><div id="tp10-home-scan">Verifica ultima scansione…</div></div></header>'+
  '<div class="tp10-metrics" id="tp10-metrics" aria-live="polite"></div>'+
  '<div class="tp10-home-sections"><section class="tp10-home-list"><div class="tp10-section-title"><div><span class="tp10-overline">PRIMA DA VALUTARE</span><h2>Opportunità da controllare</h2><p>Ordinate per compatibilità preliminare. Nessuna disponibilità garantita.</p></div><button class="tp10-text-button" data-nav="results">Tutte le case <i class="fa-solid fa-arrow-right"></i></button></div><div id="tp10-home-options"></div></section>'+
- '<aside class="tp10-home-next"><span class="tp10-overline">IL PROSSIMO PASSO</span><h2>Da una scoperta a una visita.</h2>'+
+ '<aside class="tp10-home-next tp18-home-next"><span class="tp10-overline">CONTINUA LA RICERCA</span><h2>La prossima azione utile</h2>'+
  '<div id="tp10-next-step"></div></aside></div>';
  home.prepend(s);
  document.body.classList.add('tp10-active');
@@ -140,17 +140,17 @@ function homeUpdate(){
  replied=items.filter(a=>flags[a.url]?.replyReceived).length;
  const stage=replied?"reply":contacted?"contact":saved?"saved":"start";
  const guidance={
-  start:["Inizia dalla ricerca","Trova una casa interessante, controlla prezzo e dettagli e salvala per confrontarla con le altre.","Esplora gli immobili","results"],
-  saved:["Hai delle case da valutare","Rivedi i salvati e confrontali. Prima di contattare verifica prezzo, spese e inserzionista.","Apri le case salvate","saved"],
-  contact:["Segui i contatti aperti","Hai richieste in attesa: controlla le risposte e prepara le visite delle case più interessanti.","Gestisci contatti e visite","visits"],
-  reply:["Valuta le risposte ricevute","Controlla le condizioni proposte e organizza una visita quando è opportuno.","Organizza una visita","visits"]
+  start:["Comincia dagli annunci","Sfoglia le case raccolte e salvale per confrontare le condizioni.","Cerca immobili","results"],
+  saved:["Confronta le case salvate","Hai "+saved+(saved===1?" immobile salvato":" immobili salvati")+". Metti a confronto prezzo, spese e condizioni.","Apri i salvati","saved"],
+  contact:["Controlla le risposte","Hai "+contacted+(contacted===1?" contatto":" contatti")+" in attesa. Segui l’avanzamento senza perdere i messaggi.","Gestisci contatti","visits"],
+  reply:["Organizza il prossimo incontro","Hai ricevuto "+replied+(replied===1?" risposta":" risposte")+". Valuta le condizioni prima di fissare una visita.","Apri visite e contatti","visits"]
  }[stage];
- const progress=[
-  [saved,"Salvate"],[contacted,"In attesa"],[replied,"Risposte"]
- ].map(([n,label])=>'<div><strong>'+n+'</strong><span>'+label+'</span></div>').join('');
- $("#tp10-next-step").innerHTML='<div class="tp17-journey-progress" aria-label="Avanzamento ricerca">'+progress+'</div>'+
- '<div class="tp17-journey-guidance"><h3>'+safe(guidance[0])+'</h3><p>'+safe(guidance[1])+'</p>'+
- '<button type="button" class="button primary tp17-next-cta" data-nav="'+guidance[3]+'">'+safe(guidance[2])+' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
+ const status=saved||contacted||replied?'<p class="tp18-home-context">'+
+  (saved?saved+' salvate':'')+(contacted?' · '+contacted+' in attesa':'')+(replied?' · '+replied+' risposte':'')+'</p>':'';
+ $("#tp10-next-step").innerHTML='<div class="tp18-home-next-inner"><div class="tp18-home-next-copy">'+
+ '<h3>'+safe(guidance[0])+'</h3><p>'+safe(guidance[1])+'</p>'+status+'</div>'+
+ '<button type="button" class="button primary tp18-next-cta" data-nav="'+guidance[3]+'">'+
+ safe(guidance[2])+' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
 
 }
 function searchEnhance(){
