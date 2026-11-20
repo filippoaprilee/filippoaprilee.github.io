@@ -23,17 +23,23 @@ function renderNotes(){
  const view=$("#view-notifications");
  if(!view||!latest)return;
  let card=$("#tp14-release-notes");
+ if(card&&card.tagName!=="DETAILS"){card.remove();card=null;}
  if(!card){
-  card=document.createElement("section");
-  card.id="tp14-release-notes";card.className="tp14-release-notes";
+  card=document.createElement("details");card.id="tp14-release-notes";
+  card.className="tp14-release-notes tp19-release-details";
   view.append(card);
  }
- card.innerHTML='<div class="tp14-notes-head"><div><span class="tp14-eyebrow">NOVITÀ DELL’APP · v'+esc(latest.version)+'</span>'+
- '<h2>'+esc(latest.title)+'</h2><p>'+esc(latest.summary)+'</p></div></div>'+
- (latest.highlights.length?'<details><summary>Che cosa è cambiato <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
- '<ul>'+latest.highlights.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ul></details>':'')+
- '<div class="tp14-notes-footer"><span>Puoi scegliere email e push nella sezione «Quali avvisi ricevere» presente in questa pagina.</span></div>';
+ const wasOpen=card.open;
+ card.innerHTML='<summary><i class="fa-regular fa-circle-question" aria-hidden="true"></i>'+
+  '<span>Novità dell’app <small>Versione '+esc(latest.version)+'</small></span>'+
+  '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+  '<div class="tp19-release-body"><h3>'+esc(latest.title)+'</h3>'+
+  '<p>'+esc(latest.summary)+'</p>'+
+  (latest.highlights.length?'<ul>'+latest.highlights.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ul>':"")+
+  '</div>';
+ card.open=wasOpen;
 }
+
 function improveNotifications(){
  const view=$("#view-notifications");if(!view)return;
  const title=$(".tp-v5-screen-header h1",view);if(title)title.textContent="Notifiche";
