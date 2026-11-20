@@ -1,0 +1,35 @@
+name: TurinPipps v20 visual smoke
+on:
+  push:
+    branches: [turinpipps-v20-layout-fix]
+    paths:
+      - "turinpipps/**"
+      - ".github/workflows/turinpipps-v20-visual-smoke.yml"
+jobs:
+  viewport-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Chromium test browser
+        run: |
+          npm install --no-save --no-package-lock playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start TurinPipps local server
+        run: |
+          python3 -m http.server 8787 --bind 127.0.0.1 > /tmp/turinpipps-http.log 2>&1 &
+          sleep 2
+      - name: Run viewport screenshots and assertions
+        run: node turinpipps/scripts/visual-smoke.cjs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: turinpipps-v20-screenshots
+          path: turinpipps/_visual-qa/*.png
+          if-no-files-found: warn
