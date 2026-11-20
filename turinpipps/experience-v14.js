@@ -26,9 +26,7 @@ function renderNotes(){
  if(!card){
   card=document.createElement("section");
   card.id="tp14-release-notes";card.className="tp14-release-notes";
-  const first=view.querySelector(".tp-v5-notify-controls");
-  if(first)first.before(card);
-  else view.append(card);
+  view.append(card);
  }
  card.innerHTML='<div class="tp14-notes-head"><div><span class="tp14-eyebrow">NOVITÀ DELL’APP · v'+esc(latest.version)+'</span>'+
  '<h2>'+esc(latest.title)+'</h2><p>'+esc(latest.summary)+'</p></div></div>'+
@@ -51,35 +49,7 @@ function improveNotifications(){
   const status=$("#tp-v5-push-message");if(status)status.before(explanation);
  }
 }
-function inviteNewAccount(){
- const user=window.TurinPippsAuth?.getCurrentUser?.();
- const profile=window.TurinPippsV5?.getProfile?.();
- const home=$("#tp10-home");
- if(!user?.id||!profile?.user_id||!home||user.id!==profile.user_id)return;
- if(profile.release_email_enabled||profile.release_push_enabled)return;
- const date=Date.parse(profile.created_at||"");
- if(!Number.isFinite(date)||Date.now()-date>21*86400000)return;
- const seenKey="turinpipps.release.intro."+user.id;
- try{if(localStorage.getItem(seenKey)==="1")return}catch(_){}
- if($("#tp14-notification-invite"))return;
- const card=document.createElement("section");
- card.id="tp14-notification-invite";
- card.className="tp14-notification-invite";
- card.innerHTML='<div><span class="tp14-eyebrow">CONFIGURAZIONE FACOLTATIVA</span>'+
- '<h2>Vuoi ricevere le novità di TurinPipps?</h2>'+
- '<p>Puoi scegliere email e push per gli aggiornamenti dell’app. Non attiviamo nulla senza il tuo consenso.</p></div>'+
- '<div class="tp14-invite-actions"><button type="button" class="button primary" data-nav="profile" data-tp14-dismiss>Personalizza gli avvisi</button>'+
- '<button type="button" class="button" data-tp14-dismiss>Non ora</button></div>';
- const first=home.querySelector(".tp10-home-head");
- if(first)first.after(card);else home.prepend(card);
- function dismiss(event){
-  const target=event.target.closest("[data-tp14-dismiss]");
-  if(!target)return;
-  try{localStorage.setItem(seenKey,"1")}catch(_){}
-  card.remove();
- }
- card.addEventListener("click",dismiss);
-}
+function inviteNewAccount(){ /* La scelta facoltativa è sempre accessibile in Notifiche; nessun banner sulla Home. */ }
 function init(){improveNotifications();readRelease();inviteNewAccount();}
 window.TurinPippsV14={readRelease,renderNotes};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
