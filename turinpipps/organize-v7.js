@@ -45,11 +45,13 @@ function render(node){
  const replies=groups.replies.length,ready=groups.saved.length;
  const active=stages.filter(stage=>groups[stage[0]].length>0);
  if(!tracked.length){
-  node.innerHTML='<section class="tp20-journey-empty">'+
-   '<div class="tp20-journey-icon" aria-hidden="true"><i class="fa-regular fa-calendar-check"></i></div>'+
-   '<h2>Ancora nessuna casa seguita</h2>'+
-   '<p>Salva un immobile che ti interessa. Da qui potrai tenere in ordine i contatti, le risposte e le visite, senza perdere le informazioni.</p>'+
-   '<button type="button" class="button primary" data-nav="results">Esplora gli immobili <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
+  node.innerHTML='<section class="tp20-journey-empty tp21-journey-empty">'+
+   '<div class="tp21-journey-icon" aria-hidden="true"><i class="fa-regular fa-calendar-check"></i></div>'+
+   '<div class="tp21-journey-copy"><span class="tp17-eyebrow">IL TUO PERCORSO</span>'+
+   '<h2>La tua prossima visita parte da una casa.</h2>'+
+   '<p>Quando scegli un immobile, salvalo o registra un contatto. Qui ritroverai risposte, appuntamenti e note, senza dover gestire sezioni vuote.</p>'+
+   '<button type="button" class="button primary" data-nav="results">Esplora gli annunci <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
+   '<div class="tp21-journey-steps" aria-label="Come funziona"><span><b>01</b> Salva</span><span><b>02</b> Contatta</span><span><b>03</b> Visita</span></div></div>'+
    '</section>';
   return;
  }
