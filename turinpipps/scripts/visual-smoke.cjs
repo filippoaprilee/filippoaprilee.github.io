@@ -29,6 +29,8 @@ async function test(width,height,variant){
  await check('home uses authoritative new headline',
   await page.locator('#tp10-home .tp20-hero h1').count()===1,
   (await page.locator('#tp10-home h1').first().textContent().catch(()=>''))?.slice(0,90));
+ const debugCounts=await page.evaluate(()=>({apiCount:window.TurinPippsUXV3?.getListings?.().length,rendered:document.querySelectorAll('#list .tp19-property-row').length,homeTotal:document.querySelector('#tp20-total')?.textContent,ready:document.body.classList.contains('tp-ready')}));
+ console.log('DEBUG '+variant+' DATA '+JSON.stringify(debugCounts));
  const total=await page.locator('#tp20-total').textContent().catch(()=>'');
  await check('home displays collected listings',Number(String(total).replace(/[^\d]/g,''))>0,'total='+total);
  await page.screenshot({path:path.join(root,variant+'-home.png'),fullPage:true});
@@ -37,6 +39,7 @@ async function test(width,height,variant){
  await page.waitForTimeout(300);
  const count=await page.locator('#view-results #list .tp19-property-row').count();
  await check('results have property rows',count>0,'rows='+count);
+ console.log('DEBUG '+variant+' TABS '+JSON.stringify(await page.evaluate(()=>Array.from(document.querySelectorAll('#view-results .tp12-result-tabs .chip')).map(e=>({text:e.textContent,selected:e.classList.contains('selected'),rect:{left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width},display:getComputedStyle(e).display})))));
  await check('result tab is not clipped',await page.evaluate(()=>{
   const selected=document.querySelector('#view-results .tp12-result-tabs .chip.selected');
   if(!selected)return false;
@@ -51,10 +54,10 @@ async function test(width,height,variant){
    await row.locator('[data-action="save"]').count()>0 &&
    await row.locator('.tp19-open').count()>0);
   const details=row.locator('.tp19-property-details');
-  await details.locator('summary').click({timeout:5000});
+  await details.locator(':scope > summary').click({timeout:5000});
   await check('expanded details visible',await details.evaluate(n=>n.open));
   await page.screenshot({path:path.join(root,variant+'-detail.png'),fullPage:false});
-  await details.locator('summary').click({timeout:5000});
+  await details.locator(':scope > summary').click({timeout:5000});
   const menu=row.locator('.tp19-more');
   await menu.locator('summary').click({timeout:5000});
   await check('action menu fits viewport',await menu.locator('.tp-card-menu-items').evaluate(el=>{
