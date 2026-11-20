@@ -1,6 +1,6 @@
 /* TurinPipps PWA offline cache. No private account data is cached here. */
-const CACHE='turinpipps-shell-v19.0.0';
-const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png','./styles-v16.css?v=19.0.0','./experience-v3.js?v=16.0.0','./experience-v4.js?v=15.0.0','./experience-v5.js?v=17.0.0','./organize-v7.js?v=18.0.0','./experience-v8.js?v=16.1.0','./trust-v9.js?v=18.0.0','./experience-v10.js?v=19.0.0','./experience-v12.js?v=18.0.0','./experience-v14.js?v=19.0.0','./experience-v15.js?v=17.0.0','./release.json','./informazioni.html','./widget-iphone.html','./push-config.js?v=5.0.0','./today.html'];
+const CACHE='turinpipps-shell-v20.0.0';
+const CONTENT=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-180.png','./styles-v16.css?v=20.0.0','./experience-v3.js?v=16.0.0','./experience-v4.js?v=15.0.0','./experience-v5.js?v=20.0.0','./organize-v7.js?v=20.0.0','./experience-v8.js?v=16.1.0','./trust-v9.js?v=18.0.0','./experience-v10.js?v=20.0.0','./experience-v12.js?v=20.0.0','./experience-v14.js?v=19.0.0','./experience-v15.js?v=17.0.0','./release.json','./informazioni.html','./widget-iphone.html','./push-config.js?v=5.0.0','./today.html'];
 const DATA=['./data/listings.json','./data/diagnostics.json','./data/report_status.json'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(async cache=>{
