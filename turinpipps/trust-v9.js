@@ -145,7 +145,10 @@ function enhanceCards(){
   const holder=document.createElement("div");holder.innerHTML=evidence(a);
   const proof=holder.firstElementChild;
   const details=$(".tp-card-details",article);
-  if(details)details.before(proof);else $(".body",article)?.appendChild(proof);
+  if(article.classList.contains("tp18-listing")){
+   const anchor=$(".tp18-tools-anchor",article);
+   if(anchor)anchor.before(proof);
+  }else if(details)details.before(proof);else $(".body",article)?.appendChild(proof);
   proof?.querySelector(".tp9-history")?.addEventListener("toggle",e=>{if(e.currentTarget.open)loadHistory(a,e.currentTarget)});
  });
 }
