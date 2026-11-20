@@ -127,10 +127,11 @@ function renderProfile(){
   return;
  }
  var email=esc(s.email||p.email||'Email non disponibile');
- root.innerHTML='<div class="tp17-profile-identity"><div class="tp17-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></div>'+
- '<div><span class="tp17-eyebrow">ACCOUNT TURINPIPPS</span><h2>'+email+'</h2><span class="tp17-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+(p.email_confirmed?'Email verificata':'Email da verificare')+'</span></div></div>'+
- '<div class="tp17-account-columns"><div class="tp17-account-detail"><span>EMAIL DI ACCESSO</span><strong>'+email+'</strong><p>Utilizzata per accedere e ricevere le comunicazioni autorizzate.</p></div>'+
- '<div class="tp17-account-detail tp17-security"><span>SICUREZZA</span><strong>Password e accesso</strong><p>Gestisci le credenziali e le modalità di autenticazione del tuo account.</p><button id="tp-v5-account-open" type="button" class="tp-v5-secondary">Gestisci accesso <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>';
+ root.innerHTML='<div class="tp17-profile-identity tp20-profile-identity"><div class="tp17-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></div>'+
+ '<div class="tp20-profile-info"><span class="tp17-eyebrow">ACCOUNT PERSONALE</span><h2>'+email+'</h2>'+
+ '<span class="tp17-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+(p.email_confirmed?'Email verificata':'Email da verificare')+'</span></div>'+
+ '<button type="button" id="tp-v5-account-open" class="tp-v5-secondary tp20-profile-security">Gestisci password e accesso <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
+
  $('#tp-v5-account-open')?.addEventListener('click',function(){window.TurinPippsAuth?.open()});
  if(!prefsRoot)return;
  prefsRoot.innerHTML='<div class="tp17-pref-group"><div class="tp17-pref-group-title"><h3>Immobili e riepiloghi</h3><p>Ricevi solo le informazioni che hai scelto, usando i tuoi criteri di ricerca.</p></div>'+
