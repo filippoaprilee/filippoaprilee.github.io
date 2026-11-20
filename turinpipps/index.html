@@ -573,53 +573,61 @@ function dataQuality(a){
  return {known:indicators.filter(Boolean).length,total:indicators.length};
 }
 function card(a){
- var f=flag(a.url),cost=recurringCost(a),checks=cautionSignals(a),dupes=duplicateOf(a);
- var decision=classification(a),quality=dataQuality(a),price=Number(a.price)||0;
+ var f=flag(a.url),cost=recurringCost(a),decision=classification(a),quality=dataQuality(a);
+ var price=Number(a.price)||0,checks=cautionSignals(a),dupes=duplicateOf(a);
+ var changed=priceChange(a),history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
  var ownerConfirmed=a.private_status==='confirmed'&&a.verification_level==='owner_confirmed';
- var ownerText=ownerConfirmed?'Proprietario confermato':a.private_status==='source'?'Privato dichiarato dalla fonte':'Inserzionista da verificare';
- var zone=esc(a.zone||'Zona da verificare'),source=esc(a.source||'Fonte'),title=esc(a.title||'Annuncio senza titolo');
- var priceHTML=price?'<strong>'+Math.round(price).toLocaleString('it-IT')+' €</strong><small>/mese</small>':'<strong>Prezzo n.d.</strong>';
- var summaryStatus=decision.status==='excluded'?'Fuori criteri':decision.status==='good'?'Potenzialmente compatibile':'Dati da verificare';
- var importantMissing=!price||!a.zone||!ownerConfirmed;
- var badges='<span class="tp18-state '+(decision.status==='excluded'?'tp18-state-warning':'')+'">'+summaryStatus+'</span>'+
- (importantMissing?'<span class="tp18-state tp18-state-muted">'+(ownerConfirmed?'Informazioni mancanti':ownerText)+'</span>':'');
- var facts=(Number(a.sqm)>0?'<span><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i> '+esc(a.sqm)+' m²</span>':'')+
- (Number(a.walking_minutes)>0&&a.route_checked_at?'<span><i class="fa-solid fa-person-walking" aria-hidden="true"></i> '+esc(a.walking_minutes)+' min dal Politecnico</span>':'')+
- (a.expenses?'<span><i class="fa-solid fa-receipt" aria-hidden="true"></i> Spese dichiarate</span>':'');
- var linkStatus=a.link_status==='missing'?'<p class="tp18-important-warning"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Link potenzialmente non disponibile: verifica la fonte.</p>':'';
- var changed=priceChange(a);
- var changeHTML=changed?'<span class="tp18-price-change '+(changed.delta<0?'down':'up')+'">'+(changed.delta<0?'Ribasso':'Aumento')+' '+esc(Math.abs(changed.delta))+' €</span>':'';
- var statusKnown=quality.known+'/'+quality.total+' informazioni disponibili';
- var recordedPrice=price?Math.round(price).toLocaleString('it-IT')+' €':'Non dichiarato';
- var knownCost=price?esc(cost.total)+' €/mese'+(cost.unknown?' + spese da verificare':''):'Totale non calcolabile';
- var history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
+ var owner=ownerConfirmed?'Proprietario verificato':a.private_status==='source'?'Privato indicato dalla fonte':'Inserzionista non verificato';
+ var source=esc(a.source||'Fonte non indicata'),zone=esc(a.zone||'Zona da verificare');
+ var status=decision.status==='excluded'?'Fuori criteri':decision.status==='good'?'In linea con i criteri':'Informazioni da verificare';
+ var statusClass=decision.status==='excluded'?'tp19-status-warn':decision.status==='good'?'tp19-status-match':'tp19-status-neutral';
+ var paid=price?Math.round(price).toLocaleString('it-IT')+' €':'Da verificare';
+ var total=price?esc(cost.total)+' €/mese'+(cost.unknown?' + spese non note':''):'Non calcolabile';
+ var units=[];
+ if(Number(a.sqm)>0)units.push(esc(a.sqm)+' m²');
+ if(a.expenses)units.push('Spese dichiarate');
+ else units.push('Spese da chiarire');
+ if(Number(a.walking_minutes)>0&&a.route_checked_at)units.push(esc(a.walking_minutes)+' min a piedi dal Politecnico');
+ var summary=units.map(function(x){return '<span>'+x+'</span>'}).join('');
+ var priceChangeHTML=changed?'<small class="tp19-price-change '+(changed.delta<0?'is-drop':'is-rise')+'">'+(changed.delta<0?'Ribasso':'Aumento')+' '+esc(Math.abs(changed.delta))+' €</small>':'';
+ var availableWarning=a.availability_state==='potenzialmente_non_disponibile'?' · Disponibilità da riconfermare':'';
  var historyHTML=history.length>1?'<details class="tp-history"><summary>Storico prezzo ('+history.length+')</summary>'+priceTrendSVG(history)+'<ul>'+history.slice(-12).map(function(h){return '<li>'+esc(dateLabel(h.observed_at))+' · '+esc(h.price)+' €</li>'}).join('')+'</ul></details>':'';
- var riskHTML=checks.length?'<section class="tp18-detail-section"><h4>Da controllare prima del contatto</h4><ul>'+checks.slice(0,8).map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ul></section>':'';
- var dupHTML=dupes.length?'<details class="tp-history"><summary>Possibili duplicati ('+dupes.length+')</summary><ul>'+dupes.slice(0,5).map(function(url){return '<li><a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">Consulta annuncio simile</a></li>'}).join('')+'</ul></details>':'';
- var costHTML='<dl class="tp18-detail-facts"><div><dt>Canone</dt><dd>'+recordedPrice+'</dd></div><div><dt>Costo mensile noto</dt><dd>'+knownCost+'</dd></div><div><dt>Informazioni disponibili</dt><dd>'+statusKnown+'</dd></div><div><dt>Ultimo avvistamento</dt><dd>'+esc(dateLabel(a.last_seen||a.seen))+'</dd></div></dl>';
- var notes=f.notes?'<p class="tp18-saved-note"><i class="fa-regular fa-note-sticky" aria-hidden="true"></i> '+esc(f.notes)+'</p>':'';
- var extraLink=a.address?'<a class="tp-intelmap" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking" target="_blank" rel="noopener noreferrer">Controlla il percorso dal Politecnico</a>':'';
- return '<article class="listing tp18-listing" aria-label="'+title+'">'+
- '<div class="body"><div class="tp18-card-heading"><div class="tp18-card-location"><span>'+zone+'</span><small>'+source+'</small></div><div class="tp18-card-price">'+priceHTML+changeHTML+'</div></div>'+
- '<h3>'+title+'</h3>'+
- '<div class="tp18-card-states">'+badges+'</div>'+
- (facts?'<div class="tp18-card-facts">'+facts+'</div>':'')+linkStatus+notes+
- '<details class="tp-card-details tp18-card-details"><summary><span>Dettagli, spese e verifiche</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
- '<div class="tp-card-expanded tp18-card-expanded"><section class="tp18-detail-section"><h4>Descrizione originale</h4><p class="tp18-description">'+esc(a.description||'Descrizione non fornita dalla fonte.')+'</p></section>'+
- '<section class="tp18-detail-section"><h4>Prezzo e provenienza</h4>'+costHTML+'<p class="tp18-detail-note">Prezzo, disponibilità e identità del locatore richiedono conferma con la fonte. Un link funzionante non equivale a una disponibilità verificata.</p></section>'+
- riskHTML+extraLink+historyHTML+dupHTML+
- '<div class="tp18-tools-anchor"></div></div></details></div>'+
- '<div class="actions tp18-card-actions">'+
- '<a class="button primary" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a>'+
- '<button type="button" class="button tp18-save" data-action="save" data-url="'+esc(a.url)+'"><i class="'+(f.saved?'fa-solid':'fa-regular')+' fa-heart" aria-hidden="true"></i> '+(f.saved?'Salvato':'Salva')+'</button>'+
- '<button type="button" class="button tp18-compare" data-action="compare" data-url="'+esc(a.url)+'"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> '+(f.compare?'Selezionato':'Confronta')+'</button>'+
- '<details class="tp-card-menu tp18-more"><summary><i class="fa-solid fa-ellipsis" aria-hidden="true"></i> Altro</summary><div class="tp-card-menu-items">'+
- '<button class="button" data-action="visit" data-url="'+esc(a.url)+'">Programma visita</button>'+
- '<button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'Contattato':'Segna contattato')+'</button>'+
- '<button class="button" data-action="note" data-url="'+esc(a.url)+'">Aggiungi nota</button>'+
- '<button class="button" data-action="copy" data-url="'+esc(a.url)+'">Copia messaggio</button>'+
- '<button class="button" data-action="discard" data-url="'+esc(a.url)+'">'+(f.discard?'Ripristina':'Scarta')+'</button>'+
- '</div></details></div></article>';
+ var duplicateHTML=dupes.length?'<details class="tp-history"><summary>Possibili annunci duplicati ('+dupes.length+')</summary><ul>'+dupes.slice(0,5).map(function(url){return '<li><a target="_blank" rel="noopener noreferrer" href="'+esc(url)+'">Controlla annuncio simile</a></li>'}).join('')+'</ul></details>':'';
+ var checksHTML=checks.length?'<div class="tp19-detail-group"><h4>Prima di contattare</h4><ul>'+checks.slice(0,8).map(function(item){return '<li>'+esc(item)+'</li>'}).join('')+'</ul></div>':'';
+ var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking">Verifica percorso a piedi</a>':'';
+ var notes=f.notes?'<div class="tp19-user-note"><i class="fa-regular fa-note-sticky" aria-hidden="true"></i>'+esc(f.notes)+'</div>':'';
+ return '<article class="listing tp18-listing tp19-property-row">'+
+  '<div class="body tp19-property-main">'+
+   '<div class="tp19-property-meta"><span class="tp19-property-zone">'+zone+'</span><span aria-hidden="true">·</span><span>'+source+'</span></div>'+
+   '<h3>'+esc(a.title||'Annuncio senza titolo')+'</h3>'+
+   '<div class="tp19-property-facts">'+summary+'</div>'+
+   '<div class="tp19-trust-line"><span class="tp19-status '+statusClass+'">'+esc(status)+'</span><span>'+esc(owner)+esc(availableWarning)+'</span></div>'+notes+
+  '</div>'+
+  '<div class="actions tp19-property-actions">'+
+   '<div class="tp19-price"><strong>'+paid+'</strong><span>'+(price?'/mese':'Canone non disponibile')+'</span>'+priceChangeHTML+'</div>'+
+   '<a class="button primary tp19-open" href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Apri annuncio</a>'+
+   '<div class="tp19-quick-actions">'+
+    '<button type="button" class="button tp19-save" data-action="save" data-url="'+esc(a.url)+'" aria-label="'+(f.saved?'Rimuovi dai salvati':'Salva immobile')+'"><i class="'+(f.saved?'fa-solid':'fa-regular')+' fa-heart" aria-hidden="true"></i> '+(f.saved?'Salvato':'Salva')+'</button>'+
+    '<button type="button" class="button tp19-compare" data-action="compare" data-url="'+esc(a.url)+'"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> '+(f.compare?'Selezionato':'Confronta')+'</button>'+
+    '<details class="tp-card-menu tp19-more"><summary aria-label="Altre azioni"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary><div class="tp-card-menu-items">'+
+     '<button class="button" data-action="visit" data-url="'+esc(a.url)+'">Programma visita</button>'+
+     '<button class="button" data-action="contact" data-url="'+esc(a.url)+'">'+(f.contact?'Segnato come contattato':'Segna contattato')+'</button>'+
+     '<button class="button" data-action="note" data-url="'+esc(a.url)+'">Nota personale</button>'+
+     '<button class="button" data-action="copy" data-url="'+esc(a.url)+'">Copia messaggio</button>'+
+     '<button class="button" data-action="discard" data-url="'+esc(a.url)+'">'+(f.discard?'Ripristina':'Scarta')+'</button>'+
+    '</div></details></div></div>'+
+  '<details class="tp-card-details tp18-card-details tp19-property-details">'+
+   '<summary><span>Descrizione, costi e controlli</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+   '<div class="tp-card-expanded tp19-details-content">'+
+    '<section class="tp19-detail-group"><h4>Descrizione della fonte</h4><p>'+esc(a.description||'La fonte non fornisce una descrizione dettagliata.')+'</p></section>'+
+    '<section class="tp19-detail-group"><h4>Costi e dati</h4><dl>'+
+      '<div><dt>Canone</dt><dd>'+paid+'</dd></div><div><dt>Costo mensile noto</dt><dd>'+total+'</dd></div>'+
+      '<div><dt>Completezza</dt><dd>'+quality.known+'/'+quality.total+' informazioni disponibili</dd></div>'+
+      '<div><dt>Ultimo avvistamento</dt><dd>'+esc(dateLabel(a.last_seen||a.seen))+'</dd></div>'+
+     '</dl><p class="tp19-disclaimer">Prezzo, disponibilità e identità del locatore richiedono conferma. Il controllo del link non garantisce che la casa sia ancora disponibile.</p></section>'+
+     checksHTML+route+historyHTML+duplicateHTML+'<div class="tp18-tools-anchor"></div>'+
+   '</div></details>'+
+ '</article>';
 }
 
 function showEmpty(msg,screen,tracked){var saved=screen==='saved';return '<div class="empty tp11-empty"><div class="tp11-empty-icon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div><b>'+(saved?'Nessun annuncio contrassegnato come salvato':'Nessun risultato con questi filtri')+'</b><p>'+esc(msg)+'</p><div class="tp11-empty-actions">'+(saved?'<button class="button primary" data-nav="results">Esplora immobili</button>'+(tracked?'<button class="button" data-nav="visits">'+(tracked===1?'Apri la casa seguita':'Apri le '+tracked+' case seguite')+'</button>':''):'<button class="button primary" type="button" data-tp11-reset>Azzera i filtri</button><button class="button" data-nav="sources">Consulta le fonti</button>')+'</div></div>'}
