@@ -108,21 +108,28 @@ const violations = [];
    await page.screenshot({path:path.join(output,vp.name+"-settings.png"),fullPage:false});
    await page.evaluate(()=>window.TurinPippsUXV3?.navigate("notifications"));
    await page.waitForTimeout(120);
-   const notificationState=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,visible:!document.querySelector("#view-notifications")?.classList.contains("hidden"),prefs:!!document.querySelector("#tp17-prefs-content")}));
-   console.log("NOTIFICATIONS",vp.name,JSON.stringify(notificationState));
-   if(!notificationState.visible||!notificationState.prefs||notificationState.width>vp.width+3)violations.push(vp.name+": notifications overflow or missing preferences");
-   await page.screenshot({path:path.join(output,vp.name+"-notifications.png"),fullPage:false});
-   await page.evaluate(()=>{
-     document.documentElement.dataset.tpTheme="dark";
-     document.documentElement.dataset.tpThemeChoice="dark";
-     document.documentElement.style.colorScheme="dark";
+   const notificationState=await page.evaluate(()=>{
+     const host=document.querySelector("#view-notifications");
+     const items=[".tp17-inbox-section",".tp17-preferences-section",".tp17-device-section"].map(q=>host?.querySelector(q)?.getBoundingClientRect()).filter(Boolean);
+     const overlaps=items.some((first,i)=>items.some((second,j)=>i!==j&&Math.min(first.right,second.right)-Math.max(first.left,second.left)>8&&Math.min(first.bottom,second.bottom)-Math.max(first.top,second.top)>8));
+     const areas=items.map(r=>({left:Math.round(r.left),top:Math.round(r.top),right:Math.round(r.right),bottom:Math.round(r.bottom)}));
+     return {width:document.documentElement.scrollWidth,viewport:innerWidth,visible:!host?.classList.contains("hidden"),prefs:!!document.querySelector("#tp17-prefs-content"),overlaps,areas};
    });
+   console.log("NOTIFICATIONS",vp.name,JSON.stringify(notificationState));
+   if(!notificationState.visible||!notificationState.prefs||notificationState.overlaps||notificationState.width>vp.width+3)violations.push(vp.name+": notifications overlap or missing preferences "+JSON.stringify(notificationState));
+   await page.screenshot({path:path.join(output,vp.name+"-notifications.png"),fullPage:false});
+   await page.evaluate(()=>localStorage.setItem("turinpipps.theme.v12","dark"));
+   await page.reload({waitUntil:"domcontentloaded"});
+   await page.waitForTimeout(950);
+   await page.evaluate(()=>{for(const dialog of document.querySelectorAll('dialog[open]')){try{dialog.close()}catch{}}});
+   await page.evaluate(()=>window.TurinPippsUXV3?.navigate("notifications"));
+   await page.waitForTimeout(150);
    const darkTheme=await page.evaluate(()=>{
      const style=getComputedStyle(document.documentElement);
      return {bg:style.getPropertyValue("--tp16-bg").trim(),text:style.getPropertyValue("--tp16-text").trim(),theme:document.documentElement.dataset.tpTheme};
    });
    console.log("DARK",vp.name,JSON.stringify(darkTheme));
-   if(darkTheme.theme!=="dark"||darkTheme.bg===darkTheme.text)violations.push(vp.name+": dark color tokens invalid");
+   if(darkTheme.theme!=="dark"||darkTheme.bg===darkTheme.text)violations.push(vp.name+": dark color tokens invalid "+JSON.stringify(darkTheme));
    await page.screenshot({path:path.join(output,vp.name+"-dark-notifications.png"),fullPage:false});
    await page.evaluate(()=>window.TurinPippsUXV3?.navigate("results"));
    await page.waitForTimeout(100);
