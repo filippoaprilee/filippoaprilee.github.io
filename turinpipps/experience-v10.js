@@ -502,6 +502,18 @@ function refresh(){
 function init(){
  if(!api()||!$("#view-home"))return;
  navigation();homeMarkup();searchEnhance();organizeMonitor();accessibility();attachEvents();refresh();
+ // Initial remote data can arrive after the first Home render without changing
+ // the observed list again. Synchronize once when the first usable dataset lands.
+ let knownCount=-1,attempt=0;
+ const initialSync=window.setInterval(()=>{
+  const nextCount=all().length;
+  if(nextCount!==knownCount){knownCount=nextCount;homeUpdate();}
+  if(nextCount>0||++attempt>=30)window.clearInterval(initialSync);
+ },300);
+ document.addEventListener("click",event=>{
+  if(event.target.closest('[data-nav="home"]'))queueMicrotask(homeUpdate);
+ });
+ window.addEventListener("pageshow",homeUpdate);
  [["#list",()=>{enhanceCards();simplifyListingDetails();homeUpdate()}],["#saved-list",()=>{enhanceCards();simplifyListingDetails()}],["#tp-home-list",()=>{enhanceCards();simplifyListingDetails()}],["#tp-activity-summary",renderSourceQuality],["#tp-visits-content",enhanceBoard],["#tp-v5-admin-content",enhanceAdmin]]
  .forEach(([selector,fn])=>{const root=$(selector);if(root){new MutationObserver(()=>{queueMicrotask(fn);}).observe(root,{childList:true});}});
  const slides=[
