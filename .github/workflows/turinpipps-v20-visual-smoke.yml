@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,3 +33,14 @@ jobs:
           name: turinpipps-v20-screenshots
           path: turinpipps/_visual-qa/*.png
           if-no-files-found: warn
+
+      - name: Store review screenshots on isolated QA branch
+        if: always()
+        run: |
+          test -d turinpipps/_visual-qa || exit 0
+          git config user.name "TurinPipps Visual QA"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B turinpipps-v20-qa-captures
+          git add -f turinpipps/_visual-qa/*.png
+          git commit -m "QA: Chromium screenshots for v20" || exit 0
+          git push --force origin HEAD:refs/heads/turinpipps-v20-qa-captures
