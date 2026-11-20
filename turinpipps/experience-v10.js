@@ -383,7 +383,7 @@ function accessibility(){
  });
 }
 function simplifyListingDetails(){
- $(".tp10-listing").forEach(article=>{
+ $$(".tp10-listing").forEach(article=>{
   if(article.dataset.tp11Simplified)return;
   const expanded=$(".tp-card-expanded",article),reasons=$(".tp-classification-reasons",article);
   if(expanded&&reasons){reasons.remove();expanded.prepend(reasons);}
@@ -473,13 +473,13 @@ function attachEvents(){
   // moved into the advanced panel. Let the existing click handler reset the rest.
   if(ev.target.closest("#tp8-reset")){
    filterState.priced=false;filterState.fresh=false;
-   $("[data-tp10-filter]").forEach(input=>{input.checked=false;});
+   $$("[data-tp10-filter]").forEach(input=>{input.checked=false;});
   }
   const reset=ev.target.closest("[data-tp11-reset]");
   if(reset){
    ev.preventDefault();
    filterState.priced=false;filterState.fresh=false;
-   $("[data-tp10-filter]").forEach(input=>{input.checked=false;});
+   $$("[data-tp10-filter]").forEach(input=>{input.checked=false;});
    $("#tp8-reset")?.click();
    $("#tp-main-search")?.focus();
    return;
