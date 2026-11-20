@@ -1239,7 +1239,7 @@ window.TurinPippsBridge={
        sqm:x.sqm||0,expenses:x.expenses||0,address:x.address||'',property_type:x.property_type||'',published_at:x.published_at||'',last_verified_at:x.last_verified_at||'',availability_status:x.availability_status||'unknown',verification_level:x.verification_level||'unverified',verification_reason:x.verification_reason||'',price_verified_at:x.price_verified_at||'',evidence_url:x.evidence_url||'',expired_at:x.expired_at||'',origin_engine:x.origin_engine,link_status:x.link_status||'unchecked',link_checked_at:x.link_checked_at||'',link_http_status:x.link_http_status||null,link_failure_count:x.link_failure_count||0,price_history:Array.isArray(x.price_history)?x.price_history:[],field_provenance:x.field_provenance&&typeof x.field_provenance==='object'?x.field_provenance:{},detail_checked_at:x.detail_checked_at||'',detail_status:x.detail_status||'unchecked'};
    }):[];
    liveScan=scan||null;memoListings=null;page=1;
-   renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();
+   renderResults();renderSaved();if(tab==='home')renderHome();if(tab==='sources')renderSources();window.dispatchEvent(new Event('turinpipps:listings-updated'));
  },
 
  guideSlides:function(slides){tpGuideSlides=slides},
