@@ -7,6 +7,7 @@ const base=process.env.TURINPIPPS_QA_URL||'http://127.0.0.1:4173/';
 const failures=[],observations=[];
 async function test(width,height,variant){
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ try{
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1});
  const page=await context.newPage(),errors=[];
  page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);
@@ -82,7 +83,7 @@ async function test(width,height,variant){
  await geometry('Dark mode');
  await page.screenshot({path:path.join(root,variant+'-dark.png'),fullPage:false});
  await check('no JavaScript runtime exceptions',errors.length===0,errors.join(' | ').slice(0,1000));
- await browser.close();
+ }finally{await browser.close().catch(()=>{})}
 }
 (async()=>{
  for(const [w,h,name] of [[1440,900,'desktop'],[390,844,'iphone'],[320,700,'small-mobile']]){
