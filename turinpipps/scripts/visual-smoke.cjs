@@ -100,10 +100,40 @@ const violations = [];
    await page.evaluate(()=>window.TurinPippsUXV3?.navigate("profile"));
    await page.waitForTimeout(150);
    await page.screenshot({path:path.join(output,vp.name+"-profile.png"),fullPage:false});
+   await page.evaluate(()=>window.TurinPippsUXV3?.navigate("settings"));
+   await page.waitForTimeout(120);
+   const settingsState=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,visible:!document.querySelector("#view-settings")?.classList.contains("hidden"),fields:["budget","tp-min-sqm","tp-property-type","tp-zones"].every(id=>!!document.getElementById(id))}));
+   console.log("SETTINGS",vp.name,JSON.stringify(settingsState));
+   if(!settingsState.visible||!settingsState.fields||settingsState.width>vp.width+3)violations.push(vp.name+": settings overflow or missing fields");
+   await page.screenshot({path:path.join(output,vp.name+"-settings.png"),fullPage:false});
+   await page.evaluate(()=>window.TurinPippsUXV3?.navigate("notifications"));
+   await page.waitForTimeout(120);
+   const notificationState=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth,visible:!document.querySelector("#view-notifications")?.classList.contains("hidden"),prefs:!!document.querySelector("#tp17-prefs-content")}));
+   console.log("NOTIFICATIONS",vp.name,JSON.stringify(notificationState));
+   if(!notificationState.visible||!notificationState.prefs||notificationState.width>vp.width+3)violations.push(vp.name+": notifications overflow or missing preferences");
+   await page.screenshot({path:path.join(output,vp.name+"-notifications.png"),fullPage:false});
+   await page.evaluate(()=>{
+     document.documentElement.dataset.tpTheme="dark";
+     document.documentElement.dataset.tpThemeChoice="dark";
+     document.documentElement.style.colorScheme="dark";
+   });
+   const darkTheme=await page.evaluate(()=>{
+     const style=getComputedStyle(document.documentElement);
+     return {bg:style.getPropertyValue("--tp16-bg").trim(),text:style.getPropertyValue("--tp16-text").trim(),theme:document.documentElement.dataset.tpTheme};
+   });
+   console.log("DARK",vp.name,JSON.stringify(darkTheme));
+   if(darkTheme.theme!=="dark"||darkTheme.bg===darkTheme.text)violations.push(vp.name+": dark color tokens invalid");
+   await page.screenshot({path:path.join(output,vp.name+"-dark-notifications.png"),fullPage:false});
+   await page.evaluate(()=>window.TurinPippsUXV3?.navigate("results"));
+   await page.waitForTimeout(100);
+   await page.screenshot({path:path.join(output,vp.name+"-dark-results.png"),fullPage:false});
+   await page.evaluate(()=>window.TurinPippsUXV3?.navigate("home"));
+   await page.waitForTimeout(100);
+   await page.screenshot({path:path.join(output,vp.name+"-dark-home.png"),fullPage:false});
    if(errors.length)console.log("PAGEWARN",vp.name,errors.slice(0,5));
    await context.close();
   }
   if(violations.length){console.error("FAILURES\n"+violations.join("\n"));process.exitCode=1}
-  else console.log("PASS: viewport layout, loaded Home, tabs, actions menu, and visits state");
+  else console.log("PASS: loaded Home, tabs, actions, visits, preferences, notifications and dark-mode viewport layouts");
  } finally {await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
