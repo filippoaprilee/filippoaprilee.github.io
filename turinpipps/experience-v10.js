@@ -148,7 +148,7 @@ function homeUpdate(){
  const status=saved||contacted||replied?'<p class="tp18-home-context">'+
   (saved?saved+' salvate':'')+(contacted?' · '+contacted+' in attesa':'')+(replied?' · '+replied+' risposte':'')+'</p>':'';
  $("#tp10-next-step").innerHTML='<div class="tp18-home-next-inner"><div class="tp18-home-next-copy">'+
- '<h3>'+safe(guidance[0])+'</h3><p>'+safe(guidance[1])+'</p>'+status+'</div>'+
+ '<h2>'+safe(guidance[0])+'</h2><p>'+safe(guidance[1])+'</p>'+status+'</div>'+
  '<button type="button" class="button primary tp18-next-cta" data-nav="'+guidance[3]+'">'+
  safe(guidance[2])+' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
 
