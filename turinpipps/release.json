@@ -1,13 +1,14 @@
 {
-  "version": "16.1.0",
-  "published_at": "2026-11-19T10:30:00+01:00",
-  "title": "TurinPipps · Schermate più chiare su desktop e mobile",
-  "summary": "La ricerca utilizza meglio lo spazio desktop, riduce le navigazioni duplicate e distingue meglio pannelli, pulsanti e contenuti nei temi chiaro e scuro.",
+  "version": "17.0.0",
+  "published_at": "2026-11-20T09:00:00+01:00",
+  "title": "TurinPipps 17 · Account, Notifiche e ricerca più semplici",
+  "summary": "Account dedicato a identità, accesso e privacy. Notifiche riunisce avvisi, consenso email, push e novità. Home con un solo prossimo passo, gerarchia chiara su desktop e iPhone.",
   "highlights": [
-    "Più spazio utile nelle schermate desktop",
-    "Account semplificato senza scorciatoie duplicate",
-    "Contrasto e separazione visiva migliorati in entrambi i temi",
-    "Schede e risultati più leggibili e coerenti",
-    "Navigazione mobile compatta e cache PWA aggiornata"
+    "Account ricostruito: informazioni personali e sicurezza, senza percorsi ripetuti",
+    "Notifiche riorganizzate: attività, preferenze e dispositivi sulla stessa pagina",
+    "Nuova sezione «Da una scoperta a una visita» con unica azione prioritaria",
+    "Gerarchia visiva uniforme: azioni principali distinguibili, meno contenitori annidati",
+    "Versione desktop e mobile adattiva, stessi significati e stato dei controlli",
+    "Correzione autorizzazioni Supabase per salvare le preferenze senza errore 403"
   ]
 }
