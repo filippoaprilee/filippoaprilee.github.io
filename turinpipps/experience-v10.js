@@ -92,8 +92,8 @@ function homeMarkup(){
  view.innerHTML=
  '<header class="tp20-home-header">'+
   '<div class="tp20-home-heading"><div class="tp20-eyebrow"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</div>'+
-  '<h1>La tua prossima casa<br>parte da qui.</h1>'+
-  '<p>Trova gli annunci interessanti, confronta i costi reali e organizza i contatti. Tutto in un unico percorso.</p>'+
+  '<h1>La tua ricerca a Torino</h1>'+
+  '<p>Annunci da fonti pubbliche, costi da chiarire e contatti da organizzare. Parti dagli immobili disponibili in archivio.</p>'+
   '<div class="tp20-home-primary-actions"><button type="button" data-nav="results" class="button primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Esplora gli immobili</button>'+
   '<button type="button" data-nav="settings" class="tp20-text-action">Modifica la ricerca <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>'+
   '<div class="tp20-home-overview" aria-label="Riepilogo della ricerca">'+
@@ -130,7 +130,6 @@ function homeUpdate(){
  const summary=$("#tp10-metrics");
  if(summary){
   const itemsToShow=[
-   [eligible.length,"con canone entro i criteri","results"],
    [saved.length,"salvati","saved"],
    [waiting.length+replied.length,"contatti aperti","visits"]
   ].filter(([n])=>n>0);
@@ -145,7 +144,7 @@ function homeUpdate(){
  const title=$("#tp20-shortlist-title"),desc=$("#tp20-shortlist-description");
  if(title)title.textContent=candidates.length?"Da valutare adesso":"Gli ultimi annunci raccolti";
  if(desc)desc.textContent=candidates.length?
-  "Una prima selezione per budget e zona. Identità e disponibilità devono essere confermate.":
+  eligible.length+" annunci entro budget e criteri. Disponibilità e identità del locatore sempre da verificare.":
   items.length?"Nessuna corrispondenza ai criteri attuali: questi annunci sono mostrati per esplorare alternative.":
   "L’archivio non contiene ancora immobili. Riprova a controllare la ricerca più tardi.";
  const list=$("#tp10-home-options");
