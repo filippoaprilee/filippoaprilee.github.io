@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-20T11:38:52.501Z",
+  "updated_at": "2026-11-20T17:38:52.570Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-20T11:38:52.501Z",
       "availability_state": "online_alla_verifica",
@@ -384,12 +384,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T17:38:53.464Z",
+      "availability_checked_at": "2026-11-20T17:38:52.570Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-19T17:38:53.464Z"
+      "availability_last_ok_at": "2026-11-20T17:38:52.570Z"
     },
     {
       "url": "https://www.clickcase.it/mini-loft-bilocale-su-due-livelli-con-ascensore-torino-423014.html",
@@ -403,12 +403,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T23:38:52.252Z",
+      "availability_checked_at": "2026-11-20T17:38:52.570Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-19T23:38:52.252Z"
+      "availability_last_ok_at": "2026-11-20T17:38:52.570Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -469,7 +469,7 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T23:38:52.252Z",
+      "availability_checked_at": "2026-11-20T17:38:52.570Z",
       "availability_last_http": 301,
       "availability_state": "verifica_non_conclusiva"
     },
@@ -485,12 +485,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T23:38:52.252Z",
+      "availability_checked_at": "2026-11-20T17:38:52.570Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-19T23:38:52.252Z"
+      "availability_last_ok_at": "2026-11-20T17:38:52.570Z"
     },
     {
       "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
@@ -504,12 +504,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-19T23:38:52.252Z",
+      "availability_checked_at": "2026-11-20T17:38:52.570Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-19T23:38:52.252Z"
+      "availability_last_ok_at": "2026-11-20T17:38:52.570Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -542,7 +542,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-20T05:38:52.679Z",
       "availability_state": "online_alla_verifica",
@@ -561,7 +561,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-20T05:38:52.679Z",
       "availability_state": "online_alla_verifica",
@@ -595,12 +595,27 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T17:38:53.464Z",
-      "last_seen": "2026-11-20T11:38:52.501Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-20T05:38:52.679Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
       "availability_last_ok_at": "2026-11-20T05:38:52.679Z"
+    },
+    {
+      "url": "https://www.clickcase.it/da-privato-posto-letto-stanza-niente-spese-torino-422215.html",
+      "title": "DA PRIVATO POSTO LETTO/STANZA niente spese",
+      "description": "DA PRIVATO POSTO LETTO/STANZA niente spese - Affitto Appartamento da Privato a Torino, Barriera Milano - 422215 Residenziale Commerciale Nuove costruzioni Casa vacanze Stanze Aziende Professionisti Accedi Registrati Home &raquo; Torino &raquo; Appartamenti &raquo; Rif. 422215 DA PRIVATO POSTO LETTO/STANZA niente spese Appartamento in Affitto da Pri",
+      "price": 355,
+      "zone": "",
+      "sqm": 0,
+      "source": "ClickCase",
+      "private_status": "source",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-20T17:38:52.570Z",
+      "last_seen": "2026-11-20T17:38:52.570Z",
+      "origin": "automatic_alert"
     }
   ]
 }
