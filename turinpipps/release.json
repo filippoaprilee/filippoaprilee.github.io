@@ -1,15 +1,14 @@
 {
-  "version": "21.0.0",
-  "published_at": "2026-11-20T15:04:28.510Z",
-  "title": "TurinPipps 21 · Design uniforme e percorsi più chiari",
-  "summary": "Rifacimento del sistema visivo: palette chiara/scura armonizzata, Home con riepilogo e annunci reali, elenco immobili leggibile, dettagli a richiesta, Contatti e visite senza riquadri vuoti, Preferenze e Notifiche ordinate su desktop e mobile.",
+  "version": "22.0.0",
+  "published_at": "2026-11-20T15:35:00.000Z",
+  "title": "TurinPipps 22 · Ricerca immobili leggibile",
+  "summary": "Revisione del percorso Cerca immobili e della gerarchia visiva generale, con schede che distinguono chiaramente titolo, dati, affidabilità, canone, azioni e dettagli. Correzioni coordinate di desktop, tablet, mobile e tema scuro senza modificare i dati personali né i flussi di raccolta.",
   "highlights": [
-    "Home con gerarchia netta, quattro annunci reali e budget integrato",
-    "Ricerca immobili in elenco con prezzo, fonte, azioni e verifiche differenziate",
-    "Dettagli e controlli personali separati in due pannelli espandibili",
-    "Contatti e visite con percorso in tre fasi e stati vuoti comprensibili",
-    "Preferenze di ricerca come modulo a sezioni, non una pila di card",
-    "Notifiche divise fra attività, consensi e dispositivo, con contenuti accessibili",
-    "Tema chiaro e scuro con palette coerente, tablet e smartphone adattivi"
+    "Annunci separati con un'unica superficie pulita e informazioni prioritarie ben raggruppate",
+    "Prezzo e collegamento alla fonte sempre immediati, con salva e confronta accessibili",
+    "Filtri, risultati, ordinamento e categorie con maggiore gerarchia e leggibilità",
+    "Layout realmente esteso su schermi desktop, responsive su tablet e smartphone",
+    "Palette chiara e scura con nuovi token di contrasto e controlli coerenti",
+    "CSS costruito come unico bundle da sorgenti e cache PWA aggiornata"
   ]
 }
