@@ -33,10 +33,11 @@ const violations = [];
    await page.waitForTimeout(1800);
    const diagnostic = await page.evaluate(() => {
      const dataCount=window.TurinPippsUXV3?.getListings?.()?.length || 0;
+     const beforeRefresh=document.querySelector("#tp20-total-homes")?.textContent;
      let refreshError=null;
-     try { window.TurinPippsV10?.refresh?.() } catch(error){refreshError=error.message||String(error)}
+     try { window.TurinPippsV10?.refresh?.() } catch(error){refreshError=(error.stack||error.message||String(error)).split("\n").slice(0,8).join(" | ")}
      for(const dialog of document.querySelectorAll('dialog[open]')){try{dialog.close()}catch{}}
-     return {dataCount,refreshError,homeText:document.querySelector('#tp20-total-homes')?.textContent};
+     return {dataCount,beforeRefresh,refreshError,homeText:document.querySelector('#tp20-total-homes')?.textContent};
    });
    console.log("DIAGNOSTIC",vp.name,JSON.stringify(diagnostic));
    if(diagnostic.refreshError)violations.push(vp.name+": Home update JS error: "+diagnostic.refreshError);
