@@ -770,7 +770,7 @@ function renderComparison(){
  }).join('')+'</div>';
  var fields=records[0].rows.map(function(r){return r[0]});
  var desktop='<div class="tp14-compare-desktop" role="region" aria-label="Tabella di confronto affitti" tabindex="0"><table class="tp14-compare-table">'+
- '<thead><tr><th scope="col">Indicatore</th>'+chosen.map(function(a,i){return '<th scope="col"><span class="tp14-compare-num">'+(i+1)+'</span><span>'+esc(String(a.title||'Immobile').slice(0,68))+'</span></th>';}).join('')+'</tr></thead>'+
+ '<thead><tr><th scope="col">Indicatore</th>'+chosen.map(function(a,i){return '<th scope="col"><span class="tp14-compare-num">'+(i+1)+'</span><span>'+esc(String(a.title||'Immobile').slice(0,68))+'</span><button type="button" class="tp19-compare-remove" data-action="compare" data-url="'+esc(a.url)+'" aria-label="Rimuovi dal confronto '+esc(a.title||'Immobile')+'"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></th>';}).join('')+'</tr></thead>'+
  '<tbody>'+fields.map(function(label,i){return '<tr><th scope="row">'+esc(label)+'</th>'+records.map(function(r){
    var value=r.rows[i][1];return '<td class="'+(/^(Da verificare|Non calcolabili|Da confermare|Sconosciuto)/.test(value)?'tp14-unknown':'')+'">'+esc(value)+'</td>';
  }).join('')+'</tr>';}).join('')+
