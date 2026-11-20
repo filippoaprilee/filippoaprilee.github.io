@@ -77,7 +77,7 @@ const violations = [];
    await page.screenshot({path:path.join(output,vp.name+"-results.png"),fullPage:false});
    const firstDetails=page.locator("#list .tp19-property-row>.tp19-property-details").first();
    if(await firstDetails.count()){
-    await firstDetails.locator("summary").click();
+    await firstDetails.locator(":scope > summary").click();
     const expanded=await page.evaluate(()=>{
      const detail=document.querySelector("#list .tp19-property-details[open]");
      const privateTool=detail?.querySelector("details.tp21-private-tools");
@@ -86,7 +86,7 @@ const violations = [];
     console.log("DETAILS",vp.name,JSON.stringify(expanded));
     if(!expanded.expanded||!expanded.privateTool||!expanded.privateToolInitiallyClosed||expanded.width>vp.width+3)violations.push(vp.name+": details or private accordion issue "+JSON.stringify(expanded));
     await page.screenshot({path:path.join(output,vp.name+"-details.png"),fullPage:false});
-    await firstDetails.locator("summary").click();
+    await firstDetails.locator(":scope > summary").click();
    }
 
    const other=page.locator("#list .tp19-property-row .tp20-more summary").first();
