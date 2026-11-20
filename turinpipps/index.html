@@ -905,6 +905,7 @@ async function load(){
  if(listings.status==='fulfilled'){
    var j=listings.value;
    remote=Array.isArray(j)?j:(Array.isArray(j.listings)?j.listings:[]);
+   memoListings=null; // Invalidate any snapshot calculated while network data was pending.
    lastUpdate=j.updated_at||'';
  }else{
    // Non cancellare gli annunci già visualizzati se una richiesta temporanea fallisce.
@@ -918,6 +919,7 @@ async function load(){
  renderReport();
  el('updated').textContent=lastUpdate?'Ultimo aggiornamento '+new Date(lastUpdate).toLocaleString('it-IT'):'Ricerca in attesa di dati';
  renderResults();renderSaved();if(tab==='sources')renderSources();
+ window.dispatchEvent(new Event('turinpipps:listings-updated'));
 }
 document.addEventListener('click',async function(e){var n=e.target.closest('[data-nav]');if(n){nav(n.dataset.nav);return}var b=e.target.closest('[data-action]');if(!b)return;var a=all().find(function(x){return x.url===b.dataset.url});if(!a)return;var f=flag(a.url);var previousFlag=Object.assign({},f);if(b.dataset.action==='copy'){copy(message(a));return}if(b.dataset.action==='compare'){if(!f.compare&&all().filter(function(x){return !!flag(x.url).compare}).length>=4){alert('Puoi confrontare al massimo 4 immobili. Deseleziona prima un altro.');return}f.compare=!f.compare;}
 if(b.dataset.action==='visit'){openVisitEditor(a,f);return;}
