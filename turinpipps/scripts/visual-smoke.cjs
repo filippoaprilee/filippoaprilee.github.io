@@ -31,6 +31,15 @@ const violations = [];
    await page.goto(URL,{waitUntil:"domcontentloaded",timeout:30000});
    await page.waitForFunction(()=>document.querySelector("#tp20-total-homes")?.textContent?.trim() !== "—",{timeout:25000}).catch(()=>{});
    await page.waitForTimeout(1800);
+   const diagnostic = await page.evaluate(() => {
+     const dataCount=window.TurinPippsUXV3?.getListings?.()?.length || 0;
+     let refreshError=null;
+     try { window.TurinPippsV10?.refresh?.() } catch(error){refreshError=error.message||String(error)}
+     for(const dialog of document.querySelectorAll('dialog[open]')){try{dialog.close()}catch{}}
+     return {dataCount,refreshError,homeText:document.querySelector('#tp20-total-homes')?.textContent};
+   });
+   console.log("DIAGNOSTIC",vp.name,JSON.stringify(diagnostic));
+   if(diagnostic.refreshError)violations.push(vp.name+": Home update JS error: "+diagnostic.refreshError);
    const home = await page.evaluate(() => ({
     count: Number(document.querySelector("#tp20-total-homes")?.textContent||0),
     preview: document.querySelectorAll("#tp10-home-options .tp20-shortlist-row").length,
