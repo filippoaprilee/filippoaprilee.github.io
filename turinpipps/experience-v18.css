@@ -54,7 +54,7 @@ html[data-tp-theme] #tp9-main #tp10-home .tp18-home-next-inner{
 html[data-tp-theme] #tp9-main #tp10-home .tp18-home-next-copy{
  min-width:0!important;flex:1!important;
 }
-html[data-tp-theme] #tp9-main #tp10-home .tp18-home-next-copy h3{
+html[data-tp-theme] #tp9-main #tp10-home .tp18-home-next-copy h2{
  font-size:17px!important;font-weight:680!important;letter-spacing:-.02em!important;
  margin:0 0 5px!important;color:var(--tp18-ink)!important;
 }
@@ -833,4 +833,14 @@ html[data-tp-theme] #tp9-global-footer.tp18-footer nav a:is(:hover,:focus-visibl
  html[data-tp-theme] #tp9-main .tp18-journey-empty *{
   transition:none!important;animation:none!important;
  }
+}
+
+/* Notification messages always align to the reading edge, including unread items. */
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section .tp-v5-alert,
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section .tp-v5-alert>div,
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section .tp-v5-alert :is(b,p,.tp-v5-alert-meta){
+ text-align:left!important;
+}
+html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section .tp-v5-alert-actions{
+ justify-content:flex-start!important;
 }
