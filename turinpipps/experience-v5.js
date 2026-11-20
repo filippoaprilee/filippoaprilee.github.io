@@ -142,7 +142,14 @@ function renderProfile(){
  '<label class="tp-v5-check"><input type="checkbox" id="tp14-release-email" '+(p.release_email_enabled?'checked':'')+(p.email_confirmed?'':' disabled')+'><span><b>Aggiornamenti via email</b><small>'+(p.email_confirmed?'Solo con il tuo consenso.':'Prima verifica il tuo indirizzo email.')+'</small></span></label>'+
  '<label class="tp-v5-check"><input type="checkbox" id="tp14-release-push" '+(p.release_push_enabled?'checked':'')+'><span><b>Aggiornamenti via push</b><small>Richiedono anche l’attivazione su questo dispositivo.</small></span></label></div>'+
  '<div class="tp17-pref-footer"><div><button class="tp-v5-primary" id="tp-v5-profile-save" type="button">Salva preferenze</button><button class="tp-v5-secondary" id="tp-v5-send-mail" type="button">Invia riepilogo ora</button></div><p id="tp-v5-profile-message" class="tp-v5-status" role="status" aria-live="polite"></p></div>';
- $('#tp-v5-frequency').value=p.digest_frequency||'daily';
+ $('#tp-v5-frequency').value=p.digest_enabled?(p.digest_frequency||'daily'):'off';
+ $('#tp-v5-digest-on').addEventListener('change',function(){
+  if(this.checked&&$('#tp-v5-frequency').value==='off')$('#tp-v5-frequency').value='daily';
+  if(!this.checked)$('#tp-v5-frequency').value='off';
+ });
+ $('#tp-v5-frequency').addEventListener('change',function(){
+  $('#tp-v5-digest-on').checked=this.value!=='off';
+ });
  $('#tp-v5-profile-save').addEventListener('click',saveProfile);
  $('#tp-v5-send-mail').addEventListener('click',requestMail);
 }
@@ -194,6 +201,7 @@ async function requestMail(){
 function renderAlerts(){
  var root=$('#tp-v5-alert-list'),count=state.alerts.filter(function(x){return !x.read_at}).length;
  if(!root)return;
+ var readAll=$('#tp-v6-alert-readall');if(readAll)readAll.disabled=count===0;
  var badge=$('#tp-v5-unread');if(badge){badge.hidden=count===0;badge.textContent=Math.min(count,99)}
  if(!session()){root.innerHTML='<div class="tp-v5-empty">Accedi per vedere i tuoi avvisi.</div>';return}
  if(!state.alerts.length){root.innerHTML='<div class="tp-v5-empty"><i class="fa-regular fa-bell-slash"></i><h3>Nessuna notifica</h3><p>Qui compariranno gli avvisi pertinenti alla tua ricerca.</p></div>';return}
