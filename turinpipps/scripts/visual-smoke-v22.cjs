@@ -32,7 +32,14 @@ const violations = [];
    page.on("pageerror", error => errors.push(error.message));
    await page.goto(URL,{waitUntil:"domcontentloaded",timeout:30000});
    await page.waitForFunction(()=>document.querySelector("#tp20-total-homes")?.textContent?.trim() !== "—",{timeout:25000}).catch(()=>{});
-   await page.waitForTimeout(1800);
+   await page.waitForTimeout(250);
+   // The home counter can briefly be 0 while the asynchronous listings request is resolving.
+   // Wait for the underlying public collection and the rendered summary, not an arbitrary delay.
+   await page.waitForFunction(()=>{
+     const count=window.TurinPippsUXV3?.getListings?.()?.length||0;
+     const home=Number(document.querySelector("#tp20-total-homes")?.textContent||0);
+     return count>=20&&home>=20;
+   },{timeout:20000}).catch(()=>{});
    const diagnostic = await page.evaluate(() => {
      const dataCount=window.TurinPippsUXV3?.getListings?.()?.length || 0;
      const beforeRefresh=document.querySelector("#tp20-total-homes")?.textContent;
