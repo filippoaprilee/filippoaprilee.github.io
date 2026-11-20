@@ -1,15 +1,15 @@
 {
-  "version": "20.0.0",
-  "published_at": "2026-11-20T10:19:26.700Z",
-  "title": "TurinPipps 20 · Ricerca, confronto e contatti più leggibili",
-  "summary": "Risolti i conflitti tra versioni e il mancato aggiornamento iniziale della Home. Annunci e filtri più leggibili su desktop e smartphone, menu Altro senza overflow, Account senza duplicazioni e Contatti e visite senza vecchi contenitori.",
+  "version": "21.0.0",
+  "published_at": "2026-11-20T15:04:28.510Z",
+  "title": "TurinPipps 21 · Design uniforme e percorsi più chiari",
+  "summary": "Rifacimento del sistema visivo: palette chiara/scura armonizzata, Home con riepilogo e annunci reali, elenco immobili leggibile, dettagli a richiesta, Contatti e visite senza riquadri vuoti, Preferenze e Notifiche ordinate su desktop e mobile.",
   "highlights": [
-    "Home collegata agli annunci caricati realmente e anteprima fino a cinque immobili, anche quando nessuno rientra in tutti i criteri",
-    "Eliminata la riscrittura del titolo Home da una versione precedente",
-    "Desktop con larghezze contenute, caratteri leggibili, gerarchia di prezzi e titoli e miglior uso dello spazio",
-    "Navigazione dei risultati e quattro filtri sempre leggibili su mobile",
-    "Menu Altre azioni espandibile all'interno della scheda, senza popup tagliati fuori viewport",
-    "Contatti e visite senza vecchio pannello vuoto e Account con email non duplicata",
-    "Tema chiaro e scuro con contrasto migliore, stile CSS rigenerato da sorgenti versionate"
+    "Home con gerarchia netta, quattro annunci reali e budget integrato",
+    "Ricerca immobili in elenco con prezzo, fonte, azioni e verifiche differenziate",
+    "Dettagli e controlli personali separati in due pannelli espandibili",
+    "Contatti e visite con percorso in tre fasi e stati vuoti comprensibili",
+    "Preferenze di ricerca come modulo a sezioni, non una pila di card",
+    "Notifiche divise fra attività, consensi e dispositivo, con contenuti accessibili",
+    "Tema chiaro e scuro con palette coerente, tablet e smartphone adattivi"
   ]
 }
