@@ -37,31 +37,46 @@ function card(a,c,stage){
  decisions.map(d=>'<option value="'+d[0]+'"'+(d[0]===status?" selected":"")+'>'+d[1]+'</option>').join("")+'</select></label></article>';
 }
 function render(node){
- let c=context();if(!node||!c)return;
- let {groups,tracked}=group(c);
- let future=tracked.filter(a=>{
-  let f=flag(c,a.url);return f.visitStatus==="programmata"&&Date.parse(f.visitAt)>Date.now()
- }).sort((a,b)=>Date.parse(flag(c,a.url).visitAt)-Date.parse(flag(c,b.url).visitAt));
- let contactCount=tracked.filter(a=>flag(c,a.url).contact).length;
- let metrics=[[tracked.length,"Case seguite"],[contactCount,"Contatti"],[future.length,"Visite future"],[groups.decisions.length,"Decisioni"]];
- let first=future[0];
- // Never suggest restarting from zero when the user already has a contact or reply.
+ const c=context();if(!node||!c)return;
+ const {groups,tracked}=group(c);
+ const future=tracked.filter(a=>{const f=flag(c,a.url);return f.visitStatus==="programmata"&&Date.parse(f.visitAt)>Date.now()})
+  .sort((a,b)=>Date.parse(flag(c,a.url).visitAt)-Date.parse(flag(c,b.url).visitAt));
+ const contactCount=tracked.filter(a=>flag(c,a.url).contact).length;
+ const replies=groups.replies.length,ready=groups.saved.length;
+ const active=stages.filter(stage=>groups[stage[0]].length>0);
+ if(!tracked.length){
+  node.innerHTML='<section class="tp18-journey-empty"><div class="tp18-empty-symbol"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i></div>'+
+   '<span class="tp17-eyebrow">IL TUO PERCORSO</span><h2>Le tue visite iniziano da una casa salvata</h2>'+
+   '<p>Quando salvi un immobile o contatti un inserzionista, lo ritrovi qui con note, risposte e appuntamenti. Non serve compilare nulla in anticipo.</p>'+
+   '<button type="button" class="button primary" data-nav="results">Cerca un immobile <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></section>';
+  return;
+ }
  let step;
- if(first)step={title:first.title,text:"Prossima visita: "+visitDate(flag(c,first.url).visitAt),label:"Aggiungi al calendario",attr:'data-tp7-ics="'+escapeHtml(first.url)+'"'};
- else if(groups.replies.length)step={title:"Hai una risposta da gestire",text:groups.replies.length+" "+(groups.replies.length===1?"contatto richiede":"contatti richiedono")+" un seguito. Puoi annotare le condizioni o valutare una visita.",label:"Apri risposte",attr:'data-tp7-jump="replies"'};
- else if(groups.saved.length)step={title:"Valuta le case salvate",text:groups.saved.length+" "+(groups.saved.length===1?"casa è pronta":"case sono pronte")+" per controllare costi e proprietario prima di contattare.",label:"Vedi case da contattare",attr:'data-tp7-jump="saved"'};
- else if(groups.contact.length)step={title:"Contatto in attesa di risposta",text:"Hai già contattato "+groups.contact.length+" "+(groups.contact.length===1?"inserzionista.":"inserzionisti.")+" Segna la risposta quando arriva, senza ricominciare dai salvati.",label:"Apri contatti",attr:'data-tp7-jump="contact"'};
- else if(groups.decisions.length||groups.visits.length)step={title:"Rivedi le tue case",text:"Hai già immobili nel percorso. Consulta appuntamenti ed esiti per decidere il prossimo passo.",label:"Apri il percorso",attr:'data-tp7-jump="'+(groups.visits.length?"visits":"decisions")+'"'};
- else step={title:"Inizia dalla ricerca",text:"Trova una casa, salvala e poi segui contatto, risposta e visita. Non devi compilare tutto subito.",label:"Esplora immobili",attr:'data-nav="results"'};
- let summary='<div class="tp7-summary"><div class="tp7-metrics">'+metrics.map(m=>'<div><strong>'+m[0]+'</strong><span>'+m[1]+'</span></div>').join("")+'</div>'+
- '<div class="tp7-next"><small>IL PROSSIMO PASSO</small><strong>'+escapeHtml(step.title)+'</strong><span>'+
- escapeHtml(step.text)+'</span><button type="button" class="button primary" '+step.attr+'>'+escapeHtml(step.label)+'</button></div></div>';
- // Active stages first; empty phases remain available, but condensed.
- const active=stages.filter(x=>groups[x[0]].length),empty=stages.filter(x=>!groups[x[0]].length);
- let cols=active.map(x=>'<section class="tp7-stage tp13-stage-active" data-tp7-stage="'+x[0]+'"><header><b>'+x[1]+'</b><span>'+groups[x[0]].length+'</span></header><p>'+x[2]+'</p><div class="tp7-list">'+groups[x[0]].map(a=>card(a,c,x[0])).join("")+'</div></section>').join("")+
- empty.map(x=>'<details class="tp7-stage tp13-stage-empty" data-tp7-stage="'+x[0]+'"><summary><strong>'+x[1]+'</strong><span>0</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary><p>'+x[2]+'</p><div class="tp7-empty">Non ci sono ancora immobili in questa fase.</div></details>').join("");
- node.innerHTML=summary+'<div class="tp7-board">'+cols+'</div><div class="tp7-guide"><b>Un percorso semplice</b><p>Da contattare → Risposta → Visita → Decisione. Le fasi con zero immobili sono ridotte per lasciare spazio a quelle attive.</p><button class="button" data-nav="results">Cerca altri immobili</button></div>';
+ if(future.length)step={heading:"Hai una visita in programma",description:"Prossimo appuntamento: "+visitDate(flag(c,future[0].url).visitAt),label:"Aggiungi al calendario",attribute:'data-tp7-ics="'+escapeHtml(future[0].url)+'"'};
+ else if(replies)step={heading:"Rispondi ai contatti",description:replies+(replies===1?" risposta da valutare":" risposte da valutare")+". Controlla le condizioni e valuta una visita.",label:"Vai alle risposte",attribute:'data-tp7-jump="replies"'};
+ else if(groups.contact.length)step={heading:"Controlla i contatti aperti",description:groups.contact.length+(groups.contact.length===1?" inserzionista contattato":" inserzionisti contattati")+". Segna le risposte quando arrivano.",label:"Apri i contatti",attribute:'data-tp7-jump="contact"'};
+ else if(ready)step={heading:"Hai case da valutare",description:"Confronta costi, inserzionista e disponibilità prima di prendere contatto.",label:"Apri i salvati",attribute:'data-tp7-jump="saved"'};
+ else step={heading:"Rivedi gli appuntamenti",description:"Tieni traccia di visite, decisioni e note delle case già valutate.",label:"Vai al percorso",attribute:'data-tp7-jump="'+(groups.visits.length?"visits":"decisions")+'"'};
+ const metrics='<div class="tp18-journey-numbers" role="group" aria-label="Stato del percorso">'+
+  '<span><b>'+tracked.length+'</b> '+(tracked.length===1?'casa seguita':'case seguite')+'</span>'+
+  '<span><b>'+contactCount+'</b> '+(contactCount===1?'contatto':'contatti')+'</span>'+
+  '<span><b>'+future.length+'</b> '+(future.length===1?'visita prevista':'visite previste')+'</span></div>';
+ const next='<section class="tp18-journey-next"><div><span class="tp17-eyebrow">DA FARE ORA</span>'+
+  '<h2>'+escapeHtml(step.heading)+'</h2><p>'+escapeHtml(step.description)+'</p></div>'+
+  '<button type="button" class="button primary" '+step.attribute+'>'+escapeHtml(step.label)+'</button></section>';
+ const sections=active.map(stage=>{
+  const list=groups[stage[0]];
+  return '<section class="tp7-stage tp18-stage" data-tp7-stage="'+stage[0]+'">'+
+   '<header><h3>'+escapeHtml(stage[1])+'</h3><span>'+list.length+'</span></header>'+
+   '<div class="tp18-stage-list">'+list.map(a=>card(a,c,stage[0])).join("")+'</div></section>';
+ }).join("");
+ const remaining=stages.filter(stage=>!groups[stage[0]].length);
+ const phases=remaining.length?'<details class="tp18-empty-phases"><summary>Mostra le fasi senza immobili ('+remaining.length+')</summary>'+
+  '<p>'+remaining.map(s=>escapeHtml(s[1])).join(' · ')+'</p></details>':'';
+ node.innerHTML='<div class="tp18-journey-header">'+metrics+next+'</div>'+
+  '<div class="tp18-active-stages">'+sections+'</div>'+phases;
 }
+
 function ics(url){
  const c=context();if(!c)return;
  const a=c.rows.find(x=>x.url===url);if(!a)return;
