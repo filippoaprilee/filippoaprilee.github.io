@@ -346,11 +346,6 @@ function simplifyJourney(){
   const lead=$(".tp-page-lead p",saved);if(lead)lead.textContent="Gli annunci che hai contrassegnato come salvati. Le case già contattate sono anche in Organizza.";
   const other=$(".tp-page-lead>button",saved);if(other)other.setAttribute("aria-label","Torna alla ricerca di altri immobili");
  }
- const home=$("#view-home");
- if(home){
-  const title=$(".tp10-home-head h1",home);if(title)title.innerHTML="La tua ricerca casa, <span>in un unico posto.</span>";
-  const summary=$(".tp10-home-head p",home);if(summary)summary.textContent="Confronta le opportunità, verifica i dati mancanti e segui i contatti senza perdere il filo.";
- }
 }
 /** The old welcome/login modals should never be reopened by the theme switch. */
 function improveThemeDetails(){
