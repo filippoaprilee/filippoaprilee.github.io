@@ -9,10 +9,13 @@ async function test(width,height,variant){
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1});
  const page=await context.newPage(),errors=[];
+ page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);
+ await page.addInitScript(()=>{try{localStorage.setItem('turinpipps.welcome.seen.v11','1');sessionStorage.setItem('turinpipps-guest-session','1')}catch(_){}});
  page.on('pageerror',error=>errors.push(String(error.message||error)));
  await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
- await page.waitForFunction(()=>document.body.classList.contains('tp-ready'),{timeout:25000}).catch(()=>{});
- await page.waitForTimeout(900);
+ await page.waitForFunction(()=>document.body.classList.contains('tp-ready'),null,{timeout:12000}).catch(()=>{});
+ await page.evaluate(()=>document.querySelectorAll('dialog[open]').forEach(d=>{try{d.close()}catch(_){}}));
+ await page.waitForTimeout(400);
  async function check(name,pass,detail){
   observations.push({variant,name,pass:Boolean(pass),detail});
   if(!pass)failures.push(variant+': '+name+(detail?' — '+detail:''));
@@ -47,12 +50,12 @@ async function test(width,height,variant){
    await row.locator('[data-action="save"]').count()>0 &&
    await row.locator('.tp19-open').count()>0);
   const details=row.locator('.tp19-property-details');
-  await details.locator('summary').click();
+  await details.locator('summary').click({timeout:5000});
   await check('expanded details visible',await details.evaluate(n=>n.open));
   await page.screenshot({path:path.join(root,variant+'-detail.png'),fullPage:false});
-  await details.locator('summary').click();
+  await details.locator('summary').click({timeout:5000});
   const menu=row.locator('.tp19-more');
-  await menu.locator('summary').click();
+  await menu.locator('summary').click({timeout:5000});
   await check('action menu fits viewport',await menu.locator('.tp-card-menu-items').evaluate(el=>{
    const r=el.getBoundingClientRect();
    return r.left>=-1&&r.right<=innerWidth+1&&r.width>100;
@@ -68,7 +71,7 @@ async function test(width,height,variant){
  const tabs=page.locator('#tp20-notification-tabs [role="tab"]');
  await check('notification tabs present',await tabs.count()===3);
  if(await tabs.count()===3){
-  await page.locator('#tp20-tab-preferences').click();
+  await page.locator('#tp20-tab-preferences').click({timeout:5000});
   await check('preferences tab changes panel',await page.locator('.tp17-preferences-section').evaluate(el=>!el.classList.contains('tp20-tab-hidden')));
   await check('inbox tab gets hidden',await page.locator('.tp17-inbox-section').evaluate(el=>el.classList.contains('tp20-tab-hidden')));
  }
