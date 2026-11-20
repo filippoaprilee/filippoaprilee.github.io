@@ -26,7 +26,7 @@ const violations = [];
    const context = await browser.newContext({ viewport:{width:vp.width,height:vp.height},deviceScaleFactor:1,reducedMotion:"reduce" });
    const page = await context.newPage();
    await page.addInitScript(() => {
-    try { localStorage.setItem("turinpipps.welcome.seen.v11", "1"); } catch {}
+    try { localStorage.setItem("turinpipps.welcome.seen.v11", "1"); localStorage.setItem("turinpipps.onboard.v4", "1"); } catch {}
    });
    const errors=[];
    page.on("pageerror", error => errors.push(error.message));
