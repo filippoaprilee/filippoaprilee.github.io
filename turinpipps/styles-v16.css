@@ -6358,3 +6358,68 @@ html[data-tp-theme="dark"]{
   align-self:flex-start!important;
  }
 }
+
+/* V20: never keep a two-column notification grid in a narrow viewport.
+ * Previous version's higher-specificity desktop rule caused text overlap. */
+@media(max-width:1100px){
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-notification-layout{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"inbox" "preferences" "device"!important;
+  grid-auto-rows:auto!important;
+  column-gap:0!important;row-gap:0!important;
+  align-items:stretch!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-notification-layout>.tp-v5-panel{
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  margin:0!important;padding:19px 0 22px!important;
+  border:0!important;border-top:1px solid var(--tp19-line)!important;
+  background:transparent!important;box-shadow:none!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-section{
+  grid-area:inbox!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-preferences-section{
+  grid-area:preferences!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-device-section{
+  grid-area:device!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-section-heading{
+  display:flex!important;gap:11px!important;align-items:flex-start!important;
+  margin-bottom:14px!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-section-heading>div{
+  min-width:0!important;flex:1!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-section-heading h2{
+  font-size:19px!important;line-height:1.3!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-section-heading p{
+  line-height:1.6!important;max-width:48ch!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-toolbar{
+  display:flex!important;flex-wrap:wrap!important;gap:7px!important;
+  margin:0 0 12px!important;padding:0!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-inbox-toolbar button{
+  flex:0 1 auto!important;min-height:42px!important;
+  padding:8px 12px!important;white-space:normal!important;
+ }
+}
+@media(max-width:700px){
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-notification-layout{
+  display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;gap:0!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-notification-layout>.tp-v5-panel{
+  width:100%!important;flex:0 0 auto!important;
+  position:static!important;overflow:visible!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-device-section .tp-v6-push-actions{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ }
+ html[data-tp-theme] #tp9-main #view-notifications .tp17-device-section .tp-v6-push-actions button{
+  width:100%!important;min-height:44px!important;
+ }
+}
