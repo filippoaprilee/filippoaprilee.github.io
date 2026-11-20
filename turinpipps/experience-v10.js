@@ -87,73 +87,86 @@ function navigation(){
  nav.dataset.tp10Ready="1";
 }
 function homeMarkup(){
- const home=$("#view-home");if(!home||$("#tp10-home"))return;
- const s=document.createElement("section");s.id="tp10-home";s.className="tp19-home";
- s.innerHTML='<header class="tp10-home-head tp19-home-intro"><div class="tp19-home-copy">'+
-  '<span class="tp10-overline"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</span>'+
-  '<h1>Trova una casa.<br>Il resto, con ordine.</h1>'+
-  '<p>Annunci, confronti e contatti organizzati per scegliere senza perdere informazioni importanti.</p>'+
-  '<div class="tp19-home-cta"><button type="button" class="button primary" data-nav="results"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Cerca immobili</button>'+
-  '<button type="button" class="tp19-link-button" data-nav="settings">Modifica criteri <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>'+
-  '<div class="tp19-home-context"><span>Budget mensile <strong id="tp10-budget">—</strong></span><span id="tp10-home-scan">Ultimo aggiornamento da verificare</span></div></div></header>'+
-  '<div id="tp10-metrics" class="tp10-metrics tp19-home-stats" aria-live="polite"></div>'+
-  '<div class="tp10-home-sections tp19-home-sections">'+
-   '<aside class="tp10-home-next tp18-home-next tp19-home-next" hidden><div id="tp10-next-step"></div></aside>'+
-   '<section class="tp10-home-list tp19-home-list"><div class="tp10-section-title"><div>'+
-     '<span class="tp10-overline">DA ESPLORARE</span><h2>Case da considerare</h2>'+
-     '<p>Una selezione preliminare. Prezzi e disponibilità restano da verificare.</p></div>'+
-     '<button type="button" class="tp10-text-button" data-nav="results">Tutti gli annunci <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
-   '</div><div id="tp10-home-options"></div></section></div>';
- home.prepend(s);document.body.classList.add("tp10-active");
+ const view=$("#view-home");if(!view||$("#tp10-home"))return;
+ const wrapper=document.createElement("section");wrapper.id="tp10-home";wrapper.className="tp20-home";
+ wrapper.innerHTML='<header class="tp20-hero"><div class="tp20-hero-copy">'+
+ '<p class="tp20-overline"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</p>'+
+ '<h1>La casa giusta.<br><span>La ricerca più semplice.</span></h1>'+
+ '<p class="tp20-hero-desc">Le opportunità che trovi, i confronti che fai e i contatti da seguire. Tutto organizzato attorno alla tua prossima casa.</p>'+
+ '<div class="tp20-hero-buttons"><button type="button" class="button primary" data-nav="results">Esplora gli annunci <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
+ '<button type="button" class="tp20-link" data-nav="settings">Modifica la ricerca</button></div>'+
+ '</div><aside class="tp20-hero-status" aria-label="Stato attuale della ricerca">'+
+ '<span class="tp20-data-kicker">LA TUA RICERCA OGGI</span>'+
+ '<strong id="tp20-total" class="tp20-data-big">—</strong><span class="tp20-data-title">annunci in archivio</span>'+
+ '<div class="tp20-data-bottom"><span>Budget <b id="tp10-budget">—</b></span><span id="tp20-new">— nuovi negli ultimi 7 giorni</span></div>'+
+ '<p id="tp10-home-scan" class="tp20-data-scan">Ultimo controllo da verificare</p>'+
+ '</aside></header>'+
+ '<div class="tp20-home-body"><div class="tp20-section-header"><div>'+
+ '<span class="tp20-overline">PER COMINCIARE</span><h2 id="tp20-list-title">Le case da valutare</h2>'+
+ '<p id="tp20-list-caption">Prezzo e informazioni da confermare direttamente con la fonte.</p></div>'+
+ '<button type="button" data-nav="results" class="tp20-link">Vedi tutti gli immobili <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>'+
+ '<div id="tp10-home-options" class="tp20-homes-list" aria-live="polite"></div>'+
+ '<div class="tp20-home-footer"><div id="tp20-progress"></div>'+
+ '<div class="tp20-home-utility"><span>Da una casa interessante a una visita:</span>'+
+ '<a href="#" data-nav="saved">salva</a><span>·</span><a href="#" data-nav="compare">confronta</a><span>·</span><a href="#" data-nav="visits">organizza</a></div></div></div>';
+ view.prepend(wrapper);
+ document.body.classList.add("tp10-active");
 }
 function homeUpdate(){
- if(!$("#tp10-home"))return;
+ const root=$("#tp10-home"),apiRef=api();
+ if(!root||!apiRef)return;
  const items=all(),p=prefs(),flags=p.flags||{},budget=Number(p.budget)||700;
+ const total=$("#tp20-total"),budgetEl=$("#tp10-budget"),newEl=$("#tp20-new"),scanEl=$("#tp10-home-scan");
+ if(total)total.textContent=items.length.toLocaleString("it-IT");
+ if(budgetEl)budgetEl.textContent=formatEuro(budget);
  const new7=items.filter(a=>seen(a.seen||a.first_seen)>Date.now()-7*86400000).length;
+ if(newEl)newEl.textContent=new7?new7+" nuovi negli ultimi 7 giorni":"Nessun nuovo annuncio negli ultimi 7 giorni";
+ const scan=apiRef.getLiveScan?.();
+ const t=seen(scan?.finished_at||scan?.started_at);
+ if(scanEl)scanEl.textContent=t&&Date.now()-t<24*3600000?"Ultima scansione · "+date(t):"Ultima scansione da verificare";
+ const classify=a=>apiRef.classifyListing?.(a)?.status;
+ const selected=items.filter(a=>!flags[a.url]?.discard);
+ const inBudget=selected.filter(a=>Number(a.price)>0&&Number(a.price)<=budget);
+ const eligible=inBudget.filter(a=>classify(a)!=="excluded");
+ const rank=a=>{
+  const m=match(a,p);return Number(m?.score)||0;
+ };
+ const ordered=(eligible.length?eligible:inBudget.length?inBudget:selected)
+  .slice().sort((a,b)=>rank(b)-rank(a)||seen(b.seen)-seen(a.seen)).slice(0,4);
+ const title=$("#tp20-list-title"),caption=$("#tp20-list-caption");
+ if(title)title.textContent=eligible.length?"Da guardare per prime":items.length?"Parti da questi annunci":"La tua ricerca comincia qui";
+ if(caption)caption.textContent=eligible.length?
+  "Rientrano nei tuoi criteri preliminari. Verifica sempre disponibilità, locatore e spese.":
+  items.length?"Gli annunci seguenti possono non rispettare tutti i tuoi criteri. Controlla prezzo e zona prima di contattare.":
+  "Gli immobili compariranno qui quando saranno disponibili nuove rilevazioni.";
+ const container=$("#tp10-home-options");
+ if(!container)return;
+ container.innerHTML=ordered.map(a=>{
+  const f=flags[a.url]||{},price=Number(a.price)>0?formatEuro(a.price):"Prezzo da verificare";
+  const extra=Number(a.sqm)>0?" · "+safe(a.sqm)+" m²":"";
+  return '<article class="tp20-home-item"><div class="tp20-home-item-main">'+
+   '<span class="tp20-home-item-kicker">'+safe(a.zone||"Zona da verificare")+' · '+safe(a.source||"Fonte")+'</span>'+
+   '<h3>'+safe(a.title||"Annuncio senza titolo")+'</h3>'+
+   '<p>'+safe(a.expenses?"Spese dichiarate, da confermare":"Spese da chiarire")+extra+'</p></div>'+
+   '<div class="tp20-home-item-side"><strong>'+price+'</strong>'+
+   '<div><button type="button" class="tp20-save" data-action="save" data-url="'+safe(a.url)+'" aria-label="'+(f.saved?"Rimuovi dai salvati":"Salva immobile")+'"><i class="'+(f.saved?"fa-solid":"fa-regular")+' fa-heart" aria-hidden="true"></i></button>'+
+   '<a href="'+safe(a.url)+'" target="_blank" rel="noopener noreferrer" aria-label="Apri annuncio '+safe(a.title||"")+'">Vedi annuncio <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>'+
+   '</div></div></article>';
+ }).join("")||'<div class="tp20-home-empty"><h3>Nessun annuncio disponibile nella ricerca.</h3>'+
+ '<p>Puoi esplorare le fonti e modificare i criteri, senza perdere le tue preferenze.</p>'+
+ '<button type="button" data-nav="results" class="button primary">Vai agli immobili</button></div>';
  const saved=items.filter(a=>flags[a.url]?.saved).length;
- const compatible=items.filter(a=>Number(a.price)>0&&Number(a.price)<=budget&&api()?.classifyListing?.(a)?.status!=="excluded").length;
- $("#tp10-budget").textContent=formatEuro(budget);
- const counters=[[items.length,"annunci raccolti","results"],[compatible,"entro il budget","results"],[new7,"nuovi questa settimana","results"],[saved,"salvati","saved"]];
- const visible=counters.filter((c,i)=>i===0?c[0]>0:c[0]>0);
- $("#tp10-metrics").hidden=!visible.length;
- $("#tp10-metrics").innerHTML=visible.map(([n,label,target])=>
-  '<button type="button" class="tp19-home-stat" data-nav="'+target+'"><strong>'+n+'</strong><span>'+safe(label)+'</span></button>'
- ).join("");
- const scan=api()?.getLiveScan?.(),last=seen(scan?.finished_at||scan?.started_at);
- $("#tp10-home-scan").textContent=last&&Date.now()-last<3*3600000?'Ricerca aggiornata · '+date(last):"Ultima scansione da verificare";
- const classify=a=>api()?.classifyListing?.(a)?.status;
- const rank=a=>match(a,p).score||0;
- const good=items.filter(a=>!flags[a.url]?.discard&&Number(a.price)>0&&Number(a.price)<=budget&&classify(a)!=="excluded")
-  .sort((a,b)=>rank(b)-rank(a)||seen(b.seen)-seen(a.seen)).slice(0,3);
- const other=items.filter(a=>!flags[a.url]?.discard&&classify(a)!=="excluded")
-  .sort((a,b)=>rank(b)-rank(a)||seen(b.seen)-seen(a.seen)).slice(0,3);
- const selected=good.length?good:other;
- $("#tp10-home-options").innerHTML=selected.map(a=>{
-  const f=flags[a.url]||{},owner=a.private_status==="confirmed"&&a.verification_level==="owner_confirmed"?"Identità confermata":"Identità da verificare";
-  return '<article class="tp10-home-option tp19-home-option">'+
-    '<div class="tp19-home-option-main"><span class="tp19-home-option-zone">'+safe(a.zone||"Zona da verificare")+' · '+safe(a.source||"Fonte")+'</span>'+
-    '<strong>'+safe(a.title||"Annuncio")+'</strong>'+
-    '<small>'+owner+'</small></div>'+
-    '<div class="tp19-home-option-end"><b>'+(Number(a.price)>0?formatEuro(a.price):"Canone n.d.")+'</b>'+
-    '<div><button class="tp19-home-save" type="button" data-action="save" data-url="'+safe(a.url)+'" aria-label="'+(f.saved?"Rimuovi dai salvati":"Salva immobile")+'"><i class="'+(f.saved?"fa-solid":"fa-regular")+' fa-heart" aria-hidden="true"></i></button>'+
-    '<a href="'+safe(a.url)+'" target="_blank" rel="noopener noreferrer">Apri <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></article>';
- }).join("")||'<div class="tp19-home-empty"><strong>Nessuna proposta in linea con questi criteri.</strong>'+
-  '<p>Puoi consultare anche annunci con prezzo o informazioni ancora da chiarire.</p>'+
-  '<button type="button" data-nav="results" class="tp19-link-button">Consulta tutti gli annunci</button></div>';
- const contacted=items.filter(a=>flags[a.url]?.contact&&!flags[a.url]?.replyReceived).length,
-  replied=items.filter(a=>flags[a.url]?.replyReceived).length;
- const stage=replied?"reply":contacted?"contact":saved?"saved":"start";
- const guidance={
-  saved:["Rivedi i salvati","Confronta costi e condizioni prima di contattare.","Apri i salvati","saved"],
-  contact:["Hai contatti aperti","Controlla le risposte e prepara le prossime visite.","Gestisci contatti","visits"],
-  reply:["Hai risposte da valutare","Rivedi le condizioni proposte prima di fissare la visita.","Apri contatti","visits"]
- }[stage];
- const box=$(".tp19-home-next");
- if(box)box.hidden=!guidance;
- if(guidance)$("#tp10-next-step").innerHTML='<div class="tp18-home-next-inner"><div class="tp18-home-next-copy">'+
-  '<h2>'+safe(guidance[0])+'</h2><p>'+safe(guidance[1])+'</p></div>'+
-  '<button class="button tp18-next-cta" type="button" data-nav="'+guidance[3]+'">'+safe(guidance[2])+
-  ' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
+ const waiting=items.filter(a=>flags[a.url]?.contact&&!flags[a.url]?.replyReceived).length;
+ const replies=items.filter(a=>flags[a.url]?.replyReceived).length;
+ const progress=$("#tp20-progress");
+ if(progress){
+  const recommended=replies?["Hai "+replies+" risposte da valutare","visits"]:
+   waiting?["Stai aspettando "+waiting+" risposte","visits"]:
+   saved?["Hai "+saved+" case salvate","saved"]:null;
+  progress.innerHTML=recommended?'<button class="tp20-progress-link" type="button" data-nav="'+recommended[1]+'">'+
+   '<span><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+recommended[0]+'</span>'+
+   '<span>Continua <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span></button>':'';
+ }
 }
 
 function searchEnhance(){
