@@ -193,7 +193,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-width:650px){.tp-costbar{grid-template-columns:1fr}.tp-costbar>div{border-right:0;border-bottom:1px solid #e3e9f2;padding:9px 12px}.tp-costbar>div:last-child{border-bottom:0}}
 .tp-zones-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.tp-zones-choices label{font-size:11px;border:1px solid #e3e9f2;padding:7px 9px;border-radius:9px;display:flex;align-items:center;gap:5px;cursor:pointer;background:#fff}.tp-zones-choices input{accent-color:#5265dc}
 .tp-report-action{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.tp-report-action .note{font-size:11px}
-</style><link rel="stylesheet" href="./styles-v16.css?v=21.0.0">
+</style><link rel="stylesheet" href="./styles-v16.css?v=22.0.0">
 
 </head><body><a class="tp9-skip-link" href="#tp9-main">Salta al contenuto principale</a>
 <div class="tp-splash" id="tp-splash" role="status" aria-live="polite"><div class="tp-splash-center"><div class="tp-logo"><img src="./icon.svg" class="tp-brand-image" alt="" aria-hidden="true"></div><div class="tp-splash-name">TurinPipps</div><div class="tp-splash-caption">La ricerca casa, sempre con te</div><div class="tp-spinner" aria-label="Caricamento"></div><div class="tp-loading-label" id="tp-loading-label">Preparazione della ricerca…</div><div class="tp-progress-track" aria-hidden="true"><div class="tp-progress-bar"></div></div></div></div>
@@ -577,15 +577,15 @@ function card(a){
  var price=Number(a.price)||0,checks=cautionSignals(a),dupes=duplicateOf(a);
  var changed=priceChange(a),history=(a.price_history||[]).filter(function(h){return h&&Number(h.price)>0});
  var ownerConfirmed=a.private_status==='confirmed'&&a.verification_level==='owner_confirmed';
- var owner=ownerConfirmed?'Proprietario verificato':a.private_status==='source'?'Privato indicato dalla fonte':'Inserzionista non verificato';
+ var owner=ownerConfirmed?'Proprietario verificato':a.private_status==='source'?'Privato secondo la fonte':'Inserzionista da verificare';
  var source=esc(a.source||'Fonte non indicata'),zone=esc(a.zone||'Zona da verificare');
- var status=decision.status==='excluded'?'Fuori criteri':decision.status==='good'?'In linea con i criteri':'Informazioni da verificare';
+ var status=decision.status==='excluded'?'Fuori criteri':decision.status==='good'?'Compatibile':'Da verificare';
  var statusClass=decision.status==='excluded'?'tp19-status-warn':decision.status==='good'?'tp19-status-match':'tp19-status-neutral';
  var paid=price?Math.round(price).toLocaleString('it-IT')+' €':'Da verificare';
  var total=price?esc(cost.total)+' €/mese'+(cost.unknown?' + spese non note':''):'Non calcolabile';
  var units=[];
  if(Number(a.sqm)>0)units.push(esc(a.sqm)+' m²');
- if(a.expenses)units.push('Spese dichiarate');
+ if(a.expenses)units.push('Spese: vedi dettagli');
  else units.push('Spese da chiarire');
  if(Number(a.walking_minutes)>0&&a.route_checked_at)units.push(esc(a.walking_minutes)+' min a piedi dal Politecnico');
  var summary=units.map(function(x){return '<span>'+x+'</span>'}).join('');
@@ -596,7 +596,7 @@ function card(a){
  var checksHTML=checks.length?'<div class="tp19-detail-group"><h4>Prima di contattare</h4><ul>'+checks.slice(0,8).map(function(item){return '<li>'+esc(item)+'</li>'}).join('')+'</ul></div>':'';
  var route=a.address?'<a class="tp-intelmap" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/dir/?api=1&amp;origin='+encodeURIComponent(a.address+', Torino, Italia')+'&amp;destination='+encodeURIComponent('Politecnico di Torino, Corso Duca degli Abruzzi 24, Torino')+'&amp;travelmode=walking">Verifica percorso a piedi</a>':'';
  var notes=f.notes?'<div class="tp19-user-note"><i class="fa-regular fa-note-sticky" aria-hidden="true"></i>'+esc(f.notes)+'</div>':'';
- return '<article class="listing tp18-listing tp19-property-row">'+
+ return '<article class="listing tp18-listing tp19-property-row tp22-property-card">'+
   '<div class="body tp19-property-main">'+
    '<div class="tp19-property-meta"><span class="tp19-property-zone">'+zone+'</span><span aria-hidden="true">·</span><span>'+source+'</span></div>'+
    '<h3>'+esc(a.title||'Annuncio senza titolo')+'</h3>'+
@@ -617,7 +617,7 @@ function card(a){
      '<button class="button" data-action="discard" data-url="'+esc(a.url)+'">'+(f.discard?'Ripristina':'Scarta')+'</button>'+
     '</div></details></div></div>'+
   '<details class="tp-card-details tp18-card-details tp19-property-details">'+
-   '<summary><span>Esamina spese e verifiche</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+   '<summary><span>Dettagli, costi e verifiche</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
    '<div class="tp-card-expanded tp19-details-content">'+
     '<section class="tp19-detail-group"><h4>Descrizione della fonte</h4><p>'+esc(a.description||'La fonte non fornisce una descrizione dettagliata.')+'</p></section>'+
     '<section class="tp19-detail-group"><h4>Costi e dati</h4><dl>'+
