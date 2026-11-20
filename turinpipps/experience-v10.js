@@ -92,18 +92,18 @@ function homeMarkup(){
  view.innerHTML=
  '<header class="tp20-home-header">'+
   '<div class="tp20-home-heading"><div class="tp20-eyebrow"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</div>'+
-  '<h1>La tua ricerca a Torino</h1>'+
-  '<p>Annunci da fonti pubbliche, costi da chiarire e contatti da organizzare. Parti dagli immobili disponibili in archivio.</p>'+
+  '<h1>Una casa giusta.<br>Una ricerca più semplice.</h1>'+
+  '<p>Esplora le case raccolte, confronta i costi e organizza i contatti fino alla visita. Le informazioni da verificare restano sempre riconoscibili.</p>'+
   '<div class="tp20-home-primary-actions"><button type="button" data-nav="results" class="button primary"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Esplora gli immobili</button>'+
   '<button type="button" data-nav="settings" class="tp20-text-action">Modifica la ricerca <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>'+
   '<div class="tp20-home-overview" aria-label="Riepilogo della ricerca">'+
-   '<div><span>Annunci nell’archivio</span><strong id="tp20-total-homes">—</strong></div>'+
-   '<div><span>Budget massimo</span><strong id="tp10-budget">—</strong><small>Canone mensile, spese escluse</small></div>'+
+   '<div><span>Immobili raccolti</span><strong id="tp20-total-homes">—</strong></div>'+
+   '<div><span>Il tuo budget</span><strong id="tp10-budget">—</strong><small>Canone mensile, spese escluse</small></div>'+
    '<div class="tp20-home-scan" id="tp10-home-scan">Prezzi e disponibilità da verificare</div>'+
   '</div></header>'+
  '<div id="tp10-metrics" class="tp20-home-inline-summary" aria-live="polite"></div>'+
  '<section class="tp20-home-shortlist"><header class="tp20-home-list-heading">'+
-  '<div><div class="tp20-eyebrow">LA TUA RICERCA</div><h2 id="tp20-shortlist-title">Immobili da esplorare</h2>'+
+  '<div><div class="tp20-eyebrow">LA TUA RICERCA</div><h2 id="tp20-shortlist-title">Le case da cui iniziare</h2>'+
   '<p id="tp20-shortlist-description">Controlla sempre prezzo, disponibilità e condizioni con l’inserzionista.</p></div>'+
   '<button type="button" data-nav="results" class="tp20-text-action">Tutti gli annunci <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
  '</header><div id="tp10-home-options" class="tp20-home-list" aria-live="polite"></div></section>'+
@@ -130,6 +130,7 @@ function homeUpdate(){
  const summary=$("#tp10-metrics");
  if(summary){
   const itemsToShow=[
+   [eligible.length,"entro il budget e i criteri","results"],
    [saved.length,"salvati","saved"],
    [waiting.length+replied.length,"contatti aperti","visits"]
   ].filter(([n])=>n>0);
@@ -140,7 +141,7 @@ function homeUpdate(){
  // A search can be worthwhile even when no record passes every criterion.
  // Do not show a false empty state while there are real records to explore.
  const candidates=eligible.slice().sort((a,b)=>(match(b,p).score||0)-(match(a,p).score||0)||sortRecent(a,b));
- const featured=(candidates.length?candidates:items.slice().sort(sortRecent)).slice(0,5);
+ const featured=(candidates.length?candidates:items.slice().sort(sortRecent)).slice(0,4);
  const title=$("#tp20-shortlist-title"),desc=$("#tp20-shortlist-description");
  if(title)title.textContent=candidates.length?"Da valutare adesso":"Gli ultimi annunci raccolti";
  if(desc)desc.textContent=candidates.length?
@@ -252,8 +253,9 @@ function enhanceCards(){
    article.dataset.tp10Ready="1";
    const area=$(".tp18-tools-anchor",article),f=getFlag(a.url);
    if(area){
-    const tools=document.createElement("div");tools.className="tp18-personal-tools";
-    tools.innerHTML='<div class="tp18-detail-section tp18-your-evaluation"><h4>La tua valutazione privata</h4><p>Queste informazioni sono solo tue e non certificano l’annuncio.</p>'+
+    const tools=document.createElement("details");tools.className="tp18-personal-tools tp21-private-tools";
+    tools.innerHTML='<summary><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> La mia valutazione privata <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
+     '<div class="tp18-detail-section tp18-your-evaluation"><h4>Controlli e note personali</h4><p>Queste informazioni sono solo tue e non certificano l’annuncio.</p>'+
      checksForm(a,f)+'<div class="tp18-cost-planning">'+costForm(a,f)+'</div>'+stageTools(a,f)+
      '<p class="tp10-save-feedback" role="status" aria-live="polite"></p></div>';
     area.append(tools);
