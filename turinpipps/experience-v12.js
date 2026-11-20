@@ -180,6 +180,7 @@ function titleClean(text){
  return stripped||original;
 }
 function reconcileCard(article,map){
+ if(article.classList.contains("tp18-listing"))return;
  const btn=article.querySelector('[data-action="save"][data-url]');
  if(!btn)return;
  const record=map.get(btn.dataset.url);
