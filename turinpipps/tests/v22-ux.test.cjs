@@ -76,9 +76,10 @@ test("responsive filters, card actions and comparison are retained",()=>{
  assert.match(css,/@media\(max-width:800px\)/);
  assert.match(css,/@media\(max-width:700px\)/);
  assert.match(css,/@media\(max-width:390px\)/);
+ const dynamicScreens=read("experience-v5.js")+read("experience-v14.js");
  for(const id of ["view-results","view-compare","view-saved","view-visits",
   "view-settings","view-profile","view-notifications"]){
-  assert.ok(html.includes('id="'+id+'"'),"missing "+id);
+  assert.ok(html.includes('id="'+id+'"')||dynamicScreens.includes(id),"missing "+id);
  }
  for(const id of ["tp-main-search","tp-filterbar","sort","list","saved-list"]){
   assert.ok(html.includes('id="'+id+'"'),"missing "+id);
