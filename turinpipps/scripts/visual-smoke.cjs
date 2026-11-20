@@ -11,7 +11,7 @@ async function test(width,height,variant){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1});
  const page=await context.newPage(),errors=[];
  page.setDefaultTimeout(5000);page.setDefaultNavigationTimeout(15000);
- await page.addInitScript(()=>{try{localStorage.setItem('turinpipps.welcome.seen.v11','1');sessionStorage.setItem('turinpipps-guest-session','1')}catch(_){}});
+ await page.addInitScript(()=>{try{localStorage.setItem('turinpipps.welcome.seen.v11','1');localStorage.setItem('turinpipps.onboard.v4','1');sessionStorage.setItem('turinpipps-guest-session','1')}catch(_){}});
  page.on('pageerror',error=>errors.push(String(error.message||error)));
  await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction(()=>document.body.classList.contains('tp-ready'),null,{timeout:12000}).catch(()=>{});
