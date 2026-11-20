@@ -1,0 +1,44 @@
+name: TurinPipps v22 visual QA
+on:
+  push:
+    branches: [filippoaprilee]
+    paths:
+      - "turinpipps/**"
+      - ".github/workflows/turinpipps-v22-visual-qa.yml"
+  workflow_dispatch:
+jobs:
+  responsive-visual-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate JavaScript syntax and CSS compilation
+        run: |
+          node --check turinpipps/scripts/visual-smoke-v22.cjs
+          node --check turinpipps/experience-v10.js
+          node --check turinpipps/organize-v7.js
+          node --check turinpipps/experience-v14.js
+          node turinpipps/scripts/build-css.cjs --check
+          node --test turinpipps/tests/v22-ux.test.cjs
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local app server
+        run: |
+          python3 -m http.server 8787 --bind 127.0.0.1 > /tmp/turinpipps-http.log 2>&1 &
+          sleep 2
+      - name: Verify real pages, mobile actions and light/dark themes
+        run: node turinpipps/scripts/visual-smoke-v22.cjs
+      - name: Upload all viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: turinpipps-v22-visual-qa
+          path: turinpipps/_visual-qa-v22/*.png
+          if-no-files-found: warn
