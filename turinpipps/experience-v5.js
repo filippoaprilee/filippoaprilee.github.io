@@ -20,7 +20,7 @@ async function rest(path,opts){
    'Accept':'application/json','Prefer':opts&&opts.prefer||'return=representation'},
   body:opts&&opts.body?JSON.stringify(opts.body):undefined,cache:'no-store'
  });
- if(!r.ok){var txt=await r.text();throw Error('Sincronizzazione non riuscita ('+r.status+')'+(txt&&r.status<500?': '+txt.slice(0,140):''))}
+ if(!r.ok){var txt=await r.text();throw Error(r.status===403?'Non è stato possibile salvare. Controlla i permessi del tuo account.':r.status===401?'Sessione scaduta. Accedi di nuovo.':'Operazione non riuscita. Riprova tra poco. ('+r.status+')')}
  return r.status===204?[]:await r.json();
 }
 async function functionCall(name,action,payload){
@@ -85,18 +85,23 @@ function build(){
    '<button class="button" id="tp-v5-more-profile" data-nav="profile"><i class="fa-regular fa-user"></i> Profilo e account</button>';
   more.prepend(two);
  }
- section('profile','Il tuo profilo','ACCOUNT PERSONALE',
-  'Il tuo account, i riepiloghi automatici e le impostazioni per restare aggiornato.',
-  '<div id="tp-v5-profile-body" class="tp-v5-panel"><div class="tp-v5-empty">Accedi per gestire il tuo profilo e i riepiloghi.</div></div>'+
-  '<div class="tp-v5-quick-install tp-v5-panel"><h2>TurinPipps sul tuo iPhone</h2><p>In Safari scegli Condividi → Aggiungi alla schermata Home. Le notifiche push richiedono l’app installata e il tuo consenso.</p>'+
-  '<div class="tp-v5-row-actions"><a href="./today.html" class="tp-v5-link">Panoramica rapida</a><a href="./widget-iphone.html" class="tp-v5-link">Installa su iPhone</a><button data-nav="notifications" class="tp-v5-secondary">Gestisci notifiche</button></div>'+
-  '<p class="tp-v5-hint">TurinPipps si installa da Safari come app Web. Senza un’app iOS con estensione WidgetKit non può creare un widget nativo aggiornabile nella Home; la panoramica rapida è disponibile dall’app.</p></div>');
- section('notifications','Le tue notifiche','AGGIORNAMENTI',
-  'Nuovi annunci interessanti, variazioni importanti e promemoria. Solo avvisi rilevanti.',
-  '<div class="tp-v5-panel tp-v5-notify-controls"><div><h2>Avvisi personalizzati</h2><p>Le notifiche interne sono associate al tuo account. Puoi scegliere se attivare anche gli avvisi sul dispositivo.</p></div>'+
-   '<div class="tp-v6-push-actions"><button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button><button id="tp-v6-push-disable" class="tp-v5-secondary" type="button">Disattiva su questo dispositivo</button><button id="tp-v7-push-test" class="tp-v5-primary" type="button" hidden><i class="fa-regular fa-paper-plane"></i> Invia notifica di prova</button></div>'+
-   '<p id="tp-v5-push-message" class="tp-v5-status" aria-live="polite"></p></div>'+
-  '<div class="tp-v5-panel"><div class="tp-v5-list-title"><h2>Centro notifiche</h2><div class="tp-v6-alert-actions"><button id="tp-v6-alert-readall" class="tp-v5-secondary" type="button">Segna tutte lette</button><button id="tp-v5-alert-refresh" class="tp-v5-secondary" type="button">Aggiorna</button></div></div><div id="tp-v5-alert-list" class="tp-v5-empty">Accedi per visualizzare le notifiche.</div></div>');
+ section('profile','Il tuo account','ACCOUNT E SICUREZZA',
+  'Identità, accesso e protezione dei tuoi dati. Gli avvisi si configurano in Notifiche.',
+  '<div id="tp-v5-profile-body" class="tp-v5-panel tp17-account-surface"><div class="tp-v5-empty">Caricamento account…</div></div>'+
+  '<section class="tp-v5-quick-install tp-v5-panel tp17-install"><div class="tp17-section-heading"><div><span class="tp17-eyebrow">ACCESSO RAPIDO</span><h2>TurinPipps su iPhone</h2><p>Aggiungi il sito alla schermata Home da Safari per aprirlo come un’app.</p></div><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></div>'+
+  '<div class="tp17-inline-actions"><a href="./today.html" class="tp-v5-link">Panoramica rapida</a><a href="./widget-iphone.html" class="tp-v5-link">Istruzioni per iPhone</a></div></section>');
+ section('notifications','Notifiche','AVVISI E AGGIORNAMENTI',
+  'Leggi gli avvisi e scegli qui, in un unico posto, quando ricevere email e notifiche push.',
+  '<div class="tp17-notification-layout">'+
+  '<section class="tp-v5-panel tp17-inbox-section"><div class="tp17-section-heading"><div><span class="tp17-eyebrow">CENTRO NOTIFICHE</span><h2>Attività recente</h2><p>Nuovi annunci, promemoria e messaggi della tua ricerca.</p></div><i class="fa-regular fa-bell" aria-hidden="true"></i></div>'+
+  '<div class="tp17-inbox-toolbar"><button id="tp-v6-alert-readall" class="tp-v5-secondary" type="button">Segna tutte come lette</button><button id="tp-v5-alert-refresh" class="tp-v5-secondary" type="button"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Aggiorna</button></div>'+
+  '<div id="tp-v5-alert-list" class="tp-v5-empty">Caricamento notifiche…</div></section>'+
+  '<section class="tp-v5-panel tp17-preferences-section" id="tp17-notification-preferences"><div class="tp17-section-heading"><div><span class="tp17-eyebrow">PERSONALIZZAZIONE</span><h2>Quali avvisi ricevere</h2><p>Gli avvisi sugli immobili e le novità dell’app sono indipendenti.</p></div></div>'+
+  '<div id="tp17-prefs-content" aria-live="polite"><p class="tp-v5-empty">Caricamento preferenze…</p></div></section>'+
+  '<section class="tp-v5-panel tp-v5-notify-controls tp17-device-section"><div class="tp17-section-heading"><div><span class="tp17-eyebrow">QUESTO DISPOSITIVO</span><h2>Notifiche push</h2><p>Attivazione facoltativa, distinta dalle email. Il browser richiede il permesso solo dopo la tua scelta.</p></div><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></div>'+
+   '<div class="tp-v6-push-actions"><button id="tp-v5-push-enable" class="tp-v5-primary" type="button">Attiva notifiche sul dispositivo</button><button id="tp-v6-push-disable" class="tp-v5-secondary" type="button">Disattiva su questo dispositivo</button><button id="tp-v7-push-test" class="tp-v5-secondary" type="button" hidden><i class="fa-regular fa-paper-plane"></i> Notifica di prova</button></div>'+
+   '<p id="tp-v5-push-message" class="tp-v5-status" aria-live="polite"></p></section>'+
+  '</div>');
  section('admin','Console sviluppatore','GESTIONE INTERNA',
   'Stato delle acquisizioni, utenti registrati, report e dispositivi collegati.',
   '<div id="tp-v5-admin-status" class="tp-v5-status" aria-live="polite"></div>'+
@@ -108,31 +113,38 @@ function build(){
  $('#tp-v6-alert-readall').addEventListener('click',markAllRead);
 }
 function renderProfile(){
- var root=$('#tp-v5-profile-body'),s=session(),p=state.profile;
+ var root=$('#tp-v5-profile-body'),prefsRoot=$('#tp17-prefs-content'),s=session(),p=state.profile;
  if(!root)return;
- if(!s){root.innerHTML='<div class="tp-v5-empty"><i class="fa-regular fa-user"></i><h2>Accedi al tuo account</h2><p>Preferiti, notifiche e riepiloghi vengono gestiti separatamente per ogni utente.</p><button id="tp-v5-login" class="tp-v5-primary">Accedi o registrati</button></div>';
-  $('#tp-v5-login').addEventListener('click',function(){if(window.TurinPippsAuth)window.TurinPippsAuth.open()});
+ if(!s){
+  root.innerHTML='<div class="tp17-account-empty"><i class="fa-regular fa-user" aria-hidden="true"></i><h2>Accedi al tuo account</h2><p>Gestisci accesso, dati e dispositivi in modo sicuro.</p><button id="tp-v5-login" class="tp-v5-primary" type="button">Accedi o registrati</button></div>';
+  if(prefsRoot)prefsRoot.innerHTML='<div class="tp17-settings-empty"><p>Accedi per scegliere come ricevere gli avvisi.</p><button type="button" data-nav="profile" class="tp-v5-secondary">Vai all’account</button></div>';
+  $('#tp-v5-login')?.addEventListener('click',function(){window.TurinPippsAuth?.open()});
   return;
  }
- if(!p){root.innerHTML='<div class="tp-v5-empty">Caricamento profilo…</div>';return}
- root.innerHTML='<div class="tp-v5-identity"><div class="tp-v5-avatar"><i class="fa-solid fa-user"></i></div><div><span>ACCOUNT TURINPIPPS</span><h2>'+esc(s.email||p.email)+'</h2><small>'+(p.email_confirmed?'Email verificata':'Email da verificare')+'</small></div></div>'+
- '<div class="tp-v5-rule"></div><h3>Riepiloghi via email</h3><p class="tp-v5-subtitle">I report usano gli annunci compatibili con il tuo budget e le tue zone. Non inviamo mail ad indirizzi non verificati.</p>'+
- '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-digest-on" '+(p.digest_enabled?'checked':'')+'><span><b>Ricevi il riepilogo automatico</b><small>Puoi disattivarlo quando vuoi.</small></span></label>'+
- '<label class="tp-v5-form-label">Frequenza del riepilogo<select id="tp-v5-frequency" class="tp-v5-input"><option value="daily">Ogni giorno</option><option value="weekly">Una volta a settimana</option><option value="off">Disattivato</option></select></label>'+
- '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-new-on" '+(p.notify_new_listings?'checked':'')+'><span><b>Segnalami nuove case compatibili</b><small>Solo per annunci con canone e quartiere riconoscibili.</small></span></label>'+
- '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-drop-on" '+(p.notify_price_drops?'checked':'')+'><span><b>Avvisami dei ribassi verificati</b><small>La funzione richiede uno storico prezzi affidabile.</small></span></label>'+
- '<div class="tp14-release-prefs"><div class="tp14-pref-head"><span class="tp14-eyebrow">NOVITÀ DI TURINPIPPS</span><h3>Aggiornamenti dell’app</h3><p>Scegli come essere informato quando pubblichiamo una nuova versione. Le comunicazioni sono separate dagli avvisi sugli immobili.</p></div>'+
- '<label class="tp-v5-check tp14-consent"><input type="checkbox" id="tp14-release-email" '+(p.release_email_enabled?'checked':'')+(p.email_confirmed?'':' disabled')+'><span><b>Email per le nuove versioni</b><small>'+(p.email_confirmed?'Solo dopo il tuo consenso. Puoi disattivarla qui.':'Prima verifica il tuo indirizzo email.')+'</small></span></label>'+
- '<label class="tp-v5-check tp14-consent"><input type="checkbox" id="tp14-release-push" '+(p.release_push_enabled?'checked':'')+'><span><b>Push per le nuove versioni</b><small>Richiede anche la registrazione di questo dispositivo. Su iPhone usa l’app aggiunta alla schermata Home.</small></span></label>'+
- '<button type="button" class="tp-v5-secondary tp14-open-notifications" data-nav="notifications"><i class="fa-regular fa-bell" aria-hidden="true"></i> Configura il dispositivo per le push</button>'+
- '<p class="tp14-consent-note">Nessuna iscrizione automatica. Non riceverai retroattivamente gli aggiornamenti pubblicati prima dell’attivazione.</p></div>'+
- '<div class="tp-v5-row-actions"><button class="tp-v5-primary" id="tp-v5-profile-save">Salva preferenze</button><button class="tp-v5-secondary" id="tp-v5-send-mail">Invia riepilogo adesso</button></div>'+
- '<p id="tp-v5-profile-message" class="tp-v5-status" aria-live="polite"></p><div class="tp-v5-rule"></div>'+
- '<div class="tp-v5-account-links"><button class="tp-v5-link" data-nav="settings">Budget, zone e ricerca</button><button class="tp-v5-link" id="tp-v5-account-open">Password e accesso</button></div>';
+ if(!p){
+  root.innerHTML='<div class="tp17-account-empty"><h2>Caricamento dei dati personali…</h2></div>';
+  if(prefsRoot)prefsRoot.innerHTML='<p class="tp-v5-empty">Caricamento preferenze…</p>';
+  return;
+ }
+ var email=esc(s.email||p.email||'Email non disponibile');
+ root.innerHTML='<div class="tp17-profile-identity"><div class="tp17-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></div>'+
+ '<div><span class="tp17-eyebrow">ACCOUNT TURINPIPPS</span><h2>'+email+'</h2><span class="tp17-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> '+(p.email_confirmed?'Email verificata':'Email da verificare')+'</span></div></div>'+
+ '<div class="tp17-account-columns"><div class="tp17-account-detail"><span>EMAIL DI ACCESSO</span><strong>'+email+'</strong><p>Utilizzata per accedere e ricevere le comunicazioni autorizzate.</p></div>'+
+ '<div class="tp17-account-detail tp17-security"><span>SICUREZZA</span><strong>Password e accesso</strong><p>Gestisci le credenziali e le modalità di autenticazione del tuo account.</p><button id="tp-v5-account-open" type="button" class="tp-v5-secondary">Gestisci accesso <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div></div>';
+ $('#tp-v5-account-open')?.addEventListener('click',function(){window.TurinPippsAuth?.open()});
+ if(!prefsRoot)return;
+ prefsRoot.innerHTML='<div class="tp17-pref-group"><div class="tp17-pref-group-title"><h3>Immobili e riepiloghi</h3><p>Ricevi solo le informazioni che hai scelto, usando i tuoi criteri di ricerca.</p></div>'+
+ '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-digest-on" '+(p.digest_enabled?'checked':'')+'><span><b>Riepilogo periodico via email</b><small>Le nuove opportunità riassunte in un’unica email.</small></span></label>'+
+ '<label class="tp-v5-form-label tp17-frequency">Frequenza<select id="tp-v5-frequency" class="tp-v5-input"><option value="daily">Ogni giorno</option><option value="weekly">Ogni settimana</option><option value="off">Disattivato</option></select></label>'+
+ '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-new-on" '+(p.notify_new_listings?'checked':'')+'><span><b>Nuovi immobili compatibili</b><small>Solo con prezzo e quartiere riconoscibili.</small></span></label>'+
+ '<label class="tp-v5-check"><input type="checkbox" id="tp-v5-drop-on" '+(p.notify_price_drops?'checked':'')+'><span><b>Ribassi di prezzo verificati</b><small>Disponibili quando esiste uno storico prezzi affidabile.</small></span></label></div>'+
+ '<div class="tp17-pref-group"><div class="tp17-pref-group-title"><h3>Novità di TurinPipps</h3><p>Comunicazioni sulle nuove versioni, separate dagli avvisi degli immobili.</p></div>'+
+ '<label class="tp-v5-check"><input type="checkbox" id="tp14-release-email" '+(p.release_email_enabled?'checked':'')+(p.email_confirmed?'':' disabled')+'><span><b>Aggiornamenti via email</b><small>'+(p.email_confirmed?'Solo con il tuo consenso.':'Prima verifica il tuo indirizzo email.')+'</small></span></label>'+
+ '<label class="tp-v5-check"><input type="checkbox" id="tp14-release-push" '+(p.release_push_enabled?'checked':'')+'><span><b>Aggiornamenti via push</b><small>Richiedono anche l’attivazione su questo dispositivo.</small></span></label></div>'+
+ '<div class="tp17-pref-footer"><div><button class="tp-v5-primary" id="tp-v5-profile-save" type="button">Salva preferenze</button><button class="tp-v5-secondary" id="tp-v5-send-mail" type="button">Invia riepilogo ora</button></div><p id="tp-v5-profile-message" class="tp-v5-status" role="status" aria-live="polite"></p></div>';
  $('#tp-v5-frequency').value=p.digest_frequency||'daily';
  $('#tp-v5-profile-save').addEventListener('click',saveProfile);
  $('#tp-v5-send-mail').addEventListener('click',requestMail);
- $('#tp-v5-account-open').addEventListener('click',function(){window.TurinPippsAuth.open()});
 }
 async function loadProfile(){
  var s=session();if(!s){state.profile=null;renderProfile();return}
