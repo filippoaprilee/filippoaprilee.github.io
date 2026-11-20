@@ -47,66 +47,25 @@ function account(){
  const view=$("#view-profile");if(!view)return;
  const heading=$(".tp-v5-screen-header",view);
  if(heading){
-  const title=$("h1",heading),eyebrow=$(".tp-v5-kicker",heading),desc=$("p",heading);
-  setText(title,"Account");
-  setText(eyebrow,"IL TUO ACCOUNT");
-  setText(desc,"Accesso, notifiche e dati personali. Le preferenze della ricerca sono in una sezione separata.");
+  setText($("h1",heading),"Il tuo account");
+  setText($(".tp-v5-kicker",heading),"ACCOUNT E SICUREZZA");
+  setText($("p",heading),"Gestisci identità, credenziali e dati personali. Preferenze e notifiche hanno sezioni dedicate.");
  }
- const theme=$(".tp12-theme-settings",view);if(theme)theme.remove();
- const body=$("#tp-v5-profile-body");
- if(body&&$(".tp-v5-identity",body)&&!$(".tp15-account-notifications",body)){
-  const identity=$(".tp-v5-identity",body),links=$(".tp-v5-account-links",body);
-  if(links){
-   links.classList.add("tp15-profile-shortcuts");
-   const search=links.querySelector('[data-nav="settings"]');
-   setText(search,"Preferenze di ricerca");
-   identity.after(links);
-  }
-  const details=document.createElement("details");details.className="tp15-account-notifications";
-  details.innerHTML='<summary><span><i class="fa-regular fa-bell" aria-hidden="true"></i>'+
-    '<b>Notifiche e riepiloghi</b><small>Email sulle case, aggiornamenti e dispositivi</small></span>'+
-    '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>'+
-    '<div class="tp15-account-notifications-body"></div>';
-  const content=$(".tp15-account-notifications-body",details);
-  Array.from(body.children).filter(n=>n!==identity&&n!==links).forEach(n=>content.append(n));
-  body.append(details);
- }
- const install=$(".tp-v5-quick-install",view);
- if(install&&!install.closest(".tp15-profile-collapse")){
-  const fold=document.createElement("details");fold.className="tp15-profile-collapse tp15-install";
-  fold.innerHTML='<summary><span><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>'+
-   '<b>Installazione e accesso rapido</b><small>Utilizzo su iPhone e collegamenti</small></span>'+
-   '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>';
-  install.before(fold);fold.append(install);
- }
+ const hub=$("#tp8-account-hub");if(hub)hub.remove();
  const privacy=$("#tp9-profile-privacy");
- if(privacy&&!privacy.closest(".tp15-profile-collapse")){
-  const fold=document.createElement("details");fold.className="tp15-profile-collapse tp15-privacy";
-  fold.innerHTML='<summary><span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i>'+
-    '<b>Privacy e dati personali</b><small>Esporta o elimina il tuo account</small></span>'+
-    '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>';
-  privacy.before(fold);fold.append(privacy);
-  const h=$("h3",privacy);if(h)h.classList.add("tp15-hidden-duplicate-title");
+ if(privacy){
+  privacy.classList.add("tp17-privacy-section");
+  setText($("h3",privacy),"Privacy e dati personali");
  }
  const settings=$("#view-settings");
  if(settings){
-  const title=$(".section-heading h2",settings),p=$(".section-heading p",settings);
-  setText(title,"Preferenze di ricerca");
-  setText(p,"Budget, quartieri e tipologia. Le notifiche e i dati dell’account si gestiscono in Profilo.");
+  setText($(".section-heading h2",settings),"Preferenze di ricerca");
+  setText($(".section-heading p",settings),"Budget, zone e criteri: tutte le scelte relative alla casa sono qui.");
  }
 }
 function journey(){
- const home=$("#view-home");
- if(!home||$("#tp15-journey"))return;
- const navigation=document.createElement("nav");
- navigation.id="tp15-journey";navigation.className="tp15-journey";
- navigation.setAttribute("aria-label","Le tre tappe per trovare casa");
- navigation.innerHTML='<button type="button" data-nav="results"><span>1</span> Trova una casa</button>'+
- '<button type="button" data-nav="compare"><span>2</span> Confronta</button>'+
- '<button type="button" data-nav="visits"><span>3</span> Contatta e visita</button>';
- const heading=$(".tp10-home-head",home);
- if(heading)heading.after(navigation);
- else home.prepend(navigation);
+ const existing=$("#tp15-journey");
+ if(existing)existing.remove();
 }
 function refresh(){
  scheduled=false;
