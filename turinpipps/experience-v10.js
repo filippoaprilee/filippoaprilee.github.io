@@ -108,7 +108,7 @@ function homeMarkup(){
  '<div id="tp10-home-options" class="tp20-homes-list" aria-live="polite"></div>'+
  '<div class="tp20-home-footer"><div id="tp20-progress"></div>'+
  '<div class="tp20-home-utility"><span>Da una casa interessante a una visita:</span>'+
- '<a href="#" data-nav="saved">salva</a><span>·</span><a href="#" data-nav="compare">confronta</a><span>·</span><a href="#" data-nav="visits">organizza</a></div></div></div>';
+ '<button type="button" class="tp20-utility-link" data-nav="saved">salva</button><span>·</span><button type="button" class="tp20-utility-link" data-nav="compare">confronta</button><span>·</span><button type="button" class="tp20-utility-link" data-nav="visits">organizza</button></div></div></div>';
  view.prepend(wrapper);
  document.body.classList.add("tp10-active");
 }
