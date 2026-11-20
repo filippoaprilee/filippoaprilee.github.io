@@ -88,71 +88,74 @@ function navigation(){
 }
 function homeMarkup(){
  const home=$("#view-home");if(!home||$("#tp10-home"))return;
- const s=document.createElement("section");s.id="tp10-home";
- s.innerHTML='<header class="tp10-home-head"><div><span class="tp10-overline"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</span>'+
- '<h1>La tua ricerca casa,<br>senza perdere opportunità.</h1>'+
- '<p>Valuta gli annunci raccolti, distingui le informazioni certe da quelle da confermare e segui ogni contatto in un solo posto.</p>'+
- '<div class="tp10-home-cta"><button class="button primary" data-nav="results"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Esplora immobili</button>'+
- '<button class="button" data-nav="settings"><i class="fa-solid fa-sliders" aria-hidden="true"></i> I miei criteri</button></div></div>'+
- '<div class="tp10-budget-card"><small>BUDGET IMPOSTATO</small><strong id="tp10-budget">—</strong><span>al mese, spese escluse</span><div id="tp10-home-scan">Verifica ultima scansione…</div></div></header>'+
- '<div class="tp10-metrics" id="tp10-metrics" aria-live="polite"></div>'+
- '<div class="tp10-home-sections"><section class="tp10-home-list"><div class="tp10-section-title"><div><span class="tp10-overline">PRIMA DA VALUTARE</span><h2>Opportunità da controllare</h2><p>Ordinate per compatibilità preliminare. Nessuna disponibilità garantita.</p></div><button class="tp10-text-button" data-nav="results">Tutte le case <i class="fa-solid fa-arrow-right"></i></button></div><div id="tp10-home-options"></div></section>'+
- '<aside class="tp10-home-next tp18-home-next"><span class="tp10-overline">CONTINUA LA RICERCA</span><h2>La prossima azione utile</h2>'+
- '<div id="tp10-next-step"></div></aside></div>';
- home.prepend(s);
- document.body.classList.add('tp10-active');
+ const s=document.createElement("section");s.id="tp10-home";s.className="tp19-home";
+ s.innerHTML='<header class="tp10-home-head tp19-home-intro"><div class="tp19-home-copy">'+
+  '<span class="tp10-overline"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> TORINO · POLITECNICO</span>'+
+  '<h1>Trova una casa.<br>Il resto, con ordine.</h1>'+
+  '<p>Annunci, confronti e contatti organizzati per scegliere senza perdere informazioni importanti.</p>'+
+  '<div class="tp19-home-cta"><button type="button" class="button primary" data-nav="results"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Cerca immobili</button>'+
+  '<button type="button" class="tp19-link-button" data-nav="settings">Modifica criteri <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>'+
+  '<div class="tp19-home-context"><span>Budget mensile <strong id="tp10-budget">—</strong></span><span id="tp10-home-scan">Ultimo aggiornamento da verificare</span></div></div></header>'+
+  '<div id="tp10-metrics" class="tp10-metrics tp19-home-stats" aria-live="polite"></div>'+
+  '<div class="tp10-home-sections tp19-home-sections">'+
+   '<aside class="tp10-home-next tp18-home-next tp19-home-next" hidden><div id="tp10-next-step"></div></aside>'+
+   '<section class="tp10-home-list tp19-home-list"><div class="tp10-section-title"><div>'+
+     '<span class="tp10-overline">DA ESPLORARE</span><h2>Case da considerare</h2>'+
+     '<p>Una selezione preliminare. Prezzi e disponibilità restano da verificare.</p></div>'+
+     '<button type="button" class="tp10-text-button" data-nav="results">Tutti gli annunci <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>'+
+   '</div><div id="tp10-home-options"></div></section></div>';
+ home.prepend(s);document.body.classList.add("tp10-active");
 }
 function homeUpdate(){
  if(!$("#tp10-home"))return;
  const items=all(),p=prefs(),flags=p.flags||{},budget=Number(p.budget)||700;
  const new7=items.filter(a=>seen(a.seen||a.first_seen)>Date.now()-7*86400000).length;
- const priced=items.filter(a=>a.price>0).length;
  const saved=items.filter(a=>flags[a.url]?.saved).length;
- const candidate=items.filter(a=>Number(a.price)>0&&Number(a.price)<=budget&&api()?.classifyListing?.(a)?.status!=="excluded").length;
+ const compatible=items.filter(a=>Number(a.price)>0&&Number(a.price)<=budget&&api()?.classifyListing?.(a)?.status!=="excluded").length;
  $("#tp10-budget").textContent=formatEuro(budget);
- $("#tp10-metrics").hidden=items.length===0;
- $("#tp10-metrics").innerHTML=[
-  [items.length,"Riferimenti raccolti","results","fa-solid fa-house"],
-  [new7,"Nuovi negli ultimi 7 giorni","results","fa-solid fa-clock"],
-  [candidate,"Canone entro i criteri*","results","fa-solid fa-list-check"],
-  [saved,"I tuoi salvati","saved","fa-regular fa-heart"]
- ].map(([n,label,target,icon])=>'<button class="tp10-metric" type="button" data-nav="'+target+'"><i class="'+icon+'" aria-hidden="true"></i><strong>'+n+'</strong><span>'+label+'</span></button>').join("");
- const scan=api()?.getLiveScan?.();
- const last=seen(scan?.finished_at||scan?.started_at);
- $("#tp10-home-scan").textContent=last&&Date.now()-last<3*3600000?
-  'Ricerca aggiornata · '+date(last):"Ultimo controllo da verificare";
- const good=items.filter(a=>!flags[a.url]?.discard&&Number(a.price)>0&&Number(a.price)<=budget&&
-   api()?.classifyListing?.(a)?.status!=="excluded")
-   .sort((a,b)=>match(b,p).score-match(a,p).score||seen(b.seen)-seen(a.seen)).slice(0,3);
- // Never recommend an explicitly incompatible home as a promising match.
- const other=items.filter(a=>!flags[a.url]?.discard&&api()?.classifyListing?.(a)?.status!=="excluded")
-   .sort((a,b)=>match(b,p).score-match(a,p).score||seen(b.seen)-seen(a.seen)).slice(0,3);
- $("#tp10-home-options").innerHTML=(good.length?good:other).map(a=>{
-  const m=match(a,p),r=reliability(a),f=flags[a.url]||{};
-  return '<article class="tp10-home-option"><div class="tp10-option-symbol"><i class="fa-solid fa-building" aria-hidden="true"></i></div>'+
-   '<div class="tp10-option-copy"><div class="tp10-option-tags"><span>'+safe(a.source||"Fonte")+'</span><span>'+safe(r.label)+'</span></div>'+
-   '<strong>'+safe(a.title)+'</strong><small>'+safe(a.zone||"Zona da verificare")+' · '+(a.price?formatEuro(a.price)+"/mese":"Canone non disponibile")+'</small>'+
-   '<span class="tp10-option-score">Match preliminare '+m.score+'/100 · '+m.unknown.length+' dati mancanti</span></div>'+
-   '<div class="tp10-option-actions"><button type="button" class="button" data-action="save" data-url="'+safe(a.url)+'" aria-label="'+(f.saved?"Rimuovi dai salvati":"Salva immobile")+'"><i class="'+(f.saved?"fa-solid":"fa-regular")+' fa-heart" aria-hidden="true"></i></button>'+
-   '<a class="tp10-open-source" href="'+safe(a.url)+'" target="_blank" rel="noopener noreferrer">Fonte originale</a></div></article>';
- }).join("")||'<div class="tp10-empty"><b>Nessuna proposta suggerita per i criteri attuali.</b><p>Altri annunci possono essere disponibili in Cerca, anche con prezzo o informazioni da verificare.</p><button type="button" class="button" data-nav="results">Esplora tutti i risultati</button></div>';
+ const counters=[[items.length,"annunci raccolti","results"],[compatible,"entro il budget","results"],[new7,"nuovi questa settimana","results"],[saved,"salvati","saved"]];
+ const visible=counters.filter((c,i)=>i===0?c[0]>0:c[0]>0);
+ $("#tp10-metrics").hidden=!visible.length;
+ $("#tp10-metrics").innerHTML=visible.map(([n,label,target])=>
+  '<button type="button" class="tp19-home-stat" data-nav="'+target+'"><strong>'+n+'</strong><span>'+safe(label)+'</span></button>'
+ ).join("");
+ const scan=api()?.getLiveScan?.(),last=seen(scan?.finished_at||scan?.started_at);
+ $("#tp10-home-scan").textContent=last&&Date.now()-last<3*3600000?'Ricerca aggiornata · '+date(last):"Ultima scansione da verificare";
+ const classify=a=>api()?.classifyListing?.(a)?.status;
+ const rank=a=>match(a,p).score||0;
+ const good=items.filter(a=>!flags[a.url]?.discard&&Number(a.price)>0&&Number(a.price)<=budget&&classify(a)!=="excluded")
+  .sort((a,b)=>rank(b)-rank(a)||seen(b.seen)-seen(a.seen)).slice(0,3);
+ const other=items.filter(a=>!flags[a.url]?.discard&&classify(a)!=="excluded")
+  .sort((a,b)=>rank(b)-rank(a)||seen(b.seen)-seen(a.seen)).slice(0,3);
+ const selected=good.length?good:other;
+ $("#tp10-home-options").innerHTML=selected.map(a=>{
+  const f=flags[a.url]||{},owner=a.private_status==="confirmed"&&a.verification_level==="owner_confirmed"?"Identità confermata":"Identità da verificare";
+  return '<article class="tp10-home-option tp19-home-option">'+
+    '<div class="tp19-home-option-main"><span class="tp19-home-option-zone">'+safe(a.zone||"Zona da verificare")+' · '+safe(a.source||"Fonte")+'</span>'+
+    '<strong>'+safe(a.title||"Annuncio")+'</strong>'+
+    '<small>'+owner+'</small></div>'+
+    '<div class="tp19-home-option-end"><b>'+(Number(a.price)>0?formatEuro(a.price):"Canone n.d.")+'</b>'+
+    '<div><button class="tp19-home-save" type="button" data-action="save" data-url="'+safe(a.url)+'" aria-label="'+(f.saved?"Rimuovi dai salvati":"Salva immobile")+'"><i class="'+(f.saved?"fa-solid":"fa-regular")+' fa-heart" aria-hidden="true"></i></button>'+
+    '<a href="'+safe(a.url)+'" target="_blank" rel="noopener noreferrer">Apri <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></article>';
+ }).join("")||'<div class="tp19-home-empty"><strong>Nessuna proposta in linea con questi criteri.</strong>'+
+  '<p>Puoi consultare anche annunci con prezzo o informazioni ancora da chiarire.</p>'+
+  '<button type="button" data-nav="results" class="tp19-link-button">Consulta tutti gli annunci</button></div>';
  const contacted=items.filter(a=>flags[a.url]?.contact&&!flags[a.url]?.replyReceived).length,
- replied=items.filter(a=>flags[a.url]?.replyReceived).length;
+  replied=items.filter(a=>flags[a.url]?.replyReceived).length;
  const stage=replied?"reply":contacted?"contact":saved?"saved":"start";
  const guidance={
-  start:["Comincia dagli annunci","Sfoglia le case raccolte e salvale per confrontare le condizioni.","Cerca immobili","results"],
-  saved:["Confronta le case salvate","Hai "+saved+(saved===1?" immobile salvato":" immobili salvati")+". Metti a confronto prezzo, spese e condizioni.","Apri i salvati","saved"],
-  contact:["Controlla le risposte","Hai "+contacted+(contacted===1?" contatto":" contatti")+" in attesa. Segui l’avanzamento senza perdere i messaggi.","Gestisci contatti","visits"],
-  reply:["Organizza il prossimo incontro","Hai ricevuto "+replied+(replied===1?" risposta":" risposte")+". Valuta le condizioni prima di fissare una visita.","Apri visite e contatti","visits"]
+  saved:["Rivedi i salvati","Confronta costi e condizioni prima di contattare.","Apri i salvati","saved"],
+  contact:["Hai contatti aperti","Controlla le risposte e prepara le prossime visite.","Gestisci contatti","visits"],
+  reply:["Hai risposte da valutare","Rivedi le condizioni proposte prima di fissare la visita.","Apri contatti","visits"]
  }[stage];
- const status=saved||contacted||replied?'<p class="tp18-home-context">'+
-  (saved?saved+' salvate':'')+(contacted?' · '+contacted+' in attesa':'')+(replied?' · '+replied+' risposte':'')+'</p>':'';
- $("#tp10-next-step").innerHTML='<div class="tp18-home-next-inner"><div class="tp18-home-next-copy">'+
- '<h2>'+safe(guidance[0])+'</h2><p>'+safe(guidance[1])+'</p>'+status+'</div>'+
- '<button type="button" class="button primary tp18-next-cta" data-nav="'+guidance[3]+'">'+
- safe(guidance[2])+' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
-
+ const box=$(".tp19-home-next");
+ if(box)box.hidden=!guidance;
+ if(guidance)$("#tp10-next-step").innerHTML='<div class="tp18-home-next-inner"><div class="tp18-home-next-copy">'+
+  '<h2>'+safe(guidance[0])+'</h2><p>'+safe(guidance[1])+'</p></div>'+
+  '<button class="button tp18-next-cta" type="button" data-nav="'+guidance[3]+'">'+safe(guidance[2])+
+  ' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
 }
+
 function searchEnhance(){
  if($("#tp10-search-tools"))return;
  const section=$("#view-results"),target=section?.querySelector(".tabs");if(!target)return;
