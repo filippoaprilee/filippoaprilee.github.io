@@ -98,7 +98,7 @@ function homeMarkup(){
  '<div class="tp10-metrics" id="tp10-metrics" aria-live="polite"></div>'+
  '<div class="tp10-home-sections"><section class="tp10-home-list"><div class="tp10-section-title"><div><span class="tp10-overline">PRIMA DA VALUTARE</span><h2>Opportunità da controllare</h2><p>Ordinate per compatibilità preliminare. Nessuna disponibilità garantita.</p></div><button class="tp10-text-button" data-nav="results">Tutte le case <i class="fa-solid fa-arrow-right"></i></button></div><div id="tp10-home-options"></div></section>'+
  '<aside class="tp10-home-next"><span class="tp10-overline">IL PROSSIMO PASSO</span><h2>Da una scoperta a una visita.</h2>'+
- '<div id="tp10-next-step"></div><div class="tp10-next-links"><button data-nav="saved"><i class="fa-regular fa-heart"></i> Salvati</button><button data-nav="visits"><i class="fa-regular fa-calendar-check"></i> Contatti e visite</button><button data-nav="sources"><i class="fa-solid fa-wave-square"></i> Stato ricerca</button></div></aside></div>';
+ '<div id="tp10-next-step"></div></aside></div>';
  home.prepend(s);
  document.body.classList.add('tp10-active');
 }
@@ -110,6 +110,7 @@ function homeUpdate(){
  const saved=items.filter(a=>flags[a.url]?.saved).length;
  const candidate=items.filter(a=>Number(a.price)>0&&Number(a.price)<=budget&&api()?.classifyListing?.(a)?.status!=="excluded").length;
  $("#tp10-budget").textContent=formatEuro(budget);
+ $("#tp10-metrics").hidden=items.length===0;
  $("#tp10-metrics").innerHTML=[
   [items.length,"Riferimenti raccolti","results","fa-solid fa-house"],
   [new7,"Nuovi negli ultimi 7 giorni","results","fa-solid fa-clock"],
@@ -137,12 +138,20 @@ function homeUpdate(){
  }).join("")||'<div class="tp10-empty"><b>Nessuna proposta suggerita per i criteri attuali.</b><p>Altri annunci possono essere disponibili in Cerca, anche con prezzo o informazioni da verificare.</p><button type="button" class="button" data-nav="results">Esplora tutti i risultati</button></div>';
  const contacted=items.filter(a=>flags[a.url]?.contact&&!flags[a.url]?.replyReceived).length,
  replied=items.filter(a=>flags[a.url]?.replyReceived).length;
- const nextText=replied?"Hai "+replied+" "+(replied===1?"risposta da valutare.":"risposte da valutare.")+" Apri Organizza per decidere il passo successivo.":
- contacted?"Hai già "+contacted+" "+(contacted===1?"contatto in attesa.":"contatti in attesa.")+" Puoi seguirli in Organizza, anche se non sono contrassegnati come salvati.":
- saved?"Hai "+saved+" "+(saved===1?"casa salvata.":"case salvate.")+" Verifica spese, inserzionista e condizioni prima di contattare.":
- "Trova un annuncio interessante e inizia da Salva. Identità e disponibilità richiedono sempre una conferma.";
- $("#tp10-next-step").innerHTML='<div class="tp10-journey"><div><b>'+saved+'</b><span>Salvati</span></div><div><b>'+contacted+'</b><span>In attesa di risposta</span></div><div><b>'+replied+'</b><span>Risposte segnate</span></div></div>'+
- '<p>'+safe(nextText)+'</p>';
+ const stage=replied?"reply":contacted?"contact":saved?"saved":"start";
+ const guidance={
+  start:["Inizia dalla ricerca","Trova una casa interessante, controlla prezzo e dettagli e salvala per confrontarla con le altre.","Esplora gli immobili","results"],
+  saved:["Hai delle case da valutare","Rivedi i salvati e confrontali. Prima di contattare verifica prezzo, spese e inserzionista.","Apri le case salvate","saved"],
+  contact:["Segui i contatti aperti","Hai richieste in attesa: controlla le risposte e prepara le visite delle case più interessanti.","Gestisci contatti e visite","visits"],
+  reply:["Valuta le risposte ricevute","Controlla le condizioni proposte e organizza una visita quando è opportuno.","Organizza una visita","visits"]
+ }[stage];
+ const progress=[
+  [saved,"Salvate"],[contacted,"In attesa"],[replied,"Risposte"]
+ ].map(([n,label])=>'<div><strong>'+n+'</strong><span>'+label+'</span></div>').join('');
+ $("#tp10-next-step").innerHTML='<div class="tp17-journey-progress" aria-label="Avanzamento ricerca">'+progress+'</div>'+
+ '<div class="tp17-journey-guidance"><h3>'+safe(guidance[0])+'</h3><p>'+safe(guidance[1])+'</p>'+
+ '<button type="button" class="button primary tp17-next-cta" data-nav="'+guidance[3]+'">'+safe(guidance[2])+' <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>';
+
 }
 function searchEnhance(){
  if($("#tp10-search-tools"))return;
