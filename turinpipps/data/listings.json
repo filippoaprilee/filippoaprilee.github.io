@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-21T17:38:53.515Z",
+  "updated_at": "2026-11-21T23:38:52.165Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -95,10 +95,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-21T05:38:52.095Z",
+      "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T05:38:52.095Z"
+      "availability_last_ok_at": "2026-11-21T23:38:52.165Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -121,10 +121,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-21T05:38:52.095Z",
+      "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T05:38:52.095Z"
+      "availability_last_ok_at": "2026-11-21T23:38:52.165Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-271099.html",
@@ -147,10 +147,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-21T05:38:52.095Z",
+      "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T05:38:52.095Z"
+      "availability_last_ok_at": "2026-11-21T23:38:52.165Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-arredato-torino-200568.html",
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T11:38:52.922Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T11:38:52.922Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T11:38:52.922Z",
       "availability_state": "online_alla_verifica",
@@ -485,7 +485,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -504,7 +504,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -542,7 +542,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -561,7 +561,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -595,12 +595,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T17:38:53.464Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-20T23:38:52.393Z",
+      "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-20T23:38:52.393Z"
+      "availability_last_ok_at": "2026-11-21T23:38:52.165Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-stanza-niente-spese-torino-422215.html",
@@ -614,12 +614,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-20T17:38:52.570Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-20T23:38:52.393Z",
+      "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-20T23:38:52.393Z"
+      "availability_last_ok_at": "2026-11-21T23:38:52.165Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/torino-cenisia-san-paolo-stupendo-trilocale-torino-669121129.htm",
@@ -633,7 +633,22 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-21T05:38:52.095Z",
-      "last_seen": "2026-11-21T17:38:53.515Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3397104arg-torino-669227092.htm",
+      "title": "Appartamento Torino [Cod. rif 3397104ARG] - Subito",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Crocetta",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-21T23:38:52.165Z",
+      "last_seen": "2026-11-21T23:38:52.165Z",
       "origin": "automatic_alert"
     }
   ]
