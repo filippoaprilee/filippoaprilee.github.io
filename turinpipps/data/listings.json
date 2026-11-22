@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-22T05:38:52.458Z",
+  "updated_at": "2026-11-22T11:38:53.250Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-22T05:38:52.458Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-22T05:38:52.458Z",
       "availability_state": "online_alla_verifica",
@@ -403,12 +403,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-21T11:38:52.922Z",
+      "availability_checked_at": "2026-11-22T11:38:53.250Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T11:38:52.922Z"
+      "availability_last_ok_at": "2026-11-22T11:38:53.250Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -469,7 +469,7 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-21T11:38:52.922Z",
+      "availability_checked_at": "2026-11-22T11:38:53.250Z",
       "availability_last_http": 301,
       "availability_state": "verifica_non_conclusiva"
     },
@@ -485,12 +485,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-21T17:38:53.515Z",
+      "availability_checked_at": "2026-11-22T11:38:53.250Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T17:38:53.515Z"
+      "availability_last_ok_at": "2026-11-22T11:38:53.250Z"
     },
     {
       "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
@@ -504,12 +504,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-21T17:38:53.515Z",
+      "availability_checked_at": "2026-11-22T11:38:53.250Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T17:38:53.515Z"
+      "availability_last_ok_at": "2026-11-22T11:38:53.250Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -525,10 +525,10 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-20T11:38:52.501Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-21T17:38:53.515Z",
+      "availability_checked_at": "2026-11-22T11:38:53.250Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-21T17:38:53.515Z"
+      "availability_last_ok_at": "2026-11-22T11:38:53.250Z"
     },
     {
       "url": "https://www.clickcase.it/stanza-torino-421979.html",
@@ -542,7 +542,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -561,7 +561,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T17:38:53.515Z",
       "availability_state": "online_alla_verifica",
@@ -595,7 +595,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T17:38:53.464Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
@@ -614,7 +614,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-20T17:38:52.570Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-21T23:38:52.165Z",
       "availability_state": "online_alla_verifica",
@@ -648,7 +648,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-21T23:38:52.165Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert"
     },
     {
@@ -663,7 +663,22 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-22T05:38:52.458Z",
-      "last_seen": "2026-11-22T05:38:52.458Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.casa.it/immobili/55270356",
+      "title": "Ufficio in Affitto in Via Torino 105 a Venezia - 11mq - Casa.it",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "",
+      "sqm": 0,
+      "source": "casa.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-22T11:38:53.250Z",
+      "last_seen": "2026-11-22T11:38:53.250Z",
       "origin": "automatic_alert"
     }
   ]
