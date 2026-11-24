@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-24T05:38:52.327Z",
+  "updated_at": "2026-11-24T11:38:52.504Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T23:38:53.308Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T23:38:53.308Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
@@ -485,7 +485,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
@@ -504,7 +504,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
@@ -543,12 +543,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T11:38:53.091Z",
+      "availability_checked_at": "2026-11-24T11:38:52.504Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T11:38:53.091Z"
+      "availability_last_ok_at": "2026-11-24T11:38:52.504Z"
     },
     {
       "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
@@ -562,12 +562,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T11:38:53.091Z",
+      "availability_checked_at": "2026-11-24T11:38:52.504Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T11:38:53.091Z"
+      "availability_last_ok_at": "2026-11-24T11:38:52.504Z"
     },
     {
       "url": "https://www.immobiliare.it/annunci/134852307",
@@ -596,12 +596,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T17:38:53.464Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T11:38:53.091Z",
+      "availability_checked_at": "2026-11-24T11:38:52.504Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T11:38:53.091Z"
+      "availability_last_ok_at": "2026-11-24T11:38:52.504Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-stanza-niente-spese-torino-422215.html",
@@ -617,7 +617,7 @@
       "seen": "2026-11-20T17:38:52.570Z",
       "last_seen": "2026-11-23T11:38:53.091Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T17:38:52.425Z",
+      "availability_checked_at": "2026-11-24T11:38:52.504Z",
       "availability_state": "verifica_non_conclusiva",
       "availability_consecutive_missing": 0,
       "availability_last_ok_at": "2026-11-22T17:38:52.247Z",
@@ -695,12 +695,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T17:38:52.425Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T17:38:52.425Z",
+      "availability_checked_at": "2026-11-24T11:38:52.504Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T17:38:52.425Z"
+      "availability_last_ok_at": "2026-11-24T11:38:52.504Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3397057arg-torino-669515078.htm",
@@ -714,7 +714,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T23:38:53.308Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert"
     },
     {
@@ -729,7 +729,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T23:38:53.308Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert"
     },
     {
@@ -744,7 +744,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-24T05:38:52.327Z",
-      "last_seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert"
     }
   ]
