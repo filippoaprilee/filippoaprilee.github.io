@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-23T23:38:53.308Z",
+  "updated_at": "2026-11-24T05:38:52.327Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T23:38:53.308Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T23:38:53.308Z",
       "availability_state": "online_alla_verifica",
@@ -403,12 +403,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T05:38:52.894Z",
+      "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T05:38:52.894Z"
+      "availability_last_ok_at": "2026-11-24T05:38:52.327Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3394397vrg-torino-668153496.htm",
@@ -469,7 +469,7 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-19T11:38:52.787Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T05:38:52.894Z",
+      "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_last_http": 301,
       "availability_state": "verifica_non_conclusiva"
     },
@@ -485,12 +485,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T05:38:52.894Z",
+      "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T05:38:52.894Z"
+      "availability_last_ok_at": "2026-11-24T05:38:52.327Z"
     },
     {
       "url": "https://www.clickcase.it/camera-con-bagno-privato-torino-423697.html",
@@ -504,12 +504,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T11:38:53.091Z",
+      "availability_checked_at": "2026-11-24T05:38:52.327Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T11:38:53.091Z"
+      "availability_last_ok_at": "2026-11-24T05:38:52.327Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -525,10 +525,11 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-20T11:38:52.501Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-23T11:38:53.091Z",
-      "availability_state": "online_alla_verifica",
+      "availability_checked_at": "2026-11-24T05:38:52.327Z",
+      "availability_state": "verifica_non_conclusiva",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-23T11:38:53.091Z"
+      "availability_last_ok_at": "2026-11-23T11:38:53.091Z",
+      "availability_last_http": 302
     },
     {
       "url": "https://www.clickcase.it/stanza-torino-421979.html",
@@ -542,7 +543,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T11:38:53.091Z",
       "availability_state": "online_alla_verifica",
@@ -561,7 +562,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T11:38:53.091Z",
       "availability_state": "online_alla_verifica",
@@ -595,7 +596,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T17:38:53.464Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T11:38:53.091Z",
       "availability_state": "online_alla_verifica",
@@ -694,7 +695,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T17:38:52.425Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-23T17:38:52.425Z",
       "availability_state": "online_alla_verifica",
@@ -713,7 +714,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T23:38:53.308Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert"
     },
     {
@@ -728,7 +729,22 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-23T23:38:53.308Z",
-      "last_seen": "2026-11-23T23:38:53.308Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3397506vrg-torino-669515029.htm",
+      "title": "Appartamento Torino [Cod. rif 3397506VRG] - Subito",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Cenisia",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-24T05:38:52.327Z",
+      "last_seen": "2026-11-24T05:38:52.327Z",
       "origin": "automatic_alert"
     }
   ]
