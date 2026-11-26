@@ -25,6 +25,7 @@ jobs:
           node --check turinpipps/experience-v14.js
           node turinpipps/scripts/build-css.cjs --check
           node --test turinpipps/tests/v22-ux.test.cjs
+          node --test turinpipps/tests/v23-collector-quality.test.cjs
       - name: Install Playwright Chromium
         run: |
           npm install --no-save --no-package-lock playwright@1.55.0

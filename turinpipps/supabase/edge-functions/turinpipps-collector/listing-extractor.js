@@ -105,3 +105,37 @@ export function extractClickCaseDetails(html,listingUrl,stamp){
  if(realDescription.length>=35)put("description",realDescription,"Descrizione pubblicata dall'inserzionista");
  return {status:Object.keys(fields).length?"source_read":"inconclusive",fields,field_provenance:provenance,heading};
 }
+
+/** Reject obvious non-housing, sale-only and wrong-city search index results.
+ * A named requested neighborhood is required; we never infer a district from "Via Torino".
+ * The source can still be an agency, so owner identity remains UNVERIFIED.
+ */
+export function indexedHousingIsRelevant(title, zone){
+ const t=plainText(title).slice(0,220);
+ const area=String(zone||"").trim().toLowerCase();
+ if(!["crocetta","cenisia","borgo san paolo","san paolo","cit turin","santa rita"].includes(area))return false;
+ if(/\b(?:ufficio|negozio|magazzino|capannone|garage|autorimessa|box auto|posto auto|terreno|locale commerciale)\b/i.test(t))return false;
+ if(/\b(?:vendita|vendesi|vendo|asta giudiziaria|cerco casa|cercasi)\b/i.test(t))return false;
+ if(/\b(?:stanza|posto[\s-]*letto|camera\s+(?:singola|doppia)|coinquilino)\b/i.test(t))return false;
+ if(/\b(?:a|in|di)\s+(?:venezia|mestre|milano|genova|roma|bologna|firenze|napoli|palermo|catania|padova|verona|trieste|brescia|modena|pavia|bergamo)\b/i.test(t))return false;
+ return t.length>=10;
+}
+/** Accept only an explicit monthly rent in the headline or the FIRST short excerpt.
+ * Generic euros, prices per day, unrelated cards and "800 ..." are never rents.
+ */
+export function indexedMonthlyRent(title,description){
+ const source=(plainText(title)+" "+plainText(description).slice(0,340)).slice(0,560);
+ const number="([0-9]{3,4}|[0-9]{1,2}\\.[0-9]{3})(?:,00)?";
+ const after="\\s*(?:\\/\\s*mese|al\\s+mese|mensili|mensile)\\b";
+ const patterns=[
+  new RegExp("(?:€|EUR|euro)\\s*"+number+after,"i"),
+  new RegExp(number+"\\s*(?:€|EUR|euro)"+after,"i")
+ ];
+ for(const re of patterns){
+  const match=source.match(re);
+  if(!match)continue;
+  const value=parseMoney(match[1]);
+  if(value!==null&&value>=180&&value<=3000)return value;
+ }
+ return null;
+}
