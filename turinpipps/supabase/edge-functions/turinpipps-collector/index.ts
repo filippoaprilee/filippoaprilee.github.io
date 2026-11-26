@@ -1,7 +1,7 @@
 // TurinPipps · Collector v11: source-safe enrichment, provenance and quality metrics
 // Scansioni di ricerca pubblica via indice Bing RSS, senza login o scraping dei portali.
 // Invocazione server-to-server protetta da chiave casuale conservata in Supabase Vault.
-import {extractClickCaseDetails,sourceIdentity} from "./listing-extractor.js";
+import {extractClickCaseDetails,sourceIdentity,indexedHousingIsRelevant,indexedMonthlyRent} from "./listing-extractor.js";
 const ROBOTS_CACHE=new Map<string,Promise<{status:number,ok:boolean,content:string}>>();
 const JOB_SHA256 = "f56439eb86364195905be2060527f091e4404619203a6ce0f55493dc934a3542";
 // Bing RSS non fornisce risultati pertinenti in modo affidabile: resta ricerca manuale in UI.
@@ -152,7 +152,8 @@ async function collectClickCase(time:string){
   const paths=[
     "/annunci/affitti-case-privati-torino.html",
     "/annunci/affitti-appartamenti-privati-torino.html",
-    "/annunci/appartamenti-in-affitto-privati-torino.html"
+    "/annunci/appartamenti-in-affitto-privati-torino.html",
+    "/annunci/case-in-affitto-privati-torino.html"
   ];
   const found=new Map<string,any>();let pagesRead=0,denied=0,attempts=0;
   // Consultazione graduale di pagine pubbliche, solo se autorizzate. Nessuna autenticazione.
@@ -236,12 +237,19 @@ async function readGoogleAlerts(feedURLs:string[],time:string){
             for(const match of candidates){found=canonical(unwrapGoogle(match[1]));if(found)break;}
           }
           if(!found)continue;
-          if(!place.test(title+" "+snippet))continue;
-          if(/(?:\bstanza\b|\bcamera singola\b|\bposto letto\b)/i.test(title))continue;
+          const context=title+" "+snippet;
+          if(!place.test(context))continue;
+          const zone=zoneOf(context);
+          if(!indexedHousingIsRelevant(title,zone))continue;
+          const indexedPrice=indexedMonthlyRent(title,snippet);
           rows.set(found.url,{
-            listing_url:found.url,title:title||"Annuncio da verificare",description:snippet.slice(0,1250),
-            source:found.source,origin_engine:"Google Alerts RSS",zone:zoneOf(title+" "+snippet),
-            price:0,private_status:"unverified",last_seen:time
+            listing_url:found.url,title,description:snippet.slice(0,1250),
+            source:found.source,origin_engine:"Google Alerts RSS",zone,
+            price:indexedPrice||0,private_status:"unverified",last_seen:time,
+            ...(indexedPrice?{field_provenance:{price:{
+              state:"claimed",origin:"public_search_index",observed_at:time,evidence_url:found.url,
+              cue:"Canone mensile esplicito nell'estratto; da verificare sulla fonte"
+            }}}:{})
           });
         }
         return {engine:"Google Alerts",ok:true,count:rows.size,items:entries.length,status:"ok",rows:[...rows.values()]};
@@ -392,7 +400,8 @@ async function enrichClickCase(rows:any[],existing:Map<string,any>,time:string){
 }
 function mergeSourceDetail(row:any,old:any,detail:any,time:string){
  let combined:any={...row};
- const metadata:any={...(old.field_provenance&&typeof old.field_provenance==="object"?old.field_provenance:{})};
+ const metadata:any={...(old.field_provenance&&typeof old.field_provenance==="object"?old.field_provenance:{}),
+   ...(Number(old.price)>0?{}:(row.field_provenance&&typeof row.field_provenance==="object"?row.field_provenance:{}))};
  if(detail&&detail.status==="source_read"){
   for(const [key,value] of Object.entries(detail.fields||{})){
    const prior:any=metadata[key]||{};
