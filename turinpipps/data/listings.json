@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T23:38:53.805Z",
+  "updated_at": "2026-11-27T05:38:52.244Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -485,7 +485,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -504,12 +504,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T05:38:52.605Z",
+      "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T05:38:52.605Z"
+      "availability_last_ok_at": "2026-11-27T05:38:52.244Z"
     },
     {
       "url": "https://www.clickcase.it/da-privato-posto-letto-per-maschi-torino-422215.html",
@@ -525,10 +525,10 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-20T11:38:52.501Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T05:38:52.605Z",
+      "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T05:38:52.605Z",
+      "availability_last_ok_at": "2026-11-27T05:38:52.244Z",
       "availability_last_http": 302
     },
     {
@@ -543,12 +543,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T05:38:52.605Z",
+      "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T05:38:52.605Z"
+      "availability_last_ok_at": "2026-11-27T05:38:52.244Z"
     },
     {
       "url": "https://www.clickcase.it/camera-doppia-per-due-ragazze-ampia-e-luminosa-torino-421915.html",
@@ -564,10 +564,10 @@
       "seen": "2026-11-19T11:38:52.787Z",
       "last_seen": "2026-11-25T17:38:52.714Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T05:38:52.605Z",
+      "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T05:38:52.605Z"
+      "availability_last_ok_at": "2026-11-27T05:38:52.244Z"
     },
     {
       "url": "https://www.immobiliare.it/annunci/134852307",
@@ -598,7 +598,7 @@
       "seen": "2026-11-19T17:38:53.464Z",
       "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T05:38:52.605Z",
+      "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "verifica_non_conclusiva",
       "availability_consecutive_missing": 0,
       "availability_last_ok_at": "2026-11-24T11:38:52.504Z",
@@ -616,7 +616,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-20T17:38:52.570Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T11:38:53.377Z",
       "availability_state": "online_alla_verifica",
@@ -760,7 +760,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-24T17:38:52.069Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T11:38:53.377Z",
       "availability_state": "online_alla_verifica",
@@ -794,7 +794,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-25T23:38:52.679Z",
-      "last_seen": "2026-11-26T23:38:53.805Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T11:38:53.377Z",
       "availability_state": "online_alla_verifica",
@@ -814,6 +814,21 @@
       "property_type": "",
       "seen": "2026-11-26T05:38:52.605Z",
       "last_seen": "2026-11-26T23:38:53.805Z",
+      "origin": "automatic_alert"
+    },
+    {
+      "url": "https://www.subito.it/appartamenti/nel-cuore-della-crocetta-grazioso-trilocale-torino-669823638.htm",
+      "title": "NEL CUORE DELLA CROCETTA GRAZIOSO TRILOCALE - Appartamenti In affitto a Torino",
+      "description": "Nuovo link da ricerca pubblica o avviso email. Prezzo, zona, privato e disponibilità da verificare.",
+      "price": 0,
+      "zone": "Crocetta",
+      "sqm": 0,
+      "source": "subito.it · Google Alerts RSS",
+      "private_status": "unverified",
+      "expenses": "",
+      "property_type": "",
+      "seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T05:38:52.244Z",
       "origin": "automatic_alert"
     }
   ]
