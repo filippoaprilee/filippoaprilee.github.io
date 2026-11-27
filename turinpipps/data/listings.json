@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-27T05:38:52.244Z",
+  "updated_at": "2026-11-27T11:38:52.301Z",
   "verification": "Raccolta automatica: campi non verificati richiedono controllo sulla fonte; nessun contatto inviato.",
   "listings": [
     {
@@ -95,10 +95,10 @@
           "source": "baseline archivio TurinPipps (nessuna variazione accertata)"
         }
       ],
-      "availability_checked_at": "2026-11-26T11:38:53.377Z",
+      "availability_checked_at": "2026-11-27T11:38:52.301Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T11:38:53.377Z"
+      "availability_last_ok_at": "2026-11-27T11:38:52.301Z"
     },
     {
       "url": "https://www.clickcase.it/bilocale-solo-per-studenti-fuori-sede-comodo-al-politecnico-torino-422525.html",
@@ -111,7 +111,7 @@
       "private_status": "source",
       "expenses": "Spese condominiali incluse · utenze da chiarire",
       "seen": "2026-09-15",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "source_updated": "2026-09-15",
       "property_type": "Bilocale · intero alloggio · studenti",
       "price_history": [
@@ -365,7 +365,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -384,7 +384,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -403,7 +403,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-13T11:12:09.571Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -485,7 +485,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-26T23:38:53.805Z",
       "availability_state": "online_alla_verifica",
@@ -504,7 +504,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
@@ -543,7 +543,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-19T11:38:52.787Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
       "availability_checked_at": "2026-11-27T05:38:52.244Z",
       "availability_state": "online_alla_verifica",
@@ -616,12 +616,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-20T17:38:52.570Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T11:38:53.377Z",
+      "availability_checked_at": "2026-11-27T11:38:52.301Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T11:38:53.377Z",
+      "availability_last_ok_at": "2026-11-27T11:38:52.301Z",
       "availability_last_http": 302
     },
     {
@@ -698,10 +698,10 @@
       "seen": "2026-11-23T17:38:52.425Z",
       "last_seen": "2026-11-24T11:38:52.504Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T11:38:53.377Z",
+      "availability_checked_at": "2026-11-27T11:38:52.301Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T11:38:53.377Z"
+      "availability_last_ok_at": "2026-11-27T11:38:52.301Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-torino-cod-rif-3397057arg-torino-669515078.htm",
@@ -760,12 +760,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-24T17:38:52.069Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T11:38:53.377Z",
+      "availability_checked_at": "2026-11-27T11:38:52.301Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T11:38:53.377Z"
+      "availability_last_ok_at": "2026-11-27T11:38:52.301Z"
     },
     {
       "url": "https://www.casa.it/immobili/55281085",
@@ -794,12 +794,12 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-25T23:38:52.679Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert",
-      "availability_checked_at": "2026-11-26T11:38:53.377Z",
+      "availability_checked_at": "2026-11-27T11:38:52.301Z",
       "availability_state": "online_alla_verifica",
       "availability_consecutive_missing": 0,
-      "availability_last_ok_at": "2026-11-26T11:38:53.377Z"
+      "availability_last_ok_at": "2026-11-27T11:38:52.301Z"
     },
     {
       "url": "https://www.subito.it/appartamenti/appartamento-arredato-zona-cenisia-torino-669765191.htm",
@@ -828,7 +828,7 @@
       "expenses": "",
       "property_type": "",
       "seen": "2026-11-27T05:38:52.244Z",
-      "last_seen": "2026-11-27T05:38:52.244Z",
+      "last_seen": "2026-11-27T11:38:52.301Z",
       "origin": "automatic_alert"
     }
   ]
